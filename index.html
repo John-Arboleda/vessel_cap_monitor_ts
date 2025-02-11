@@ -11,14 +11,1579 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <title>Vessel Capacity Monitor</title>
   </head>
-  <!-- <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
-  </head> -->
+
   <body>
-    <div id="app"></div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Guardar escenario actual</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="save-description" class="col-form-label">Descripción:</label>
+                <textarea class="form-control" id="save-description"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button id="save-data-button" type="button" class="btn btn-primary" data-bs-dismiss="modal">Guardar
+              Datos</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navbar -->
+    <div id="main-navbar" class="row bg-light mx-0">
+      <div id="logo" class="col-3 d-flex flex-row align-items-center justify-content-center my-1">
+        <img src="./assets/images/girozeroLogo.jpg" alt="Girozero Logo" />
+        <div class="ps-2 mt-1">
+          <h5 class="mb-0">Simulador 1</h5>
+        </div>
+      </div>
+      <div class="col mt-2 d-flex justify-content-center">
+        <ul class="nav nav-pills flex-row mb-auto">
+
+          <li id="emissions-nav-button" class="navbar-item nav-item mb-1 me-1">
+            <a class="nav-link link-secondary d-flex active">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-leaf" aria-hidden="true"></i></div>
+              <div>Emisiones</div>
+            </a>
+          </li>
+
+          <li id="fleet-nav-button" class="navbar-item nav-item mb-1 me-1">
+            <a class="nav-link link-secondary d-flex">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-truck" aria-hidden="true"></i></div>
+              <div>Flota</div>
+            </a>
+          </li>
+
+          <li id="costs-nav-button" class="navbar-item nav-item mb-1 me-1">
+            <a class="nav-link link-secondary d-flex">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-usd" aria-hidden="true"></i></div>
+              <div>Costos</div>
+            </a>
+          </li>
+
+          <li id="energy-nav-button" class="navbar-item nav-item mb-1 me-1">
+            <a class="nav-link link-secondary d-flex">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-bolt" aria-hidden="true"></i></div>
+              <div>Energía</div>
+            </a>
+          </li>
+
+          <li id="scenario-nav-button" class="mb-1 d-none" data-bs-toggle="collapse" data-bs-target="#scenario-collapse"
+            aria-expanded="true">
+            <a class="nav-link link-secondary d-flex">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-archive" aria-hidden="true"></i></div>
+              <div>Escenarios</div>
+            </a>
+          </li>
+          <li>
+            <div class="collapse" id="scenario-collapse">
+              <ul class="nav nav-pills flex-row mb-auto small">
+
+                <li class="nav-item ms-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  <a class="nav-link link-secondary">Guardar Actual</a>
+                </li>
+                <li id="load-scenario-nav-button" class="navbar-item nav-item ms-2">
+                  <a class="nav-link link-secondary">Administrar</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+
+
+    <div id="app" class="container-fluid row m-0 p-0">
+
+      <!-- sidebar -->
+      <div id="sidebar-panel" class="col-3 p-0 overflow-scroll height-100-vh px-2 pb-5">
+
+        <!-- Dev -->
+
+        <table class="table table-bordered table table-hover align-middle my-4 d-none">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#dev-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Parámetros Admin</th>
+            </tr>
+          </thead>
+          <tbody class="lh-1 collapse bg-transparent" id="dev-collapse">
+
+            <tr>
+              <td scope="row">
+                <label for="input-scl">
+                  <small class="form-text text-muted">Escala logit</small>
+                </label>
+              </td>
+              <td class="home">
+                <input type="number" class="form-control static-input" id="input-scl" name="input-scl" value="100" step="1" required>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+        <!-- Finanzas -->
+        
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#finance-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Parámetros Financieros</th>
+            </tr>
+          </thead>
+          <tbody class="lh-1 collapse bg-transparent" id="finance-collapse">
+
+            <tr>
+              <td scope="row">
+                <label for="input-TRM">
+                  <small class="form-text text-muted">Tasa de cambio dólar</small>
+                </label>
+              </td>
+              <td class="home">
+                <input type="number" class="form-control static-input" id="input-TRM" name="input-TRM" value="4000" step="1" required>
+              </td>
+            </tr>
+
+            <tr>
+              <td scope="row">
+                <label for="input-CT">
+                  <small class="form-text text-muted">Tax carbon USD/ton</small>
+                </label>
+              </td>
+              <td class="home">
+                <input type="number" class="form-control static-input" id="input-CT" name="input-CT" value="200" step="1" required>
+              </td>
+            </tr>
+
+            <tr>
+              <td scope="row">
+                <label for="input-tt">
+                  <small class="form-text text-muted">Periodo de instalación del tax carbon</small>
+                </label>
+              </td>
+              <td class="home">
+                <input type="number" class="form-control static-input" id="input-tt" name="input-tt" value="10" step="1" required>
+              </td>
+            </tr>
+
+            <tr class="d-none">
+              <td scope="row">
+                <label for="input-rate">
+                  <small class="form-text text-muted">Tasa del préstamo</small>
+                </label>
+              </td>
+              <td class="home">
+                <input type="number" class="form-control static-input percent" id="input-rate" name="input-rate" value="26.28" step="1" required>
+              </td>
+            </tr>
+
+            <tr class="d-none">
+              <td scope="row">
+                <label for="input-per">
+                  <small class="form-text text-muted">Años del préstamo</small>
+                </label>
+              </td>
+              <td class="home">
+                <input type="number" class="form-control static-input" id="input-per" name="input-per" value="5" step="1" required>
+              </td>
+            </tr>
+
+            <tr class="nested-table-header bg-transparent d-none">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Flujos del préstamo</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent d-none">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+                
+                    <tr id="LO-alert" class="d-none">
+                      <td colspan="2">
+                        <div class="alert alert-danger mb-0 text-center" role="alert">
+                          La suma de los porcentajes de los flujos del préstamos es <spam id="LO-spam">1.00</spam><br>
+                          Debe ser igual a 1.00
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-LO-0" class="form-label">
+                            <small class="form-text text-muted">Porcentaje de pago inicial</small>
+                          </label>
+                          <small id="per_input-LO-0" class="form-text text-muted">0.1</small>
+                        </div>
+                        <input type="range" class="form-range static-input LO" min="0" max="1" step="0.01" value="0.1"
+                          id="input-LO-0">
+                
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-LO-1" class="form-label">
+                            <small class="form-text text-muted">Porcentaje de pago diferido a cuotas</small>
+                          </label>
+                          <small id="per_input-LO-1" class="form-text text-muted">0.9</small>
+                        </div>
+                        <input type="range" class="form-range static-input LO" min="0" max="1" step="0.01" value="0.9"
+                          id="input-LO-1">
+                
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-LO-2" class="form-label">
+                            <small class="form-text text-muted">Porcentaje de pago final</small>
+                          </label>
+                          <small id="per_input-LO-2" class="form-text text-muted">0.0</small>
+                        </div>
+                        <input type="range" class="form-range static-input LO" min="0" max="1" step="0.01" value="0.0"
+                          id="input-LO-2">
+                
+                      </td>
+                    </tr>
+                    
+                    
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <tr class="nested-table-header bg-transparent">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Tasa de Renovación</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-RN-0" class="form-label">
+                            <small class="form-text text-muted">Flota C2</small>
+                          </label>
+                          <small id="per_input-RN-0" class="form-text text-muted">0.1</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="1" step="0.01" value="0.1"
+                          id="input-RN-0">
+                
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-RN-1" class="form-label">
+                            <small class="form-text text-muted">Flota C3S3</small>
+                          </label>
+                          <small id="per_input-RN-1" class="form-text text-muted">0.1</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="1" step="0.01" value="0.1"
+                          id="input-RN-1">
+                
+                      </td>
+                    </tr>
+                  
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+
+            
+          </tbody>
+        </table>
+
+        <!-- Policies -->
+
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#policy-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Prácticas Operativas</th>
+            </tr>
+          </thead>
+
+          <tbody class="lh-1 collapse bg-transparent" id="policy-collapse">
+
+            <tr>
+              <td colspan="2">
+                <div class="d-flex justify-content-between">
+                  <label for="input-eta" class="form-label">
+                    <small class="form-text text-muted">Minimización de viajes vacíos</small>
+                  </label>
+                  <small id="per_input-eta" class="form-text text-muted">1.0</small>
+                </div>
+                <input type="range" class="form-range static-input" min="0" max="1" step="0.01" value="1.0"
+                  id="input-eta">
+                <div class="eta_legend d-flex justify-content-between">
+                  <small class="text-muted">Actual</small>
+                  <small class="text-muted">Max reducción</small>
+                </div>
+              </td>
+            </tr>
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#lambda-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Políticas de Consolidación de Carga</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="lambda-collapse">
+              <td colspan="2" id="lambda-row">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+                
+                    <tr id="lambda-alert" class="d-none">
+                      <td colspan="2">
+                        <div class="alert alert-danger mb-0 text-center" role="alert">
+                          La suma de los ratios de implementacion de las politicas de consolidacion es <spam id="lambda-spam">1.00</spam><br>
+                          debe ser igual a 1.00
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-lambda-0" class="form-label">
+                            <small class="form-text text-muted">Business as Usual</small>
+                          </label>
+                          <small id="per_input-lambda-0" class="form-text text-muted">0.0</small>
+                        </div>
+                        <input type="range" class="form-range static-input lambda" min="0" max="1" step="0.01" value="0.0"
+                          id="input-lambda-0">
+                        <div class="lambda-0_legend d-flex justify-content-between">
+                          <small class="text-muted">Min</small>
+                          <small class="text-muted">Max</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-lambda-1" class="form-label">
+                            <small class="form-text text-muted">Maximización utilización <br> de capacidad por camión</small>
+                          </label>
+                          <small id="per_input-lambda-1" class="form-text text-muted">1.0</small>
+                        </div>
+                        <input type="range" class="form-range static-input lambda" min="0" max="1" step="0.01" value="1.0"
+                          id="input-lambda-1">
+                        <div class="lambda-1_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Lleno</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-lambda-2" class="form-label">
+                            <small class="form-text text-muted">Consolidación de carga C3S3 (34 Ton)</small>
+                          </label>
+                          <small id="per_input-lambda-2" class="form-text text-muted">0.0</small>
+                        </div>
+                        <input type="range" class="form-range static-input lambda" min="0" max="1" step="0.01" value="0"
+                          id="input-lambda-2">
+                        <div class="lambda-2_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Max uso C3S3</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-lambda-3" class="form-label">
+                            <small class="form-text text-muted">Vehículos combinados de carga (54 Ton)</small>
+                          </label>
+                          <small id="per_input-lambda-3" class="form-text text-muted">0.0</small>
+                        </div>
+                        <input type="range" class="form-range static-input lambda" min="0" max="1" step="0.01" value="0"
+                          id="input-lambda-3">
+                        <div class="lambda-3_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Max uso VCC</small>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#gamma-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Eficiencias en Condiciones de Conducción</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="gamma-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-gamma-0" class="form-label">
+                            <small class="form-text text-muted">Mejoras aerodinámicas</small>
+                          </label>
+                          <small id="per_input-gamma-0" class="form-text text-muted">0.06</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="0.09" step="0.01" value="0.09"
+                          id="input-gamma-0">
+                        <div class="gamma-0_legend d-flex justify-content-between">
+                          <small class="text-muted">0.00</small>
+                          <small class="text-muted">0.09</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-gamma-1" class="form-label">
+                            <small class="form-text text-muted">EcoConducción</small>
+                          </label>
+                          <small id="per_input-gamma-1" class="form-text text-muted">0.15</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="0.15" step="0.01" value="0.15"
+                          id="input-gamma-1">
+                        <div class="gamma-1_legend d-flex justify-content-between">
+                          <small class="text-muted">0.00</small>
+                          <small class="text-muted">0.15</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-gamma-2" class="form-label">
+                            <small class="form-text text-muted">Control de llantas</small>
+                          </label>
+                          <small id="per_input-gamma-2" class="form-text text-muted">0.05</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="0.05" step="0.01" value="0.05"
+                          id="input-gamma-2">
+                        <div class="gamma-2_legend d-flex justify-content-between">
+                          <small class="text-muted">0.00</small>
+                          <small class="text-muted">0.05</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row">
+                        <label for="input-st">
+                          <small class="form-text text-muted">Periodo inicio de<br>implementación de los ratios</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-st" name="input-st" value="2024" min="2024" max="2049" step="1" required>
+                      </td>
+                    </tr>
+          
+                    <tr>
+                      <td scope="row">
+                        <label for="input-Top">
+                          <small class="form-text text-muted">Periodo máximo de<br>implementación de los ratios</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-Top" name="input-Top" value="2030" min="2025" max="2050" step="1" required>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- Assets -->
+
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#assets-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Impuestos y Subsidios a los Activos</th>
+            </tr>
+          </thead>
+          <tbody class="lh-1 collapse bg-transparent" id="assets-collapse">
+
+            <tr>
+              <td scope="row">
+                <label for="input-agep">
+                  <small class="form-text text-muted">Años máximo un vehículo puede ser conservado en circulación</small>
+                </label>
+              </td>
+              <td>
+                <input type="number" class="form-control static-input" id="input-agep" name="input-agep" value="20" step="1" required>
+              </td>
+            </tr>
+            
+            <!-- Diesel -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#diesel-tech-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Camiones Diesel Nuevos</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="diesel-tech-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="3" class="text-center">
+                        <label>
+                          <small class="form-text text-muted">Disponibilidad de tecnología en el mercado</small>
+                        </label>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" rowspan="2">
+                        <label>
+                          <small class="form-text text-muted">C2</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Año Inicio</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-ti-1-0" name="input-ti-1-0" step="1" min="2024" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Año Fin</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tf-1-0" name="input-tf-1-0" step="1" min="2025" max="2050" value="2035" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" rowspan="2">
+                        <label>
+                          <small class="form-text text-muted">C3S3</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Año Inicio</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-ti-1-1" name="input-ti-1-1" step="1" min="2024" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Año Fin</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tf-1-1" name="input-tf-1-1" step="1" min="2025" max="2050" value="2035" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VAC-1" class="form-label">
+                            <small class="form-text text-muted">Sobrecosto del camión</small>
+                          </label>
+                          <small id="per_input-VAC-1" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input id="input-VAC-1" type="range" class="form-range static-input" min="0" max="1" step="0.01" value="0.35">
+                        <div class="input-VAC-1_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Doble</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <!-- Gas Natural -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#gas-tech-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Camiones a Gas Natural Nuevos</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="gas-tech-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="3" class="text-center">
+                        <label>
+                          <small class="form-text text-muted">Disponibilidad de tecnología en el mercado</small>
+                        </label>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" rowspan="2">
+                        <label>
+                          <small class="form-text text-muted">C2</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Año Inicio</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-ti-2-0" name="input-ti-2-0" step="1" min="2024" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Año Fin</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tf-2-0" name="input-tf-2-0" step="1" min="2025" max="2050" value="2035" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" rowspan="2">
+                        <label>
+                          <small class="form-text text-muted">C3S3</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <label for="input-ti-2-1">
+                          <small class="form-text text-muted">Año Inicio</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-ti-2-1" name="input-ti-2-1" step="1" min="2024" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label for="input-tf-2-1">
+                          <small class="form-text text-muted">Año Fin</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tf-2-1" name="input-tf-2-1" step="1" min="2025" max="2050" value="2035" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VAC-2" class="form-label">
+                            <small class="form-text text-muted">Sobrecosto del camión</small>
+                          </label>
+                          <small id="per_input-VAC-2" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="1" step="0.01" value="0.35"
+                          id="input-VAC-2">
+                        <div class="input-VAC-2_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Doble</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <!-- Eléctrico -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#electric-tech-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Camiones Eléctricos (BEV)</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="electric-tech-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="3" class="text-center">
+                        <label>
+                          <small class="form-text text-muted">Disponibilidad de tecnología en el mercado</small>
+                        </label>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" rowspan="2">
+                        <label>
+                          <small class="form-text text-muted">C2</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <label for="input-ti-3-0">
+                          <small class="form-text text-muted">Año Inicio</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-ti-3-0" name="input-ti-3-0" step="1" min="2024" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label for="input-tf-3-0">
+                          <small class="form-text text-muted">Año Fin</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tf-3-0" name="input-tf-3-0" step="1" min="2025" max="2050" value="2050" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" rowspan="2">
+                        <label>
+                          <small class="form-text text-muted">C3S3</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <label for="input-ti-3-1">
+                          <small class="form-text text-muted">Año Inicio</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-ti-3-1" name="input-ti-3-1" step="1" min="2025" max="2050" value="2035" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label for="input-tf-3-1">
+                          <small class="form-text text-muted">Año Fin</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tf-3-1" name="input-tf-3-1" step="1" min="2025" max="2050" value="2050" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VAC-3" class="form-label">
+                            <small class="form-text text-muted">Subsidio al camión</small>
+                          </label>
+                          <small id="per_input-VAC-3" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input type="range" class="form-range static-input negative" min="0" max="1" step="0.01" value="0.35"
+                          id="input-VAC-3">
+                        <div class="input-VAC-3_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Gratis</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <!-- Hidrógeno -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#hidrogen-tech-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Camiones a Hidrógeno (FCEV)</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="hidrogen-tech-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="3" class="text-center">
+                        <label>
+                          <small class="form-text text-muted">Disponibilidad de tecnología en el mercado</small>
+                        </label>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" rowspan="2">
+                        <label>
+                          <small class="form-text text-muted">C2</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <label for="input-ti-4-0">
+                          <small class="form-text text-muted">Año Inicio</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-ti-4-0" name="input-ti-4-0" step="1" min="2025" max="2050" value="2030" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label for="input-tf-4-0">
+                          <small class="form-text text-muted">Año Fin</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tf-4-0" name="input-tf-4-0" step="1" min="2025" max="2050" value="2050" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" rowspan="2">
+                        <label>
+                          <small class="form-text text-muted">C3S3</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <label for="input-ti-4-1">
+                          <small class="form-text text-muted">Año Inicio</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-ti-4-1" name="input-ti-4-1" step="1" min="2024" max="2050" value="2040" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label for="input-tf-4-1">
+                          <small class="form-text text-muted">Año Fin</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tf-4-1" name="input-tf-4-1" step="1" min="2024" max="2050" value="2050" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VAC-4" class="form-label">
+                            <small class="form-text text-muted">Subsidio al camión</small>
+                          </label>
+                          <small id="per_input-VAC-4" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input type="range" class="form-range static-input negative" min="0" max="1" step="0.01" value="0.35"
+                          id="input-VAC-4">
+                        <div class="input-VAC-4_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Gratis</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+
+          </tbody>
+        </table>
+
+        <!-- Energy -->
+
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#fuel-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Impuestos y Subsidios a la Energía</th>
+            </tr>
+          </thead>
+          <tbody class="lh-1 collapse bg-transparent" id="fuel-collapse">
+            
+            <!-- Diesel Actual -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer d-none" data-bs-toggle="collapse" data-bs-target="#current-diesel-fuel-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Diesel Actual</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="current-diesel-fuel-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label>
+                          <small class="form-text text-muted">Inicio del incremento gradual</br>del impuesto al Diesel</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc1-0" name="input-tc1-0" step="1" min="2024" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label for="input-tc2-1">
+                          <small class="form-text text-muted">Fin del incremento del</br>impuesto al Diesel</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc2-0" name="input-tc2-0" step="1" min="2025" max="2050" value="2029" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VFC-0" class="form-label">
+                            <small class="form-text text-muted">Porcentaje de impuesto al Diesel</small>
+                          </label>
+                          <small id="per_input-VFC-0" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="1" step="0.01" value="0.35"
+                          id="input-VFC-0">
+                        <div class="input-VFC-0_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Doble</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <!-- Diesel -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#diesel-fuel-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Diesel</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="diesel-fuel-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label>
+                          <small class="form-text text-muted">Inicio del incremento gradual</br>del impuesto al Diesel</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc1-1" name="input-tc1-1" step="1" min="2024" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label for="input-tc2-1">
+                          <small class="form-text text-muted">Fin del incremento del</br>impuesto al Diesel</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc2-1" name="input-tc2-1" step="1" min="2025" max="2050" value="2029" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VFC-1" class="form-label">
+                            <small class="form-text text-muted">Porcentaje de impuesto al Diesel</small>
+                          </label>
+                          <small id="per_input-VFC-1" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="1" step="0.01" value="0.35"
+                          id="input-VFC-1">
+                        <div class="input-VFC-1_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Doble</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <!-- Gas Natural -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#gas-fuel-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Gas Natural Vehicular</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="gas-fuel-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label for="input-tc1-2">
+                          <small class="form-text text-muted">Inicio del incremento gradual</br>del impuesto al Gas Natural</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc1-2" name="input-tc1-2" step="1" min="2025" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label for="input-tc2-2">
+                          <small class="form-text text-muted">Fin del incremento del</br>impuesto al Gas Natural</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc2-2" name="input-tc2-2" step="1" min="2025" max="2050" value="2029" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VFC-2" class="form-label">
+                            <small class="form-text text-muted">Porcentaje de impuesto al Gas Natural</small>
+                          </label>
+                          <small id="per_input-VFC-2" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input type="range" class="form-range static-input" min="0" max="1" step="0.01" value="0.35"
+                          id="input-VFC-2">
+                        <div class="input-VFC-2_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Doble</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <!-- Eléctrico -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#electric-fuel-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Carga Eléctrica</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="electric-fuel-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label for="input-tc1-3">
+                          <small class="form-text text-muted">Inicio del incremento gradual<br>del subsidio a Carga Eléctrica</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc1-3" name="input-tc1-3" step="1" min="2025" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label for="input-tc2-3">
+                          <small class="form-text text-muted">Fin del incremento del<br>subsidio a Carga Eléctrica</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc2-3" name="input-tc2-3" step="1" min="2025" max="2050" value="2029" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VFC-3" class="form-label">
+                            <small class="form-text text-muted">Porcentaje de subsidio a la Carga Eléctrica</small>
+                          </label>
+                          <small id="per_input-VFC-3" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input type="range" class="form-range static-input negative" min="0" max="1" step="0.01" value="0.35"
+                          id="input-VFC-3">
+                        <div class="input-VFC-3_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Gratis</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+            <!-- Hidrógeno -->
+
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#hidrogen-fuel-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Hidrógeno</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="hidrogen-fuel-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label for="input-tc1-4">
+                          <small class="form-text text-muted">Inicio del incremento gradual<br>del subsidio al Hidrógeno</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc1-4" name="input-tc1-4" step="1" min="2025" max="2050" value="2024" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" colspan="2">
+                        <label for="input-tc2-4">
+                          <small class="form-text text-muted">Fin del incremento del<br>subsidio al Hidrógeno</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-tc2-4" name="input-tc2-4" step="1" min="2025" max="2050" value="2029" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-VFC-4" class="form-label">
+                            <small class="form-text text-muted">Porcentaje de subsidio al Hidrógeno</small>
+                          </label>
+                          <small id="per_input-VFC-4" class="form-text text-muted">0.35</small>
+                        </div>
+                        <input type="range" class="form-range static-input negative" min="0" max="1" step="0.01" value="0.35"
+                          id="input-VFC-4">
+                        <div class="input-VFC-4_legend d-flex justify-content-between">
+                          <small class="text-muted">Actual</small>
+                          <small class="text-muted">Gratis</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                
+                </table>
+              </td>
+            </tr>
+
+
+          </tbody>
+        </table>
+
+      </div>
+
+      <!-- main -->
+      <div id="main-panel" class="col height-100-vh pb-5">
+
+        <div id="emissions-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3">
+          <div>
+
+            <ul id="emissions-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+              <li class="nav-item">
+                <select id="emissions_select_tech" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                  <option value="01234" selected>Todas las fuentes de energía</option>
+                  <option value="0">Diesel Actual</option>
+                  <option value="1">Diesel Nuevos</option>
+                  <option value="2">Gas Natural</option>
+                  <option value="3">Eléctrico</option>
+                  <option value="4">Hidrógeno</option> 
+                </select>
+              </li>
+              <li class="nav-item mx-4">
+                <select id="emissions_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                  <option value="01" selected>Todos los vehículos</option>
+                  <option value="0">C2</option>
+                  <option value="1">C3S3</option>
+                </select>
+              </li>
+              <li class="nav-item">
+                <button id="emissions_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
+              </li>
+            </ul>
+            
+            <div class="container px-0">
+
+              <div class="mb-4">
+                <h5 class="text-persian-green fw-bold">Gráfica 1</h5>
+                <div class="alert alert-light text-justify" role="alert">
+                  <p class="mb-0">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Molestias provident eaque, ipsam modi non, eius tenetur temporibus deserunt quos nisi minima neque accusamus eligendi quia. Nam earum excepturi repudiandae tenetur!
+                  </p>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="saved-co2" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <h5 class="text-persian-green fw-bold">Gráfica 2</h5>
+                <div class="alert alert-light text-justify" role="alert">
+                  <p class="mb-0">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem deleniti dolor ducimus eos quibusdam! Ducimus totam veniam nihil perspiciatis nulla unde aliquid magni, illo harum ratione, repellendus sunt vero optio.
+                  </p>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="area_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div id="fleet-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+          <div>
+
+            <ul id="fleet-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+              <li class="nav-item">
+                <select id="fleet_select_tech" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                  <option value="01234" selected>Todas las fuentes de energía</option>
+                  <option value="0">Diesel Actual</option>
+                  <option value="1">Diesel Nuevos</option>
+                  <option value="2">Gas Natural</option>
+                  <option value="3">Eléctrico</option>
+                  <option value="4">Hidrógeno</option> 
+                </select>
+              </li>
+              <li class="nav-item mx-4">
+                <select id="fleet_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                  <option value="01" selected>Todos los vehículos</option>
+                  <option value="0">C2</option>
+                  <option value="1">C3S3</option>
+                </select>
+              </li>
+              <li class="nav-item">
+                <button id="fleet_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
+              </li>
+            </ul>
+
+            <div class="container px-0">
+
+              <div class="mb-4">
+                <h5 class="text-persian-green fw-bold">Plan de renovacion de la flota por tecnologia y periodo (2023-2050)
+                </h5>
+                <div class="alert alert-light text-justify" role="alert">
+                  <p class="mb-0">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem deleniti dolor ducimus eos quibusdam! Ducimus totam veniam nihil perspiciatis nulla unde aliquid magni, illo harum ratione, repellendus sunt vero optio.
+                  </p>
+                </div>
+
+                <div class="row justify-content-md-center mx-1">
+                  <div id="buy_column_chart" class="buy-chart-content col-lg-12 p-0"></div>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="sell_column_chart" class="sell-chart-content col-lg-12 p-0"></div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <h5 class="text-persian-green fw-bold">Evolución de la Configuración de la Flota por Tecnología
+                  (2023-2050)</h5>
+                <div class="alert alert-light text-justify" role="alert">
+                  <p class="mb-0">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Et vitae quasi voluptatum unde. Aliquam repellat suscipit possimus, pariatur dignissimos deserunt, quia id explicabo autem sed tenetur amet sequi cum placeat?
+                  </p>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="fleet_column_chart" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <h5 class="text-persian-green fw-bold">Gráfica 5</h5>
+                <div class="alert alert-light text-justify" role="alert">
+                  <p class="mb-0">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem, omnis iusto aliquam error odio optio expedita suscipit, nihil laudantium possimus sunt ducimus dolore quis soluta voluptate distinctio ex placeat vitae!
+                  </p>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="old_column_chart" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="costs-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+          <div>
+            <ul id="costs-result-navbar"
+              class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+              <li class="nav-item">
+                <select id="costs_select_tech" class="form-select flex-sm-fill text-sm-center m-2"
+                  aria-label="technology select">
+                  <option value="01234" selected>Todas las fuentes de energía</option>
+                  <option value="0">Diesel Actual</option>
+                  <option value="1">Diesel Nuevos</option>
+                  <option value="2">Gas Natural</option>
+                  <option value="3">Eléctrico</option>
+                  <option value="4">Hidrógeno</option>
+                </select>
+              </li>
+              <li class="nav-item mx-4">
+                <select id="costs_select_size" class="form-select flex-sm-fill text-sm-center m-2"
+                  aria-label="vehicle type select">
+                  <option value="01" selected>Todos los vehículos</option>
+                  <option value="0">C2</option>
+                  <option value="1">C3S3</option>
+                </select>
+              </li>
+              <li class="nav-item">
+                <button id="costs_percent_button"
+                  class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
+              </li>
+            </ul>
+
+
+            <div class="mb-4">
+              <h5 class="text-persian-green fw-bold">Gráfica 7.1
+              </h5>
+              <div class="alert alert-light text-justify" role="alert">
+                <p class="mb-0">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem deleniti dolor ducimus eos quibusdam! Ducimus totam veniam nihil perspiciatis nulla unde aliquid magni, illo harum ratione, repellendus sunt vero optio.
+                </p>
+              </div>
+
+              <div class="row justify-content-md-center mx-1">
+                <div id="cost_area_chart" class="chart-content col-lg-12"></div>
+              </div>
+              
+            </div>
+
+            <div class="mb-2">
+              <h5 class="text-persian-green fw-bold">Gráfica 7.2</h5>
+              <div class="alert alert-light text-justify" role="alert">
+                <p class="mb-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint consequuntur quibusdam earum assumenda, quidem animi ducimus, consectetur deserunt optio ad fuga sed eos esse autem possimus repellendus nam! Consectetur, voluptatem.
+                </p>
+              </div>
+              <div class="row justify-content-md-center mx-1">
+                <div id="income_area_chart" class="buy-chart-content col-lg-12 p-0"></div>
+              </div>
+              <div class="row justify-content-md-center mx-1">
+                <div id="spending_area_chart" class="sell-chart-content col-lg-12 p-0"></div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+        <div id="energy-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+          <div>
+            <ul id="energy-result-navbar"
+              class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+              <li class="nav-item">
+                <select id="energy_select_tech" class="form-select flex-sm-fill text-sm-center m-2"
+                  aria-label="technology select" disabled>
+                  <option value="01234" selected>Todas las fuentes de energía</option>
+                  <option value="0">Diesel Actual</option>
+                  <option value="1">Diesel Nuevos</option>
+                  <option value="2">Gas Natural</option>
+                  <option value="3">Eléctrico</option>
+                  <option value="4">Hidrógeno</option>
+                </select>
+              </li>
+              <li class="nav-item mx-4">
+                <select id="energy_select_size" class="form-select flex-sm-fill text-sm-center m-2"
+                  aria-label="vehicle type select" disabled>
+                  <option value="01" selected>Todos los vehículos</option>
+                  <option value="0">C2</option>
+                  <option value="1">C3S3</option>
+                </select>
+              </li>
+              <li class="nav-item">
+                <button id="energy_percent_button"
+                  class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
+              </li>
+            </ul>
+            <div class="mb-4">
+              <h5 class="text-persian-green fw-bold">Gráfica 7</h5>
+              <div class="alert alert-light text-justify" role="alert">
+                <p class="mb-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint consequuntur quibusdam earum assumenda, quidem animi ducimus, consectetur deserunt optio ad fuga sed eos esse autem possimus repellendus nam! Consectetur, voluptatem.
+                </p>
+              </div>
+              <div class="row justify-content-md-center mx-1">
+                <div id="current_diesel_area_chart" class="chart-content col-lg-12"></div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5 class="text-persian-green fw-bold">Gráfica 8
+              </h5>
+              <div class="alert alert-light text-justify" role="alert">
+                <p class="mb-0">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dignissimos eveniet suscipit voluptatibus deleniti reprehenderit beatae explicabo facilis nam accusamus fuga recusandae, illo quod, ad perspiciatis consequatur amet! Praesentium, repellendus.
+                </p>
+              </div>
+              <div class="row justify-content-md-center mx-1">
+                <div id="new_diesel_area_chart" class="chart-content col-lg-12"></div>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <h5 class="text-persian-green fw-bold">Gráfica 9
+              </h5>
+              <div class="alert alert-light text-justify" role="alert">
+                <p class="mb-0">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dignissimos eveniet suscipit voluptatibus deleniti reprehenderit beatae explicabo facilis nam accusamus fuga recusandae, illo quod, ad perspiciatis consequatur amet! Praesentium, repellendus.
+                </p>
+              </div>
+              <div class="row justify-content-md-center mx-1">
+                <div id="gas_area_chart" class="chart-content col-lg-12"></div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5 class="text-persian-green fw-bold">Gráfica 10
+              </h5>
+              <div class="alert alert-light text-justify" role="alert">
+                <p class="mb-0">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dignissimos eveniet suscipit voluptatibus deleniti reprehenderit beatae explicabo facilis nam accusamus fuga recusandae, illo quod, ad perspiciatis consequatur amet! Praesentium, repellendus.
+                </p>
+              </div>
+              <div class="row justify-content-md-center mx-1">
+                <div id="electric_area_chart" class="chart-content col-lg-12"></div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <h5 class="text-persian-green fw-bold">Gráfica 11
+              </h5>
+              <div class="alert alert-light text-justify" role="alert">
+                <p class="mb-0">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dignissimos eveniet suscipit voluptatibus deleniti reprehenderit beatae explicabo facilis nam accusamus fuga recusandae, illo quod, ad perspiciatis consequatur amet! Praesentium, repellendus.
+                </p>
+              </div>
+              <div class="row justify-content-md-center mx-1">
+                <div id="hydrogen_area_chart" class="chart-content col-lg-12"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="load-scenario-panel" class="panel m-md-4 p-4 border border-persian-green rounded-3 d-none">
+          <div>
+            <div class="mb-2">
+              <h3 class="text-tropical fw-bold">Administrar Escenarios</h3>
+            </div>
+
+            <div class="col-12 mt-3 pt-4">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th colspan="8" class="text-center text-persian-green border-top border-persian-green">Escenarios
+                      Guardados</th>
+                  </tr>
+                  <tr>
+                    <th scope="col" class="text-persian-green">#</th>
+                    <th scope="col" colspan="4" class="text-persian-green">
+                      Descripción
+                    </th>
+                    <th scope="col" class="text-persian-green">
+                      Fecha
+                    </th>
+                    <th scope="col" class="text-persian-green">
+                      Cargar
+                    </th>
+                    <th scope="col" class="text-persian-green">
+                      Borrar
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="scenario-table-body">
+
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
+
 </html>

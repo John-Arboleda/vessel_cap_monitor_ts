@@ -1,24 +1,45 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { transformData } from "./functions";
+import { defaultValues } from "./data";
+import { navbarResultsScroll } from "./components/navbar-results";
+import { createNavEvents} from "./components/main-navbar";
+import { runEmissionCharts } from "./charts/draw-charts";
+import { displayRangeValue } from "./components/range-value";
+import { validatePayPer } from "./components/validations";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+import { drawChartsOnInput } from "./update"; 
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+
+// var objValues = {...defaultValues}
+
+// console.log(updateObj(objValues));
+
+displayRangeValue();
+drawChartsOnInput();
+validatePayPer();
+
+
+// console.log(resultObj);
+
+// console.log(createFleetByTech(resultObj.N));
+
+// (() => {
+//   console.log("Page fully loaded.");
+// })();
+
+(async () => {
+  const resultObj = await transformData(defaultValues);
+
+  runEmissionCharts(resultObj);
+})();
+createNavEvents();
+navbarResultsScroll();
+
+window.addEventListener("load", () => {
+  // console.log("Page fully loaded.");
+  // const resultObj = transformData(defaultValues);
+  
+  // createNavEvents();
+  // navbarResultsScroll();
+  // await runAnalysisCharts(resultObj);
+  //console.log(resultObj);
+})
