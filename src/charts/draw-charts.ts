@@ -1,6 +1,6 @@
 import { multipleAreaChart } from "./area-chart";
 import { multipleColumnChart, sumColumnChart } from "./column-chart";
-import { simpleLineChart } from "./line-chart";
+// import { simpleLineChart } from "./line-chart";
 
 import { createDataAreaEmis, createFleetByTech, dataPropNegative, maxValueVAxis, 
   createDataAreaCost, createDataTotalCost, dataSavedCO2, createDataQfuel, costNegObj } from "./chart-functions";
@@ -41,11 +41,11 @@ function drawEmissionsCharts(resultObj: ResultObj): void {
 
   // console.log(resultObj);
   
-  const co2Header = ['Periodo', 'Operacional', 'Renovación', 'Total'];
-  simpleLineChart(resultObj, dataSavedCO2, 'saved-co2', co2Options, co2Header)
+  // const co2Header = ['Periodo', 'Operacional', 'Renovación', 'Total'];
+  // simpleLineChart(resultObj, dataSavedCO2, 'saved-co2', co2Options, co2Header)
 
   const emisHeader: string[] = ['Periodo', 'Well-to-Tank', 'Tank-to-Wheel']
-  multipleAreaChart(resultObj, createDataAreaEmis, 'area_chart_div', 'emissions', emissionsOptions, emisHeader);
+  multipleAreaChart(resultObj, createDataAreaEmis, 'area_chart_div', 'strategies', emissionsOptions, emisHeader);
 
 }
 
@@ -69,13 +69,13 @@ function drawFleetCharts(resultObj: ResultObj): void {
   buyFleetOptions.vAxis.maxValue = vAxisMaxValue;
 
   const negPropD = dataPropNegative(resultObj.D);
-  multipleColumnChart(resultObj.G, createFleetByTech, 'buy_column_chart', 'fleet', buyFleetOptions, techTypeHeader);
+  multipleColumnChart(resultObj.G, createFleetByTech, 'buy_column_chart', 'capacity', buyFleetOptions, techTypeHeader);
 
-  multipleColumnChart(negPropD, createFleetByTech, 'sell_column_chart', 'fleet', sellFleetOptions, techTypeHeader);
+  multipleColumnChart(negPropD, createFleetByTech, 'sell_column_chart', 'capacity', sellFleetOptions, techTypeHeader);
 
-  multipleColumnChart(resultObj.N, createFleetByTech, 'fleet_column_chart', 'fleet', fleetOptions, techTypeHeader);
+  multipleColumnChart(resultObj.N, createFleetByTech, 'fleet_column_chart', 'capacity', fleetOptions, techTypeHeader);
 
-  multipleColumnChart(resultObj.OLD, createFleetByTech, 'old_column_chart', 'fleet', fleetOptions, techTypeHeader);
+  multipleColumnChart(resultObj.OLD, createFleetByTech, 'old_column_chart', 'capacity', fleetOptions, techTypeHeader);
 }
 
 function runCostsCharts(resultObj: ResultObj) {
@@ -128,10 +128,10 @@ function drawEnergyCharts(resultObj: ResultObj): void {
 }
 
 const drawChartFunctions: { [prefixId: string]: (resultObj: ResultObj) => void } = {
-  'emissions': runEmissionCharts,
-  'fleet': runFleetCharts,
-  'costs': runCostsCharts,
-  'energy': runEnergyCharts
+  'strategies': runEmissionCharts,
+  'capacity': runFleetCharts,
+  // 'costs': runCostsCharts,
+  // 'energy': runEnergyCharts
 };
 
 export { runEmissionCharts, runFleetCharts, runCostsCharts, runEnergyCharts, drawChartFunctions }

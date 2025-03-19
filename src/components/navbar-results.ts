@@ -2,10 +2,8 @@
 function navbarResultsScroll(): void {
     const mainPanel = document.getElementById('main-panel') as HTMLElement;
     // Get the navbar
-    const emissionsResultNavbar = document.getElementById('emissions-result-navbar') as HTMLElement;
-    const fleetResultNavbar = document.getElementById('fleet-result-navbar') as HTMLElement;
-    const costsResultNavbar = document.getElementById('costs-result-navbar') as HTMLElement;
-    const energyResultNavbar = document.getElementById('energy-result-navbar') as HTMLElement;
+    const strategiesResultNavbar = document.getElementById('strategies-result-navbar') as HTMLElement;
+    const capacityResultNavbar = document.getElementById('capacity-result-navbar') as HTMLElement;
   
     // Add the sticky class to the navbar when you reach its scroll position.
     // Remove "sticky" when you leave the scroll position
@@ -22,10 +20,8 @@ function navbarResultsScroll(): void {
   
     // When the user scrolls the page, execute makeStickyNavbar
     mainPanel.onscroll = function (): void { 
-      makeStickyNavbar(emissionsResultNavbar); 
-      makeStickyNavbar(fleetResultNavbar); 
-      makeStickyNavbar(costsResultNavbar); 
-      makeStickyNavbar(energyResultNavbar); 
+      makeStickyNavbar(strategiesResultNavbar); 
+      makeStickyNavbar(capacityResultNavbar); 
     };
   }
   
@@ -34,6 +30,7 @@ function navbarResultsScroll(): void {
     const selectTechnology = document.getElementById(navPrefix + '_select_tech') as HTMLSelectElement;
     const selectSize = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
   
+    console.log(navPrefix);
     const navObj = {
       percentText: percentButton.innerHTML,
       techKeys: selectTechnology.value.split("").map((a: String) => Number(a)),

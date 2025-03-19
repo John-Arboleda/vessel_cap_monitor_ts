@@ -41,47 +41,33 @@
     <!-- Navbar -->
     <div id="main-navbar" class="row bg-light mx-0">
       <div id="logo" class="col-3 d-flex flex-row align-items-center justify-content-center my-1">
-        <img src="./assets/images/girozeroLogo.jpg" alt="Girozero Logo" />
+        <!-- <img src="./assets/images/girozeroLogo.jpg" alt="Girozero Logo" /> -->
         <div class="ps-2 mt-1">
-          <h5 class="mb-0">Simulador 1</h5>
+          <h5 class="mb-0">Vessel Capacity Monitor</h5>
         </div>
       </div>
       <div class="col mt-2 d-flex justify-content-center">
         <ul class="nav nav-pills flex-row mb-auto">
 
-          <li id="emissions-nav-button" class="navbar-item nav-item mb-1 me-1">
+          <li id="strategies-nav-button" class="navbar-item nav-item mb-1 me-1">
             <a class="nav-link link-secondary d-flex active">
               <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-leaf" aria-hidden="true"></i></div>
-              <div>Emisiones</div>
+              <div>Strategies</div>
             </a>
           </li>
 
-          <li id="fleet-nav-button" class="navbar-item nav-item mb-1 me-1">
+          <li id="capacity-nav-button" class="navbar-item nav-item mb-1 me-1">
             <a class="nav-link link-secondary d-flex">
               <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-truck" aria-hidden="true"></i></div>
-              <div>Flota</div>
+              <div>Capacity</div>
             </a>
           </li>
 
-          <li id="costs-nav-button" class="navbar-item nav-item mb-1 me-1">
-            <a class="nav-link link-secondary d-flex">
-              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-usd" aria-hidden="true"></i></div>
-              <div>Costos</div>
-            </a>
-          </li>
-
-          <li id="energy-nav-button" class="navbar-item nav-item mb-1 me-1">
-            <a class="nav-link link-secondary d-flex">
-              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-bolt" aria-hidden="true"></i></div>
-              <div>Energía</div>
-            </a>
-          </li>
-
-          <li id="scenario-nav-button" class="mb-1 d-none" data-bs-toggle="collapse" data-bs-target="#scenario-collapse"
+          <li id="scenario-nav-button" class="mb-1" data-bs-toggle="collapse" data-bs-target="#scenario-collapse"
             aria-expanded="true">
             <a class="nav-link link-secondary d-flex">
               <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-archive" aria-hidden="true"></i></div>
-              <div>Escenarios</div>
+              <div>Scenarios</div>
             </a>
           </li>
           <li>
@@ -1259,12 +1245,12 @@
       <!-- main -->
       <div id="main-panel" class="col height-100-vh pb-5">
 
-        <div id="emissions-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3">
+        <div id="strategies-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3">
           <div>
 
-            <ul id="emissions-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+            <ul id="strategies-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
               <li class="nav-item">
-                <select id="emissions_select_tech" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                <select id="strategies_select_tech" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
                   <option value="01234" selected>Todas las fuentes de energía</option>
                   <option value="0">Diesel Actual</option>
                   <option value="1">Diesel Nuevos</option>
@@ -1274,14 +1260,14 @@
                 </select>
               </li>
               <li class="nav-item mx-4">
-                <select id="emissions_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                <select id="strategies_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
                   <option value="01" selected>Todos los vehículos</option>
                   <option value="0">C2</option>
                   <option value="1">C3S3</option>
                 </select>
               </li>
               <li class="nav-item">
-                <button id="emissions_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
+                <button id="strategies_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
               </li>
             </ul>
             
@@ -1315,12 +1301,12 @@
           </div>
         </div>
 
-        <div id="fleet-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+        <div id="capacity-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
           <div>
 
-            <ul id="fleet-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+            <ul id="capacity-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
               <li class="nav-item">
-                <select id="fleet_select_tech" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                <select id="capacity_select_tech" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
                   <option value="01234" selected>Todas las fuentes de energía</option>
                   <option value="0">Diesel Actual</option>
                   <option value="1">Diesel Nuevos</option>
@@ -1330,14 +1316,14 @@
                 </select>
               </li>
               <li class="nav-item mx-4">
-                <select id="fleet_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                <select id="capacity_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
                   <option value="01" selected>Todos los vehículos</option>
                   <option value="0">C2</option>
                   <option value="1">C3S3</option>
                 </select>
               </li>
               <li class="nav-item">
-                <button id="fleet_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
+                <button id="capacity_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
               </li>
             </ul>
 
@@ -1387,6 +1373,8 @@
             </div>
           </div>
         </div>
+
+        <!-- delete cost panel -->
 
         <div id="costs-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
           <div>
@@ -1449,6 +1437,8 @@
             </div>
           </div>
         </div>
+
+        <!-- delete energy panel -->
 
         <div id="energy-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
           <div>
@@ -1546,29 +1536,29 @@
         <div id="load-scenario-panel" class="panel m-md-4 p-4 border border-persian-green rounded-3 d-none">
           <div>
             <div class="mb-2">
-              <h3 class="text-tropical fw-bold">Administrar Escenarios</h3>
+              <h3 class="text-tropical fw-bold">Manage Scenarios</h3>
             </div>
 
             <div class="col-12 mt-3 pt-4">
               <table class="table align-middle">
                 <thead>
                   <tr>
-                    <th colspan="8" class="text-center text-persian-green border-top border-persian-green">Escenarios
-                      Guardados</th>
+                    <th colspan="8" class="text-center text-persian-green border-top border-persian-green">Saved
+                      Scenarios</th>
                   </tr>
                   <tr>
                     <th scope="col" class="text-persian-green">#</th>
                     <th scope="col" colspan="4" class="text-persian-green">
-                      Descripción
+                      Description
                     </th>
                     <th scope="col" class="text-persian-green">
-                      Fecha
+                      Date
                     </th>
                     <th scope="col" class="text-persian-green">
-                      Cargar
+                      Load
                     </th>
                     <th scope="col" class="text-persian-green">
-                      Borrar
+                      Delete
                     </th>
                   </tr>
                 </thead>
