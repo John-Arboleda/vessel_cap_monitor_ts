@@ -28,8 +28,8 @@ function regionHeader(regionId: number, regionTitle: string): HTMLTableRowElemen
 }
 
 function regionBody(regionId: number): HTMLTableRowElement{
+  
   const row = document.createElement('TR') as HTMLTableRowElement;
-  // <tr class="lh-1 bg-transparent collapse" id="region-${regionId}-collapse">
   row.id = `region-${regionId}-collapse`;
   row.classList.add('lh-1', 'bg-transparent', 'collapse');
   
