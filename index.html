@@ -94,37 +94,345 @@
       <!-- sidebar -->
       <div id="sidebar-panel" class="col-3 p-0 overflow-scroll height-100-vh px-2 pb-5">
 
-        <!-- Dev -->
+        <!-- General -->
 
-        <table class="table table-bordered table table-hover align-middle my-4 d-none">
-          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#dev-collapse"
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#general-collapse"
             aria-expanded="false">
             <tr>
-              <th colspan="2" class="text-center table-header">Parámetros Admin</th>
+              <th colspan="2" class="text-center table-header">General Parameters</th>
             </tr>
           </thead>
-          <tbody class="lh-1 collapse bg-transparent" id="dev-collapse">
+          <tbody class="lh-1 collapse bg-transparent" id="general-collapse">
 
             <tr>
               <td scope="row">
                 <label for="input-scl">
-                  <small class="form-text text-muted">Escala logit</small>
+                  <small class="form-text text-muted">Goal</small>
                 </label>
               </td>
               <td class="home">
-                <input type="number" class="form-control static-input" id="input-scl" name="input-scl" value="100" step="1" required>
+                <input type="number" class="form-control static-input" id="input-goal" name="input-goal" value="1" step="0.5" required>
+              </td>
+            </tr>
+
+            <tr>
+              <td colspan="2">
+                <div class="d-flex justify-content-between">
+                  <label for="input-eta" class="form-label">
+                    <small class="form-text text-muted">eta</small>
+                  </label>
+                  <small id="per_input-eta" class="form-text text-muted">0.0</small>
+                </div>
+                <input type="range" class="form-range static-input eta" min="0" max="1" step="0.01" value="0.0"
+                  id="input-eta">
+        
+              </td>
+            </tr>
+
+            <tr>
+              <td colspan="2">
+                <div class="d-flex justify-content-between">
+                  <label for="input-rho" class="form-label">
+                    <small class="form-text text-muted">rho</small>
+                  </label>
+                  <small id="per_input-rho" class="form-text text-muted">0.0</small>
+                </div>
+                <input type="range" class="form-range static-input rho" min="0" max="0.3" step="0.01" value="0.0"
+                  id="input-rho">
+        
+              </td>
+            </tr>
+
+            <tr>
+              <td colspan="2">
+                <div class="d-flex justify-content-between">
+                  <label for="input-alpha" class="form-label">
+                    <small class="form-text text-muted">Effect of economic shock</small>
+                  </label>
+                  <small id="per_input-alpha" class="form-text text-muted">0.5</small>
+                </div>
+                <input type="range" class="form-range static-input alpha" min="-1" max="1" step="0.01" value="0.5"
+                  id="input-alpha">
+        
+              </td>
+            </tr>
+
+            <tr>
+              <td scope="row">
+                <label for="input-PARN-0">
+                  <small class="form-text text-muted">Start of the shock</small>
+                </label>
+              </td>
+              <td class="home">
+                <!-- TODO start must be lower than end -->
+                <input type="number" class="form-control static-input year" id="input-PARN-0" name="input-PARN-0" value="2025" min="2025" max="2050" step="1" required>
+              </td>
+            </tr>
+  
+            <tr>
+              <td scope="row">
+                <label for="input-PARN-1">
+                  <small class="form-text text-muted">End of the shock</small>
+                </label>
+              </td>
+              <td class="home">
+                <input type="number" class="form-control static-input year" id="input-PARN-1" name="input-PARN-1" value="2050" min="2025" max="2050" step="1" required>
               </td>
             </tr>
 
           </tbody>
         </table>
+
+        <!-- Vessel -->
+
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#vessel-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Vessel Parameters</th>
+            </tr>
+          </thead>
+          <tbody class="lh-1 collapse bg-transparent" id="vessel-collapse">
+
+            <!-- Oil tanker -->
+            
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#vessel-0-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Crude Tanker</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="vessel-0-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-beta-1" class="form-label">
+                            <small class="form-text text-muted">RF</small>
+                          </label>
+                          <small id="per_input-beta-1" class="form-text text-muted">0.0</small>
+                        </div>
+                        <input id="input-beta-1" type="range" class="form-range static-input" min="0" max="1" step="0.01" value="0.0">
+                        <div class="input-beta-1_legend d-flex justify-content-between">
+                          <small class="text-muted">0</small>
+                          <small class="text-muted">1</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td scope="row" colspan="2" class="text-center">
+                        <label>
+                          <small class="form-text text-muted">% Share in route of vessels type</small>
+                        </label>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">VLCC</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input" id="input-delta-0-0" name="input-delta-0-0" step="1" min="0" max="100" value="20" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Suezmax</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input" id="input-delta-0-1" name="input-delta-0-1"  step="1" min="0" max="100" value="20" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Aframax</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input" id="input-delta-0-2" name="input-delta-0-2"  step="1" min="0" max="100" value="20" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Panamax</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input" id="input-delta-0-3" name="input-delta-0-3"  step="1" min="0" max="100" value="20" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Handysize</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input" id="input-delta-0-4" name="input-delta-0-4"  step="1" min="0" max="100" value="20" required>
+                      </td>
+                    </tr>
+
+                  </tbody>
+
+
+                </table>
+              </td>
+            </tr>
+            
+
+          </tbody>
+        </table>
+        
+        <!-- Regions -->
+
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#region-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Region Parameters</th>
+            </tr>
+          </thead>
+          <tbody class="lh-1 collapse bg-transparent" id="region-collapse">
+          
+            <tr class="nested-table-header bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#region-0-collapse" aria-expanded="true">
+              <td colspan="2" class="text-center">
+                <small class="form-text text-muted"><b>Western Asia</b></small>
+              </td>
+            </tr>
+
+            <tr class="lh-1 bg-transparent collapse" id="region-0-collapse">
+              <td colspan="2">
+                <table class="table table-bordered table-hover align-middle mb-0 bg-light">
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="2" class="text-center">
+                        <label>
+                          <small class="form-text text-muted">Exports</small>
+                        </label>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-beta-0-0" class="form-label">
+                            <small class="form-text text-muted">Reduction in exports</small>
+                          </label>
+                          <small id="per_input-beta-0-0" class="form-text text-muted">0.0</small>
+                        </div>
+                        <input id="input-beta-0-0" type="range" class="form-range static-input" min="-1" max="0" step="0.01" value="0.0">
+                        <div class="input-beta-0-0_legend d-flex justify-content-between">
+                          <small class="text-muted">No exports</small>
+                          <small class="text-muted">Current</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Start of policy</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-PARR-0-0" name="input-PARR-0-0" step="1" min="2025" max="2050" value="2025" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">End of policy</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-PARR-0-1" name="input-PARR-0-1" step="1" min="2026" max="2050" value="2035" required>
+                      </td>
+                    </tr>
+
+                  </tbody>
+
+                  <tbody class="lh-1 bg-transparent">
+
+                    <tr>
+                      <td scope="row" colspan="2" class="text-center">
+                        <label>
+                          <small class="form-text text-muted">Imports</small>
+                        </label>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <div class="d-flex justify-content-between">
+                          <label for="input-beta-0-1" class="form-label">
+                            <small class="form-text text-muted">Reduction in imports</small>
+                          </label>
+                          <small id="per_input-beta-0-1" class="form-text text-muted">0.0</small>
+                        </div>
+                        <input id="input-beta-1" type="range" class="form-range static-input" min="-1" max="0" step="0.01" value="0.0">
+                        <div class="input-beta-0-1_legend d-flex justify-content-between">
+                          <small class="text-muted">No imports</small>
+                          <small class="text-muted">Current</small>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">Start of policy</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-PARR-0-2" name="input-PARR-0-2" step="1" min="2025" max="2050" value="2025" required>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="home">
+                        <label>
+                          <small class="form-text text-muted">End of policy</small>
+                        </label>
+                      </td>
+                      <td class="home">
+                        <input type="number" class="form-control static-input year" id="input-PARR-0-3" name="input-PARR-0-3" step="1" min="2026" max="2050" value="2035" required>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                  
+                
+                </table>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
         <!-- Finanzas -->
         
         <table class="table table-bordered table table-hover align-middle my-4">
           <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#finance-collapse"
             aria-expanded="false">
             <tr>
-              <th colspan="2" class="text-center table-header">Parámetros Financieros</th>
+              <th colspan="2" class="text-center table-header">Parámetros financieros</th>
             </tr>
           </thead>
           <tbody class="lh-1 collapse bg-transparent" id="finance-collapse">
