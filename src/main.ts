@@ -8,11 +8,11 @@ import { validatePayPer } from "./components/validations";
 
 import { drawChartsOnInput } from "./update"; 
 
-
+import { createRegionInputs } from "./components/regions-input";
 // var objValues = {...defaultValues}
 
 // console.log(updateObj(objValues));
-
+createRegionInputs();
 displayRangeValue();
 drawChartsOnInput();
 validatePayPer();

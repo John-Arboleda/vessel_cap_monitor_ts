@@ -1,4 +1,4 @@
-import { devParams, userParams } from "./data";
+import { devParams, userParams } from "./parameters";
 import { arrayToNDMatrix } from "./linear-alg";
 import * as d3 from "d3";
 
