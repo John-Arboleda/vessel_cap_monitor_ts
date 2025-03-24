@@ -54,13 +54,13 @@ function vesselBody(vesselId: number, vesselTypes: string[]): HTMLTableRowElemen
   rfRow.innerHTML = `
     <td colspan="2">
       <div class="d-flex justify-content-between">
-        <label for="input-beta-${vesselId}" class="form-label">
+        <label for="input-RF-${vesselId}" class="form-label">
           <small class="form-text text-muted">RF</small>
         </label>
-        <small id="per_input-beta-${vesselId}" class="form-text text-muted">0.0</small>
+        <small id="per_input-RF-${vesselId}" class="form-text text-muted">0.0</small>
       </div>
       <input 
-        id="input-beta-${vesselId}" 
+        id="input-RF-${vesselId}" 
         type="range" 
         class="form-range 
         static-input" 
@@ -69,7 +69,7 @@ function vesselBody(vesselId: number, vesselTypes: string[]): HTMLTableRowElemen
         step="0.01" 
         value="0.0"
       >
-      <div class="input-beta-${vesselId}_legend d-flex justify-content-between">
+      <div class="input-RF-${vesselId}_legend d-flex justify-content-between">
         <small class="text-muted">0</small>
         <small class="text-muted">1</small>
       </div>
@@ -107,7 +107,7 @@ function vesselTypeRow (vesselId: number, typeId: number, typeName: string): HTM
   <td>
     <input 
       type="number"
-      class="form-control static-input perc"
+      class="form-control static-input percent"
       id="input-delta-${vesselId}-${typeId}"
       name="input-delta-${vesselId}-${typeId}"
       step="1"

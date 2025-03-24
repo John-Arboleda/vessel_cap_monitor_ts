@@ -49,14 +49,14 @@ function regionBody(regionId: number): HTMLTableRowElement{
             <tr>
               <td colspan="2">
                 <div class="d-flex justify-content-between">
-                  <label for="input-beta-${regionId}-0" class="form-label">
+                  <label for="input-beta-0-${regionId}" class="form-label">
                     <small class="form-text text-muted">Reduction in exports</small>
                   </label>
-                  <small id="per_input-beta-${regionId}-0" class="form-text text-muted">0.0</small>
+                  <small id="per_input-beta-0-${regionId}" class="form-text text-muted">0.0</small>
                 </div>
 
                 <input 
-                  id="input-beta-${regionId}-0"
+                  id="input-beta-0-${regionId}"
                   type="range"
                   class="form-range
                   static-input"
@@ -66,7 +66,7 @@ function regionBody(regionId: number): HTMLTableRowElement{
                   value="0.0"
                 >
                 
-                <div class="input-beta-${regionId}-0_legend d-flex justify-content-between">
+                <div class="input-beta-0-${regionId}_legend d-flex justify-content-between">
                   <small class="text-muted">No exports</small>
                   <small class="text-muted">Current</small>
                 </div>
@@ -84,8 +84,8 @@ function regionBody(regionId: number): HTMLTableRowElement{
                   type="number"
                   class="form-control
                   static-input year"
-                  id="input-PARR-${regionId}-0"
-                  name="input-PARR-${regionId}-0"
+                  id="input-PARR-0-${regionId}"
+                  name="input-PARR-0-${regionId}"
                   step="1"
                   min="2025"
                   max="2050"
@@ -106,8 +106,8 @@ function regionBody(regionId: number): HTMLTableRowElement{
                   type="number"
                   class="form-control
                   static-input year"
-                  id="input-PARR-${regionId}-1"
-                  name="input-PARR-${regionId}-1"
+                  id="input-PARR-1-${regionId}"
+                  name="input-PARR-1-${regionId}"
                   step="1"
                   min="2026"
                   max="2050"
@@ -128,13 +128,13 @@ function regionBody(regionId: number): HTMLTableRowElement{
             <tr>
               <td colspan="2">
                 <div class="d-flex justify-content-between">
-                  <label for="input-beta-${regionId}-1" class="form-label">
+                  <label for="input-beta-1-${regionId}" class="form-label">
                     <small class="form-text text-muted">Reduction in imports</small>
                   </label>
-                  <small id="per_input-beta-${regionId}-1" class="form-text text-muted">0.0</small>
+                  <small id="per_input-beta-1-${regionId}" class="form-text text-muted">0.0</small>
                 </div>
                 <input 
-                  id="input-beta-${regionId}-1"
+                  id="input-beta-1-${regionId}"
                   type="range"
                   class="form-range
                   static-input"
@@ -143,7 +143,7 @@ function regionBody(regionId: number): HTMLTableRowElement{
                   step="0.01"
                   value="0.0"
                 >
-                <div class="input-beta-${regionId}-1_legend d-flex justify-content-between">
+                <div class="input-beta-1-${regionId}_legend d-flex justify-content-between">
                   <small class="text-muted">No imports</small>
                   <small class="text-muted">Current</small>
                 </div>
@@ -161,8 +161,8 @@ function regionBody(regionId: number): HTMLTableRowElement{
                   type="number"
                   class="form-control
                   static-input year"
-                  id="input-PARR-${regionId}-2"
-                  name="input-PARR-${regionId}-2"
+                  id="input-PARR-2-${regionId}"
+                  name="input-PARR-2-${regionId}"
                   step="1"
                   min="2025"
                   max="2050"
@@ -183,8 +183,8 @@ function regionBody(regionId: number): HTMLTableRowElement{
                   type="number"
                   class="form-control
                   static-input year"
-                  id="input-PARR-${regionId}-3"
-                  name="input-PARR-${regionId}-3"
+                  id="input-PARR-3-${regionId}"
+                  name="input-PARR-3-${regionId}"
                   step="1"
                   min="2026"
                   max="2050"

@@ -30,7 +30,6 @@ function navbarResultsScroll(): void {
     const selectTechnology = document.getElementById(navPrefix + '_select_tech') as HTMLSelectElement;
     const selectSize = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
   
-    console.log(navPrefix);
     const navObj = {
       percentText: percentButton.innerHTML,
       techKeys: selectTechnology.value.split("").map((a: String) => Number(a)),

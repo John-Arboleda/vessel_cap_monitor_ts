@@ -31,7 +31,8 @@ function transformData( dataObj = userParams ){
   //   RATE0[t]<-min(1,(max(0,t-PARN[1])/max(1,PARN[2]-PARN[1])))
   // }
   for (let t = 0; t < T; t++){
-    RATE0[t] = Math.min(1, Math.max(0, t - PARN[0]) / Math.max(1, PARN[1] - PARN[0]));
+    // Add one because the index is 1-based in R
+    RATE0[t] = Math.min(1, Math.max(0, t - PARN[0] + 1) / Math.max(1, PARN[1] - PARN[0]));
   }
 
   // RATE1<- array(rep(0,T*N), dim=c(T,N))
@@ -49,8 +50,8 @@ function transformData( dataObj = userParams ){
   //   }}
   for (let t = 0; t < T; t++){
     for (let n = 0; n < N; n++){
-      RATE1[t][n] = Math.min(1, Math.max(0, t - PARR[0][n]) / Math.max(1, PARR[1][n] - PARR[0][n]));
-      RATE2[t][n] = Math.min(1, Math.max(0, t - PARR[2][n]) / Math.max(1, PARR[3][n] - PARR[2][n]));
+      RATE1[t][n] = Math.min(1, Math.max(0, t - PARR[0][n] + 1) / Math.max(1, PARR[1][n] - PARR[0][n]));
+      RATE2[t][n] = Math.min(1, Math.max(0, t - PARR[2][n] + 1) / Math.max(1, PARR[3][n] - PARR[2][n]));
     }
   }
 

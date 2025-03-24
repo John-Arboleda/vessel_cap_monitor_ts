@@ -10,14 +10,21 @@ import { drawChartsOnInput } from "./update";
 
 import { createRegionInputs } from "./components/regions-input";
 import { createVesselInputs } from "./components/vessel-input";
-// var objValues = {...defaultValues}
+import { userParams } from "./logic/parameters";
+import { updateObj } from "./update";
 
-// console.log(updateObj(objValues));
+
 createRegionInputs();
 createVesselInputs();
 displayRangeValue();
 drawChartsOnInput();
 validatePayPer();
+
+
+// console.log(userParams);
+var objValues = {...userParams}
+
+console.log(updateObj(objValues));
 
 
 // console.log(resultObj);

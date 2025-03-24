@@ -1,23 +1,22 @@
 import { getStaticInputValues, setStaticValues, setStaticObjValues, setStaticInputValues } from "./components/static-inputs";
 import { drawChartFunctions } from "./charts/draw-charts";
-import { transformData } from "./functions";
-import { defaultValues } from "./data";
+// import { transformData } from "./functions";
+// import { defaultValues } from "./data";
+
+import { userParams } from "./logic/parameters";
+import { transformData } from "./logic/functions";
 
 const staticInputCollection = document.getElementsByClassName('static-input') as HTMLCollection;
 
-var objValues = {...defaultValues}
+var objValues = {...userParams}
 
 function updateObj(dataObj: any){
 
   const staticObj = getStaticInputValues(staticInputCollection);
 
-  staticObj['input-VFC-0'] = staticObj['input-VFC-1'];
-  staticObj['input-tc1-0'] = staticObj['input-tc1-1'];
-  staticObj['input-tc2-0'] = staticObj['input-tc2-1'];
-
   dataObj = setStaticValues(staticObj, dataObj);
 
-  return dataObj;
+  return dataObj
 }
 
 // Function to draw the active panel
@@ -50,8 +49,8 @@ function drawChartsOnInput(): void {
       input.addEventListener('change', async () => {
         try {
           objValues = updateObj(objValues);
-          const resultObj = await transformData(objValues);
-          drawActivePanel(resultObj);
+          // const resultObj = await transformData(objValues);
+          // drawActivePanel(resultObj);
         } catch (error) {
           console.error('Failed to process input change:', error);
         }

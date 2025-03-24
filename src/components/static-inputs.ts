@@ -11,10 +11,8 @@ function getStaticInputValues(staticInputCollection: HTMLCollection){
         if (input.classList.contains('percent')) {
           // round to 2 decimals
           inputValues[inputIdString] = Math.round(Number(input.value) * 100) / 10000;
-        } else if (input.classList.contains('negative')){
-          inputValues[inputIdString] = -1 * Number(input.value);
         } else if (input.classList.contains('year')){
-          inputValues[inputIdString] = Number(input.value) - 2024;
+          inputValues[inputIdString] = Number(input.value) - 1996;
         } else {
           inputValues[inputIdString] = Number(input.value);
         }
@@ -74,10 +72,8 @@ function getStaticInputValues(staticInputCollection: HTMLCollection){
         if (Object.keys(staticObj).includes(inputIdString)){
           if (input.classList.contains('percent')) {
             input.value = (staticObj[inputIdString] * 100).toString();
-          } else if (input.classList.contains('negative')){
-            staticObj[inputIdString] = (-1 * Number(input.value)).toString();
           } else if (input.classList.contains('year')){
-            staticObj[inputIdString] = (Number(input.value) + 2024).toString();
+            staticObj[inputIdString] = (Number(input.value) + 1996).toString();
           } else {
             input.value = (staticObj[inputIdString]).toString();
           }
