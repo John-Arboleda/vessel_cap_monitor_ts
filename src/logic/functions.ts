@@ -1,21 +1,14 @@
-import { devParams, userParams } from "./parameters";
+import { userParams, getDevParams } from "./parameters";
 import { arrayToNDMatrix } from "./linear-alg";
-import * as d3 from "d3";
-
-async function parseTSV(url: string): Promise<number[][]> {
-  const response = await fetch(url);
-  const text = await response.text();
-  const parsedRows = d3.tsvParseRows(text);
-  
-  // Convert each string in the parsed rows to a number
-  return parsedRows.map((row: string[]) => row.map((cell: string) => parseFloat(cell)))
-}
 
 
 
-function transformData( dataObj = userParams ){
+
+async function transformData( dataObj = userParams ){
     
   const { goal, eta, rho, alpha, PARN, beta, PARR, RF, delta } = dataObj;
+
+  const devParams = await getDevParams();
   
   const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, 
     lambda1, HF, HN, HD, CAP, U, DIST, MAXD, AVEG, lambda2, 
@@ -88,8 +81,7 @@ function transformData( dataObj = userParams ){
   const lambda1B: number[][][][] = arrayToNDMatrix(arrayLambda1B, [R, W, F, T]) as number[][][][];
 
   // TOTAL<-array(rep(1,T), dim=c(T))
-  const arrayTOTAL: number[] = new Array(T).fill(1);
-  const TOTAL: number[] = arrayToNDMatrix(arrayTOTAL, [T]) as number[];
+  const TOTAL: number[] = new Array(T).fill(1);
 
   // for (t in 1:T){
   //   for (r in 1:R){

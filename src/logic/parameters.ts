@@ -1,4 +1,14 @@
-import { arrayToNDMatrix } from "./linear-alg";
+import { arrayToNDMatrix, arrayTo2DMatrix, arrayTo3DMatrix, arrayTo4DMatrix } from "./linear-alg";
+import * as d3 from "d3";
+
+async function parseTSV(url: string): Promise<number[][]> {
+  const response = await fetch(url);
+  const text = await response.text();
+  const parsedRows = d3.tsvParseRows(text);
+  
+  // Convert each string in the parsed rows to a number
+  return parsedRows.map((row: string[]) => row.map((cell: string) => parseFloat(cell)))
+}
 
 
 // #Developer parameters
@@ -29,123 +39,160 @@ const V2: number[] = [5, 5, 1, 2, 3, 4];
 const ind: number = 2;
 const SCN: number = 5;
 
-// DDA<-array(data.matrix(data5), dim=c(5,F,T)) # BAU, expected tonnes of fuel f transported by sea in year t.
-const arrayDDA: number[] = new Array(5 * F * T).fill(0);
-const DDA: number[][][] = arrayToNDMatrix(arrayDDA, [5, F, T]) as number[][][];
+async function getDevParams() {
 
-// lambda1<-array(data.matrix(data8), dim=c(R,W,F))/(10000) # % fuel f transported in that route direction. .### afinar
-const arrayLambda1: number[] = new Array(R * W * F).fill(0);
-const lambda1: number[][][] = arrayToNDMatrix(arrayLambda1, [R, W, F]) as number[][][];
+    // data1<-read.csv("HA.txt",sep = "\t",header = FALSE)
+    const data1 = await parseTSV("../../assets/files/HA.txt");
+    // data2<-read.csv("HG.txt",sep = "\t",header = FALSE)
+    const data2 = await parseTSV("../../assets/files/HG.txt");
+    // data3<-read.csv("HD.txt",sep = "\t",header = FALSE)
+    const data3 = await parseTSV("../../assets/files/HD.txt");
+    // data4<-read.csv("CAP.txt",sep = "\t",header = FALSE)
+    const data4 = await parseTSV("../../assets/files/CAP.txt");
+    // data5<-read.csv("DDA.txt",sep = "\t",header = FALSE)
+    const data5 = await parseTSV("../../assets/files/DDA.txt");
+    // data6<-read.csv("O.txt",sep = "\t",header = FALSE)
+    const data6 = await parseTSV("../../assets/files/O.txt");
+    // data7<-read.csv("D.txt",sep = "\t",header = FALSE)
+    const data7 = await parseTSV("../../assets/files/D.txt");
+    // data8<-read.csv("LAMB1.txt",sep = "\t",header = FALSE)
+    const data8 = await parseTSV("../../assets/files/LAMB1.txt");
+    // data9<-read.csv("U.txt",sep = "\t",header = FALSE)
+    const data9 = await parseTSV("../../assets/files/U.txt");
+    // data10<-read.csv("LAMB2.txt",sep = "\t",header = FALSE)
+    // const data10 = await parseTSV("../../assets/files/LAMB2.txt");
+    // data11<-read.csv("MAXD.txt",sep = "\t",header = FALSE)
+    const data11 = await parseTSV("../../assets/files/MAXD.txt");
+    // data12<-read.csv("AVEG.txt",sep = "\t",header = FALSE)
+    const data12 = await parseTSV("../../assets/files/AVEG.txt");
+    // data13<-read.csv("DIST.txt",sep = "\t",header = FALSE)
+    const data13 = await parseTSV("../../assets/files/DIST.txt");
+    // data14<-read.csv("L.txt",sep = "\t",header = FALSE)
+    const data14 = await parseTSV("../../assets/files/L.txt");
+    // data15<-read.csv("FOREC.txt",sep = "\t",header = FALSE)
+    const data15 = await parseTSV("../../assets/files/FOREC.txt");
+    // data16<-read.csv("L2.txt",sep = "\t",header = FALSE)
+    const data16 = await parseTSV("../../assets/files/L2.txt");
 
-// HF<-array(data.matrix(data1), dim=c(S2,V,T2))# Historia de la flota existente
-const arrayHF: number[] = new Array(S2 * V * T2).fill(0);
-const HF: number[][][] = arrayToNDMatrix(arrayHF, [S2, V, T2]) as number[][][];
+    // DDA<-array(data.matrix(data5), dim=c(5,F,T)) # BAU, expected tonnes of fuel f transported by sea in year t.
+    const arrayDDA: number[] = d3.transpose(data5).flat(2);
+    const DDA: number[][][] = arrayTo3DMatrix(arrayDDA, [5, F, T]) as number[][][];
 
-// HN<-array(data.matrix(data2), dim=c(S2,V,T2))# Historia de la flota nueva
-const arrayHN: number[] = new Array(S2 * V * T2).fill(0);
-const HN: number[][][] = arrayToNDMatrix(arrayHN, [S2, V, T2]) as number[][][];
+    // lambda1<-array(data.matrix(data8), dim=c(R,W,F))/(10000) # % fuel f transported in that route direction. .### afinar
+    const arrayLambda1: number[] = d3.transpose(data8).flat(2).map((a: number) => a / 10000);
+    const lambda1: number[][][] = arrayTo3DMatrix(arrayLambda1, [R, W, F]) as number[][][];
+    // const lambda1: number[][][] = reshapeMatrix(arrayLambda1, [R, W, F]) as number[][][];
 
-// HD<-array(data.matrix(data3), dim=c(S2,V,T2))# Historia de la flota desintegrada
-const arrayHD: number[] = new Array(S2 * V * T2).fill(0);
-const HD: number[][][] = arrayToNDMatrix(arrayHD, [S2, V, T2]) as number[][][];
+    // HF<-array(data.matrix(data1), dim=c(S2,V,T2))# Historia de la flota existente
+    const arrayHF: number[] = d3.transpose(data1).flat(2);
+    const HF: number[][][] = arrayTo3DMatrix(arrayHF, [S2, V, T2]) as number[][][];
 
-// CAP<-array(data.matrix(data4), dim=c(S2,V,2)) # capacity of a vessel type v and size s
-const arrayCAP: number[] = new Array(S2 * V * 2).fill(0);
-const CAP: number[][][] = arrayToNDMatrix(arrayCAP, [S2, V, 2]) as number[][][];
+    // HN<-array(data.matrix(data2), dim=c(S2,V,T2))# Historia de la flota nueva
+    const arrayHN: number[] = d3.transpose(data2).flat(2);
+    const HN: number[][][] = arrayTo3DMatrix(arrayHN, [S2, V, T2]) as number[][][];
 
-// U<-array(data.matrix(data9), dim=c(V,R,2)) # vessel utilization
-const arrayU: number[] = new Array(V * R * 2).fill(0);
-const U: number[][][] = arrayToNDMatrix(arrayU, [V, R, 2]) as number[][][];
+    // HD<-array(data.matrix(data3), dim=c(S2,V,T2))# Historia de la flota desintegrada
+    const arrayHD: number[] = d3.transpose(data3).flat(2);
+    const HD: number[][][] = arrayTo3DMatrix(arrayHD, [S2, V, T2]) as number[][][];
 
-// DIST<-array(data.matrix(data13), dim=c(R,W)) # distance in km traveled in route r direction w
-const arrayDIST: number[] = new Array(R * W).fill(0);
-const DIST: number[][] = arrayToNDMatrix(arrayDIST, [R, W]) as number[][];
+    // CAP<-array(data.matrix(data4), dim=c(S2,V,2)) # capacity of a vessel type v and size s
+    const arrayCAP: number[] = d3.transpose(data4).flat(2);
+    const CAP: number[][][] = arrayTo3DMatrix(arrayCAP, [S2, V, 2]) as number[][][];
 
-// MAXD<-array(data.matrix(data11), dim=c(S2,V)) # maxima distancia un vessel recorre en un año
-const arrayMAXD: number[] = new Array(S2 * V).fill(0);
-const MAXD: number[][] = arrayToNDMatrix(arrayMAXD, [S2, V]) as number[][];
+    // U<-array(data.matrix(data9), dim=c(V,R,2)) # vessel utilization
+    const arrayU: number[] = d3.transpose(data9).flat(2);
+    const U: number[][][] = arrayTo3DMatrix(arrayU, [V, R, 2]) as number[][][];
 
-// AVEG<-array(data.matrix(data12), dim=c(S2,V)) # distancia media un vessel recorre en un año
-const arrayAVEG: number[] = new Array(S2 * V).fill(0);
-const AVEG: number[][] = arrayToNDMatrix(arrayAVEG, [S2, V]) as number[][];
+    // DIST<-array(data.matrix(data13), dim=c(R,W)) # distance in km traveled in route r direction w
+    const arrayDIST: number[] = d3.transpose(data13).flat(2);
+    const DIST: number[][] = arrayTo2DMatrix(arrayDIST, [R, W]) as number[][];
 
-// lambda2<-array(rep(0,R*S2*V), dim=c(R,S2,V)) # % share in route of vessels type v with size s.### afinar
-const arrayLambda2: number[] = new Array(R * S2 * V).fill(0);
-const lambda2: number[][][] = arrayToNDMatrix(arrayLambda2, [R, S2, V]) as number[][][];
+    // MAXD<-array(data.matrix(data11), dim=c(S2,V)) # maxima distancia un vessel recorre en un año
+    const arrayMAXD: number[] = d3.transpose(data11).flat(2);
+    const MAXD: number[][] = arrayTo2DMatrix(arrayMAXD, [S2, V]) as number[][];
 
-// M<-array(rep(0,N*V*S2), dim=c(N,V,S2))### afinar
-const arrayM: number[] = new Array(N * V * S2).fill(0);
-const M: number[][][] = arrayToNDMatrix(arrayM, [N, V, S2]) as number[][][];
+    // AVEG<-array(data.matrix(data12), dim=c(S2,V)) # distancia media un vessel recorre en un año
+    const arrayAVEG: number[] = d3.transpose(data12).flat(2);
+    const AVEG: number[][] = arrayTo2DMatrix(arrayAVEG, [S2, V]) as number[][];
 
-// agep1<-c(28,24,23,22,22) # Edad para desintegrar flota by size
-const agep1: number[] = [28, 24, 23, 22, 22];
+    // lambda2<-array(rep(0,R*S2*V), dim=c(R,S2,V)) # % share in route of vessels type v with size s.### afinar
+    const arrayLambda2: number[] = new Array(R * S2 * V).fill(0);
+    const lambda2: number[][][] = arrayTo3DMatrix(arrayLambda2, [R, S2, V]) as number[][][];
 
-// agep2<-ceiling(agep1/2) # Edad para desintegrar flota by sizeO<-array(data.matrix(data6), dim=c(R,W)) # Origin nodes of route with direction w
-const agep2: number[] = agep1.map((a: number) => Math.ceil(a / 2));
+    // M<-array(rep(0,N*V*S2), dim=c(N,V,S2))### afinar
+    const arrayM: number[] = new Array(N * V * S2).fill(0);
+    const M: number[][][] = arrayTo3DMatrix(arrayM, [N, V, S2]) as number[][][];
 
-// O<-array(data.matrix(data6), dim=c(R,W)) # Origin nodes of route with direction w
-const arrayO: number[] = new Array(R * W).fill(0);
-const O: number[][] = arrayToNDMatrix(arrayO, [R, W]) as number[][];
+    // agep1<-c(28,24,23,22,22) # Edad para desintegrar flota by size
+    const agep1: number[] = [28, 24, 23, 22, 22];
 
-// D<-array(data.matrix(data7), dim=c(R,W)) # Destination nodes of route with direction w
-const arrayD: number[] = new Array(R * W).fill(0);
-const D: number[][] = arrayToNDMatrix(arrayD, [R, W]) as number[][];
+    // agep2<-ceiling(agep1/2) # Edad para desintegrar flota by sizeO<-array(data.matrix(data6), dim=c(R,W)) # Origin nodes of route with direction w
+    const agep2: number[] = agep1.map((a: number) => Math.ceil(a / 2));
 
-// L<-array(data.matrix(data14), dim=c(S2,V,T)) # Correccion por programacion y otros
-const arrayL: number[] = new Array(S2 * V * T).fill(0);
-const L: number[][][] = arrayToNDMatrix(arrayL, [S2, V, T]) as number[][][];
+    // O<-array(data.matrix(data6), dim=c(R,W)) # Origin nodes of route with direction w
+    const arrayO: number[] = d3.transpose(data6).flat(2);
+    const O: number[][] = arrayTo2DMatrix(arrayO, [R, W]) as number[][];
 
-// L2<-array(data.matrix(data16), dim=c(S2,V)) # Correccion por programacion y otros
-const arrayL2: number[] = new Array(S2 * V).fill(0);
-const L2: number[][] = arrayToNDMatrix(arrayL2, [S2, V]) as number[][];
+    // D<-array(data.matrix(data7), dim=c(R,W)) # Destination nodes of route with direction w
+    const arrayD: number[] = d3.transpose(data7).flat(2);
+    const D: number[][] = arrayTo2DMatrix(arrayD, [R, W]) as number[][];
 
-// FOREC<-array(data.matrix(data15), dim=c(T,S2,V,5)) # barras entre [0.0;1.0]
-const arrayFOREC: number[] = new Array(T * S2 * V * 5).fill(0);
-const FOREC: number[][][][] = arrayToNDMatrix(arrayFOREC, [T, S2, V, 5]) as number[][][][];
+    // L<-array(data.matrix(data14), dim=c(S2,V,T)) # Correccion por programacion y otros
+    const arrayL: number[] = d3.transpose(data14).flat(2);
+    const L: number[][][] = arrayTo3DMatrix(arrayL, [S2, V, T]) as number[][][];
 
-// FOREC2<-array(rep(0,S2*V*5), dim=c(T,S2,V,5)) # barras entre [0.0;1.0] ### afinar
-const arrayFOREC2: number[] = new Array(T * S2 * V * 5).fill(0);
-const FOREC2: number[][][][] = arrayToNDMatrix(arrayFOREC2, [T, S2, V, 5]) as number[][][][];
+    // L2<-array(data.matrix(data16), dim=c(S2,V)) # Correccion por programacion y otros
+    const arrayL2: number[] = d3.transpose(data16).flat(2);
+    const L2: number[][] = arrayTo2DMatrix(arrayL2, [S2, V]) as number[][];
 
-// factor<-array(rep(1,N*5*F*T), dim=c(N,5,F,T)) ### afinar
-const arrayFactor: number[] = new Array(N * 5 * F * T).fill(1);
-const factor: number[][][][] = arrayToNDMatrix(arrayFactor, [N, 5, F, T]) as number[][][][];
+    // FOREC<-array(data.matrix(data15), dim=c(T,S2,V,5)) # barras entre [0.0;1.0]
+    const arrayFOREC: number[] = d3.transpose(data15).flat(2);
+    const FOREC: number[][][][] = arrayTo4DMatrix(arrayFOREC, [T, S2, V, 5]) as number[][][][];
 
-const devParams = {
-    T,
-    T2,
-    N,
-    R,
-    W,
-    F,
-    V,
-    S,
-    S2,
-    V2,
-    ind,
-    SCN,
-    DDA,
-    lambda1,
-    HF,
-    HN,
-    HD,
-    CAP,
-    U,
-    DIST,
-    MAXD,
-    AVEG,
-    lambda2,
-    M,
-    agep1,
-    agep2,
-    O,
-    D,
-    L,
-    L2,
-    FOREC,
-    FOREC2,
-    factor,
-};
+    // FOREC2<-array(rep(0,S2*V*5), dim=c(T,S2,V,5)) # barras entre [0.0;1.0] ### afinar
+    const arrayFOREC2: number[] = new Array(T * S2 * V * 5).fill(0);
+    const FOREC2: number[][][][] = arrayTo4DMatrix(arrayFOREC2, [T, S2, V, 5]) as number[][][][];
+
+    // factor<-array(rep(1,N*5*F*T), dim=c(N,5,F,T)) ### afinar
+    const arrayFactor: number[] = new Array(N * 5 * F * T).fill(1);
+    const factor: number[][][][] = arrayTo4DMatrix(arrayFactor, [N, 5, F, T]) as number[][][][];
+
+    return {
+        T,
+        T2,
+        N,
+        R,
+        W,
+        F,
+        V,
+        S,
+        S2,
+        V2,
+        ind,
+        SCN,
+        DDA,
+        lambda1,
+        HF,
+        HN,
+        HD,
+        CAP,
+        U,
+        DIST,
+        MAXD,
+        AVEG,
+        lambda2,
+        M,
+        agep1,
+        agep2,
+        O,
+        D,
+        L,
+        L2,
+        FOREC,
+        FOREC2,
+        factor,
+    };
+}
 
 // #User parameters
 
@@ -191,4 +238,4 @@ const userParams = {
     delta,
 };
 
-export { devParams, userParams };
+export { userParams, getDevParams };

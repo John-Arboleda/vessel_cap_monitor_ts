@@ -49,7 +49,8 @@ function drawChartsOnInput(): void {
       input.addEventListener('change', async () => {
         try {
           objValues = updateObj(objValues);
-          // const resultObj = await transformData(objValues);
+          const resultObj = await transformData(objValues);
+          console.log(resultObj);
           // drawActivePanel(resultObj);
         } catch (error) {
           console.error('Failed to process input change:', error);
