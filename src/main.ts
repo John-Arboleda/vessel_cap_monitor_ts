@@ -10,9 +10,9 @@ import { drawChartsOnInput } from "./update";
 
 import { createRegionInputs } from "./components/regions-input";
 import { createVesselInputs } from "./components/vessel-input";
-// import { userParams } from "./logic/parameters";
+import { userParams } from "./logic/parameters";
 // import { updateObj } from "./update";
-// import { transformData } from "./logic/functions";
+import { transformData } from "./logic/functions";
 import { getDevParams } from "./logic/parameters";
 
 createRegionInputs();
@@ -22,10 +22,11 @@ drawChartsOnInput();
 validatePayPer();
 
 (async () => {
-  // const resultObj = await transformData(userParams);
-  // console.log(resultObj)
   const devParams = await getDevParams()
   console.log(devParams);
+  const resultObj = await transformData(userParams);
+  console.log(resultObj)
+  
   // runEmissionCharts(resultObj);
 })();
 createNavEvents();

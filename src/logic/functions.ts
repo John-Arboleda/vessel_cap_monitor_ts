@@ -48,7 +48,6 @@ async function transformData( dataObj = userParams ){
     }
   }
 
-
   // UB<-array(rep(0,R*W*V*S2), dim=c(R,W,V,S2))
   const arrayUB: number[] = new Array(R * W * V * S2).fill(0);
   const UB: number[][][][] = arrayToNDMatrix(arrayUB, [R, W, V, S2]) as number[][][][];
@@ -96,7 +95,7 @@ async function transformData( dataObj = userParams ){
     for (let r = 0; r < R; r++){
       for (let w = 0; w < W; w++){
         for (let f = 0; f < F; f++){
-          lambda1B[r][w][f][t] = lambda1[r][w][f] * Math.min(factor[O[r][w]][goal][f][t], Math.max(1 - beta[0][O[r][w]] * RATE1[t][O[r][w]], 1 - beta[1][D[r][w]] * RATE2[t][D[r][w]]));
+          lambda1B[r][w][f][t] = lambda1[r][w][f] * Math.min(factor[O[r][w] - 1][goal - 1][f][t], Math.max(1 - beta[0][O[r][w] - 1] * RATE1[t][O[r][w] - 1], 1 - beta[1][D[r][w] - 1] * RATE2[t][D[r][w] - 1]));
           TOTAL[t] += lambda1B[r][w][f][t];
         }
       }
@@ -114,7 +113,7 @@ async function transformData( dataObj = userParams ){
   const Y: number[][][][][] = arrayToNDMatrix(arrayY, [R, W, V, S2, T]) as number[][][][][];
 
   // TRIP<-array(rep(0,R*W*F*V*S2), dim=c(R,W,V,S2))
-  const arrayTRIP: number[] = new Array(R * W * F * V * S2).fill(0);
+  const arrayTRIP: number[] = new Array(R * W * V * S2).fill(0);
   const TRIP: number[][][][] = arrayToNDMatrix(arrayTRIP, [R, W, V, S2]) as number[][][][];
 
   // Q2<-array(rep(0,V*S2*T), dim=c(V,S2,T))
@@ -133,7 +132,7 @@ async function transformData( dataObj = userParams ){
     for (let w = 0; w < W; w++){
       for (let t = 0; t < T; t++){
         for (let f = 0; f < F; f++){
-          Q[r][w][f][t] = Math.pow(10, 6) * DDA[SCN][f][t] * (1 + alpha * RATE0[t]) * Math.min(factor[O[r][w]][goal][f][t], (1 - beta[1][O[r][w]] * RATE1[t][O[r][w]])) * (lambda1B[r][w][f][t] / TOTAL[t]);
+          Q[r][w][f][t] = Math.pow(10, 6) * DDA[SCN - 1][f][t] * (1 + alpha * RATE0[t]) * Math.min(factor[O[r][w] - 1][goal - 1][f][t], (1 - beta[1][O[r][w] - 1] * RATE1[t][O[r][w] - 1])) * (lambda1B[r][w][f][t] / TOTAL[t]);
         }
       }
     }
@@ -162,16 +161,15 @@ async function transformData( dataObj = userParams ){
           TRIP[r][w][v][s] = (eta * UB[r][w][v][s] + (1 - eta) * LB[r][w][v][s]) * (1 - rho);
           for (let t = 0; t < T; t++){
             if(t < T2){ // T2 = 29, 28th index in js
-              Y[r][w][v][s][t] = CAP[s][v][ind] * U[v][r][0] * TRIP[r][w][v][s];
+              Y[r][w][v][s][t] = CAP[s][v][ind - 1] * U[v][r][0] * TRIP[r][w][v][s];
             } else {
-              Y[r][w][v][s][t] = Y[r][w][v][s][t] + CAP[s][v][ind] * ((1 - delta[s][v]) * U[v][r][0] + delta[s][v] * U[v][r][1]) * TRIP[r][w][v][s];
+              Y[r][w][v][s][t] = Y[r][w][v][s][t] + CAP[s][v][ind - 1] * ((1 - delta[s][v]) * U[v][r][0] + delta[s][v] * U[v][r][1]) * TRIP[r][w][v][s];
             }
           }
         }
       }
     }
   }
-
 
   // X<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
   const arrayX: number[] = new Array(R * V * S2 * T).fill(0);
@@ -247,7 +245,7 @@ async function transformData( dataObj = userParams ){
     for (let s = 0; s < S[v]; s++){
       for (let t = 0; t < T; t++){
         for (let r = 0; r < R; r++){
-          X2[r][v][s][t] = Math.ceil(X[r][v][s][t] * (1 + M[O[r][0]][v][s] / 100));
+          X2[r][v][s][t] = Math.ceil(X[r][v][s][t] * (1 + M[O[r][0] - 1][v][s] / 100));
           Z[v][s][t] += X2[r][v][s][t];
           for (let f = 0; f < F; f++){
             if(v === V2[f]){
@@ -260,7 +258,6 @@ async function transformData( dataObj = userParams ){
       }
     }
   }
-
 
   // PORC<-array(rep(0,R*V*T), dim=c(R,V,T))
   const arrayPORC: number[] = new Array(R * V * T).fill(0);
@@ -277,8 +274,8 @@ async function transformData( dataObj = userParams ){
     for (let r = 0; r < R; r++){
       for (let v = 0; v < V; v++){
         for (let f = 0; f < F; f++){
-          if(v === V2[f]){
-            PORC[r][v][t] += (lambda1B[r][0][f][t] + lambda1B[r][1][f][t]) / TOTAL[t];
+          if(v === (V2[f] - 1)){ // V2 is 1-based in R
+            PORC[r][v][t] += ((lambda1B[r][0][f][t] + lambda1B[r][1][f][t]) / TOTAL[t]);
           }
         }
       }
@@ -297,7 +294,9 @@ async function transformData( dataObj = userParams ){
   for (let t = 0; t < T; t++){
     for (let v = 0; v < V; v++){
       for (let s = 0; s < S[v]; s++){
-        UTIL[v][s][t] += ((1 - delta[s][v]) * U[v][0][0] + delta[s][v] * U[v][0][1]) * PORC[0][v][t];
+        for (let r = 0; r < R; r++){
+          UTIL[v][s][t] += ((1 - delta[s][v]) * U[v][r][0] + delta[s][v] * U[v][r][1]) * PORC[r][v][t];
+        }
       }
     }
   }
@@ -379,36 +378,42 @@ async function transformData( dataObj = userParams ){
   //       GAP2[v,s,t]=FLEET2[v,s,t]-Z2[v,s,t]
         
   //     }}}
-  for (let v = 0; v < V; v++){
-    for (let s = 0; s < S[v]; s++){
-      for (let t = 0; t < T; t++){
-        for (let f = 0; f < F; f++){
-          if(v === V2[f]){
-            Q3[0][v][s][t] = Q3[0][v][s][t] + Q[0][0][f][t] + Q[0][1][f][t];
+  for (let r = 0; r < R; r++){
+    for (let v = 0; v < V; v++){
+      for (let s = 0; s < S[v]; s++){
+        for (let t = 0; t < T; t++){
+          for (let f = 0; f < F; f++){
+            if(v === (V2[f] - 1)){ // V2 is 1-based in R 
+              Q3[r][v][s][t] = Q3[r][v][s][t] + Q[r][0][f][t] + Q[r][1][f][t];
+            }
           }
-        }
-        if(t > (T2 + 1)){ // T2 = 29, 28th index in js
-          if(t - agep1[s] > 1){
-            OLD[v][s][t] = NEW[v][s][t - agep1[s]] - FIT[v][s][t - agep2[s]];
+          if(t >= (T2)){ // T2 = 29, 28th index in js
+            if(t - (agep1[s] - 1) >= 0){
+              OLD[v][s][t] = NEW[v][s][t - agep1[s]] - FIT[v][s][t - agep2[s]];
+            } else {
+              OLD[v][s][t] = 0;
+            }
+            FIT[v][s][t] = RF[v] * OLD[v][s][t];
+            DEM[v][s][t] = OLD[v][s][t] - FIT[v][s][t];
+            NEW[v][s][t] = FOREC2[t][s][v][2];
+            FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - DEM[v][s][t];
           } else {
-            OLD[v][s][t] = 0;
+            FLEET[v][s][t] = HF[s][v][t];
+            DEM[v][s][t] = HD[s][v][t];
+            NEW[v][s][t] = HN[s][v][t];
           }
-          FIT[v][s][t] = RF[v] * OLD[v][s][t];
-          DEM[v][s][t] = OLD[v][s][t] - FIT[v][s][t];
-          NEW[v][s][t] = FOREC2[t][s][v][2];
-          FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - DEM[v][s][t];
-        } else {
-          FLEET[v][s][t] = HF[s][v][t];
-          DEM[v][s][t] = HD[s][v][t];
-          NEW[v][s][t] = HN[s][v][t];
+          FLEET2[v][s][t] = FLEET[v][s][t] * CAP[s][v][0] * UTIL[v][s][t];
+          Z2[v][s][t] = Z2[v][s][t] + Q3[r][v][s][t];
+          GAP[v][s][t] = FLEET[v][s][t] - Z[v][s][t];
+          GAP2[v][s][t] = FLEET2[v][s][t] - Z2[v][s][t];
         }
-        FLEET2[v][s][t] = FLEET[v][s][t] * CAP[s][v][0] * UTIL[v][s][t];
-        Z2[v][s][t] = Z2[v][s][t] + Q3[0][v][s][t];
-        GAP[v][s][t] = FLEET[v][s][t] - Z[v][s][t];
-        GAP2[v][s][t] = FLEET2[v][s][t] - Z2[v][s][t];
       }
     }
   }
+
+  // console.log("GAP2", GAP2);
+  // console.log("FLEET", FLEET);
+  // console.log("Z", Z);
 
 // ############Graph 1######################################
 // #FLEET[v,s,t] vs Z[v,s,t] # Eje X es t, v y s son filtros. Lineas
