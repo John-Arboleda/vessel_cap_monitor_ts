@@ -411,10 +411,6 @@ async function transformData( dataObj = userParams ){
     }
   }
 
-  // console.log("GAP2", GAP2);
-  // console.log("FLEET", FLEET);
-  // console.log("Z", Z);
-
 // ############Graph 1######################################
 // #FLEET[v,s,t] vs Z[v,s,t] # Eje X es t, v y s son filtros. Lineas
 

@@ -2,7 +2,7 @@
 // import { defaultValues } from "./data";
 import { navbarResultsScroll } from "./components/navbar-results";
 import { createNavEvents} from "./components/main-navbar";
-// import { runEmissionCharts } from "./charts/draw-charts";
+import { runFleetStrategiesCharts } from "./charts/draw-charts";
 import { displayRangeValue } from "./components/range-value";
 import { validatePayPer } from "./components/validations";
 
@@ -25,9 +25,9 @@ validatePayPer();
   const devParams = await getDevParams()
   console.log(devParams);
   const resultObj = await transformData(userParams);
-  console.log(resultObj)
+  console.log(resultObj);
   
-  // runEmissionCharts(resultObj);
+  runFleetStrategiesCharts(resultObj);
 })();
 createNavEvents();
 navbarResultsScroll();
@@ -39,5 +39,5 @@ window.addEventListener("load", () => {
   // createNavEvents();
   // navbarResultsScroll();
   // await runAnalysisCharts(resultObj);
-  //console.log(resultObj);
+  // console.log(resultObj);
 })

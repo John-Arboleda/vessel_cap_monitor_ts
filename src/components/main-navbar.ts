@@ -1,4 +1,4 @@
-import { transformData } from "../functions";
+import { transformData } from "../logic/functions";
 // import { defaultValues } from "../data";
 import { objValues, drawActivePanel, updateObj} from "../update";
 
