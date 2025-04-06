@@ -88,14 +88,12 @@ function sumDataObj(
 //   return dataArr;
 // }
 
-
-function createDataFleet1Lines(
-  dataObj: {  FLEET: number[][][], Z: number[][][] },
+function createDataFleetLines(
+  FLEET: number[][][], 
+  Z: number[][][],
   vesselKeys: number[] = [0, 1, 2, 3, 4],
   sizeKeys: number[] = [0, 1, 2, 3, 4]
 ): number[][] {
-  
-  const { FLEET, Z } = dataObj
 
   const sumFLEET: number[] = sumDataObj(FLEET, vesselKeys, sizeKeys);
   const sumZ: number[] = sumDataObj(Z, vesselKeys, sizeKeys);
@@ -111,6 +109,17 @@ function createDataFleet1Lines(
   return dataArr;
 }
 
+function createDataFleet1Lines(
+  dataObj: {  FLEET: number[][][], Z: number[][][] },
+  vesselKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4]
+): number[][] {
+  
+  const { FLEET, Z } = dataObj
+
+  return createDataFleetLines(FLEET, Z, vesselKeys, sizeKeys);
+}
+
 function createDataFleet2Lines(
   dataObj: {  FLEET2: number[][][], Z2: number[][][] },
   vesselKeys: number[] = [0, 1, 2, 3, 4],
@@ -119,19 +128,10 @@ function createDataFleet2Lines(
   
   const { FLEET2, Z2 } = dataObj
 
-  const sumFLEET: number[] = sumDataObj(FLEET2, vesselKeys, sizeKeys);
-  const sumZ: number[] = sumDataObj(Z2, vesselKeys, sizeKeys);
-  
-  const dataArr:  number[][] = [];
-
-  for(let t = 0; t < T; t++){
-    const year: number = baseYear + t + 1;
-    const dataPeriod:  number[] = [year, sumFLEET[t], sumZ[t]];
-    dataArr.push(dataPeriod);
-  }
-
-  return dataArr;
+  return createDataFleetLines(FLEET2, Z2, vesselKeys, sizeKeys);
 }
+
+
 
 function createDataTotalCost(
   dataObj: {  TCX: number[][][], VFCX: number[][][], VACX: number[][][] },

@@ -378,15 +378,17 @@ async function transformData( dataObj = userParams ){
   //       GAP2[v,s,t]=FLEET2[v,s,t]-Z2[v,s,t]
         
   //     }}}
-  for (let r = 0; r < R; r++){
-    for (let v = 0; v < V; v++){
-      for (let s = 0; s < S[v]; s++){
-        for (let t = 0; t < T; t++){
+  
+  for (let v = 0; v < V; v++){
+    for (let s = 0; s < S[v]; s++){
+      for (let t = 0; t < T; t++){
+        for (let r = 0; r < R; r++){
           for (let f = 0; f < F; f++){
             if(v === (V2[f] - 1)){ // V2 is 1-based in R 
               Q3[r][v][s][t] = Q3[r][v][s][t] + Q[r][0][f][t] + Q[r][1][f][t];
             }
           }
+        }
           if(t >= (T2)){ // T2 = 29, 28th index in js
             if(t - (agep1[s] - 1) >= 0){
               OLD[v][s][t] = NEW[v][s][t - agep1[s]] - FIT[v][s][t - agep2[s]];
@@ -403,13 +405,15 @@ async function transformData( dataObj = userParams ){
             NEW[v][s][t] = HN[s][v][t];
           }
           FLEET2[v][s][t] = FLEET[v][s][t] * CAP[s][v][0] * UTIL[v][s][t];
-          Z2[v][s][t] = Z2[v][s][t] + Q3[r][v][s][t];
+          for (let r = 0; r < R; r++){
+            Z2[v][s][t] = Z2[v][s][t] + Q3[r][v][s][t];
+          }
           GAP[v][s][t] = FLEET[v][s][t] - Z[v][s][t];
           GAP2[v][s][t] = FLEET2[v][s][t] - Z2[v][s][t];
-        }
       }
     }
   }
+  
 
 // ############Graph 1######################################
 // #FLEET[v,s,t] vs Z[v,s,t] # Eje X es t, v y s son filtros. Lineas

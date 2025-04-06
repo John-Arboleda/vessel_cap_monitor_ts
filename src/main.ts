@@ -6,7 +6,7 @@ import { runFleetStrategiesCharts } from "./charts/draw-charts";
 import { displayRangeValue } from "./components/range-value";
 import { validatePayPer } from "./components/validations";
 
-import { drawChartsOnInput } from "./update"; 
+import { drawChartsOnInput, updateObj } from "./update"; 
 
 import { createRegionInputs } from "./components/regions-input";
 import { createVesselInputs } from "./components/vessel-input";
@@ -24,7 +24,9 @@ validatePayPer();
 (async () => {
   const devParams = await getDevParams()
   console.log(devParams);
-  const resultObj = await transformData(userParams);
+
+  const objData = updateObj(userParams);
+  const resultObj = await transformData(objData);
   console.log(resultObj);
   
   runFleetStrategiesCharts(resultObj);
