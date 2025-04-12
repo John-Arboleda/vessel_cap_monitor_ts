@@ -66,7 +66,7 @@ function setColumnOptions(chartOptions: any, percentText: string, minValue: numb
 
   const options = { ...chartOptions }
 
-  if (percentText == 'Porcentajes') {
+  if (percentText == 'Percentage') {
     options.isStacked = true;
     options.vAxis.minValue = minValue;
     options.vAxis.maxValue = maxValue;
@@ -104,7 +104,7 @@ function multipleColumnChart(
 
   percentButton.addEventListener('click', () => {
 
-    percentButton.innerHTML = options.isStacked == 'percent' ? 'Porcentajes' : 'Valores'
+    percentButton.innerHTML = options.isStacked == 'percent' ? 'Percentage' : 'Values'
     
     options = setColumnOptions(chartOptions, percentButton.innerHTML, minValue, maxValue);
     
@@ -180,7 +180,7 @@ function multipleColumnChart4D(
 
   percentButton.addEventListener('click', () => {
 
-    percentButton.innerHTML = options.isStacked == 'percent' ? 'Porcentajes' : 'Valores'
+    percentButton.innerHTML = options.isStacked == 'percent' ? 'Percentage' : 'Values'
     
     options = setColumnOptions(chartOptions, percentButton.innerHTML, minValue, maxValue);
     

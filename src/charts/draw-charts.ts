@@ -33,7 +33,7 @@ interface ResultObj {
   X2: number[][][][],
 }
 
-const techTypeHeader: string[] = ['Periodo', 'Diesel Actual', 'Diesel Nuevo', 'Gas', 'Eléctrico', 'Hidrógeno'];
+const techTypeHeader: string[] = ['Year', 'Crude Tanker', 'Product Tanker', 'LNG', 'LPG', 'Bulker'];
 
 function runFleetStrategiesCharts(resultObj: ResultObj) {
   google.charts.load('current', { packages: ['corechart', 'bar', 'table', 'controls'] });
@@ -47,10 +47,10 @@ function runFleetStrategiesCharts(resultObj: ResultObj) {
 
 function drawFleetStrategiesChart(resultObj: ResultObj): void {
 
-  const emisHeader: string[] = ['Periodo', 'Well-to-Tank', 'Tank-to-Wheel']
+  const fleetHeader: string[] = ['Year', 'FLEET', 'Z']
 
-  //multipleLineChart(resultObj, createDataFleet1Lines, 'area_chart_div', 'strategies', emissionsOptions, emisHeader);
-  //multipleColumnChart(resultObj.GAP, createGapBySize, 'gap-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
+  multipleLineChart(resultObj, createDataFleet1Lines, 'area_chart_div', 'strategies', emissionsOptions, fleetHeader);
+  multipleColumnChart(resultObj.GAP, createGapBySize, 'gap-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
   multipleColumnChart4D(resultObj.X2, sumPeriodRegions, 'routes-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
 }
 
@@ -125,9 +125,11 @@ function runFleetCapacityCharts(resultObj: ResultObj) {
 
 function drawFleetCapacityChart(resultObj: ResultObj): void {
 
-  const emisHeader: string[] = ['Periodo', 'Well-to-Tank', 'Tank-to-Wheel']
-  multipleLineChart(resultObj, createDataFleet2Lines, 'fleet_capacity_chart_div', 'capacity', emissionsOptions, emisHeader);
+  const fleetHeader: string[] = ['Year', 'FLEET2', 'Z2'];
+
+  multipleLineChart(resultObj, createDataFleet2Lines, 'fleet_capacity_chart_div', 'capacity', emissionsOptions, fleetHeader);
   multipleColumnChart(resultObj.GAP2, createGapBySize, 'gap_capacity_chart', 'capacity', fleetOptions, techTypeHeader);
+  multipleColumnChart4D(resultObj.Q3, sumPeriodRegions, 'routes-capacity-chart', 'capacity', fleetOptions, techTypeHeader);
 }
 
 // function runEnergyCharts(resultObj: ResultObj) {

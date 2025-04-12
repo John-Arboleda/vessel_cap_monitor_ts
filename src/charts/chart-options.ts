@@ -23,7 +23,7 @@ const co2Options = {
     chartArea: { width: '75%' },
     hAxis: {
       minValue: 'auto',
-      title: 'Periodo (años)',
+      title: 'Period (years)',
       titleTextStyle: {
         italic: false,
       },
@@ -32,7 +32,7 @@ const co2Options = {
     isStacked: true,
     legend: {position: 'bottom', maxLines: 3},
     vAxis: {
-      title: 'Emisiones (Toneladas de CO2e)',
+      title: 'Fleet (Number of vessels)',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,
@@ -44,7 +44,7 @@ const co2Options = {
     chartArea: { width: '75%' },
     hAxis: {
       minValue: 'auto',
-      title: 'Periodo (años)',
+      title: 'Period (years)',
       titleTextStyle: {
         italic: false,
       },
@@ -53,7 +53,7 @@ const co2Options = {
     isStacked: true,
     legend: {position: 'bottom', maxLines: 3},
     vAxis: {
-      title: 'Número de vehículos',
+      title: 'Number of vessels',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,

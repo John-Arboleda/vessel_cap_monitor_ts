@@ -50,8 +50,8 @@ function drawChartsOnInput(): void {
         try {
           objValues = updateObj(objValues);
           const resultObj = await transformData(objValues);
-          console.log(resultObj);
-          // drawActivePanel(resultObj);
+          console.log(objValues);
+          drawActivePanel(resultObj);
         } catch (error) {
           console.error('Failed to process input change:', error);
         }
