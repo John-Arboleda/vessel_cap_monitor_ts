@@ -1,8 +1,8 @@
 import { multipleAreaChart } from "./area-chart";
-import { multipleColumnChart, sumColumnChart } from "./column-chart";
+import { multipleColumnChart, sumColumnChart, multipleColumnChart4D } from "./column-chart";
 import { multipleLineChart } from "./line-chart";
 
-import { createDataFleet1Lines, createDataFleet2Lines, createGapBySize, dataPropNegative, maxValueVAxis, 
+import { createDataFleet1Lines, createDataFleet2Lines, createGapBySize, sumPeriodRegions ,dataPropNegative, maxValueVAxis, 
   createDataAreaCost, createDataTotalCost, createDataQfuel, costNegObj } from "./chart-functions";
 
 import { sellFleetOptions, buyFleetOptions, fleetOptions, emissionsOptions, 
@@ -49,9 +49,9 @@ function drawFleetStrategiesChart(resultObj: ResultObj): void {
 
   const emisHeader: string[] = ['Periodo', 'Well-to-Tank', 'Tank-to-Wheel']
 
-  multipleLineChart(resultObj, createDataFleet1Lines, 'area_chart_div', 'strategies', emissionsOptions, emisHeader);
-  multipleColumnChart(resultObj.GAP, createGapBySize, 'gap-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
-
+  //multipleLineChart(resultObj, createDataFleet1Lines, 'area_chart_div', 'strategies', emissionsOptions, emisHeader);
+  //multipleColumnChart(resultObj.GAP, createGapBySize, 'gap-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
+  multipleColumnChart4D(resultObj.X2, sumPeriodRegions, 'routes-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
 }
 
 // function runFleetCharts(resultObj: ResultObj) {

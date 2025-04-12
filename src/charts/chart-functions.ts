@@ -1,14 +1,5 @@
 import * as d3 from "d3";
 
-// import { defaultValues } from "../data";
-
-
-// interface CO2Obj {
-//   SAVED1: number[];  
-//   SAVED2: number[];  
-//   CO2SAVED: number[];
-// }
-
 const baseYear: number = 1996;
 const T: number = 55;
 const I: number = 5;
@@ -16,21 +7,6 @@ const I: number = 5;
 const V: number = 5;
 const S: number = 5;
 
-
-// function dataSavedCO2(dataObj: {  SAVED1: number[], SAVED2: number[], CO2SAVED: number[] }): number[][]{
-  
-//   const { SAVED1, SAVED2, CO2SAVED } = dataObj
-  
-//   const dataArr:  number[][] = [];
-
-//   for(let t = 0; t < T; t++){
-//     const year: number = baseYear + t + 1;
-//     const dataPeriod:  number[] = [year, SAVED1[t], SAVED2[t], CO2SAVED[t]]
-//     dataArr.push(dataPeriod);
-//   }
-
-//   return dataArr;
-// }
 
 function sumPeriod(
   dataProp: number[][][],
@@ -47,6 +23,7 @@ function sumPeriod(
     // Iterate over the specified 'vesselKeys'
     for (let v = 0; v < vesselKeys.length; v++) {
       let techKey = vesselKeys[v];
+      // console.log(dataProp, techKey, sizeKey, t);
       // Add the value at the specified indices to the result
       result += dataProp[techKey][sizeKey][t];
     }
@@ -65,28 +42,6 @@ function sumDataObj(
 
   return dataArr.map((_t, j) => sumPeriod(dataProp, j, vesselKeys, sizeKeys));
 }
-
-// function createDataAreaEmis(
-//   dataObj: {  WTTX: number[][][], TTWX: number[][][] },
-//   vesselKeys: number[] = [0, 1, 2, 3, 4],
-//   sizeKeys: number[] = [0, 1]
-// ): number[][] {
-  
-//   const { WTTX, TTWX } = dataObj
-
-//   const sumWTTX: number[] = sumDataObj(WTTX, vesselKeys, sizeKeys);
-//   const sumTTWX: number[] = sumDataObj(TTWX, vesselKeys, sizeKeys);
-  
-//   const dataArr:  number[][] = [];
-
-//   for(let t = 0; t < T; t++){
-//     const year: number = baseYear + t + 1;
-//     const dataPeriod:  number[] = [year, sumWTTX[t], sumTTWX[t]];
-//     dataArr.push(dataPeriod);
-//   }
-
-//   return dataArr;
-// }
 
 function createDataFleetLines(
   FLEET: number[][][], 
@@ -131,7 +86,100 @@ function createDataFleet2Lines(
   return createDataFleetLines(FLEET2, Z2, vesselKeys, sizeKeys);
 }
 
+function sumPeriodRegions(
+  matrix4D: number[][][][], 
+  regionKeys: number[],
+  vesselKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4],
+){
 
+  const regionsVesselArr = regionKeys.map(route => {
+    return sumRegion(matrix4D[route], vesselKeys, sizeKeys
+    )
+  })
+
+  const sumN:  number[][] = vesselKeys.map(v => sumDataObj(regionsVesselArr, regionKeys, [v]))
+
+  const transSumN: number[][] = d3.transpose(sumN);
+
+  const dataArr:  number[][] = [];
+
+  for(let t = 0; t < T; t++){
+    const year: number = baseYear + t + 1;
+    const dataPeriod:  number[] = [year, ...transSumN[t]];
+    dataArr.push(dataPeriod);
+  }
+
+  return dataArr;
+}
+
+function sumRegion(
+  dataProp: number[][][],
+  vesselKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4]
+): number[][] {
+  
+  const sumN: number[][] = [];
+
+  vesselKeys.forEach((tech: number) => {
+    sumN.push(sumDataObj(dataProp, [tech], sizeKeys));
+  })
+
+  // const transSumN = d3.transpose(sumN);
+  
+  // return transSumN;
+
+  return sumN;
+}
+
+function createGapBySize(
+  dataProp: number[][][],
+  vesselKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4]
+): number[][] {
+  
+  const sumN: number[][] = [];
+
+  vesselKeys.forEach((tech: number) => {
+    sumN.push(sumDataObj(dataProp, [tech], sizeKeys));
+  })
+
+  const transSumN = d3.transpose(sumN);
+  
+  const dataArr:  number[][] = [];
+
+  for(let t = 0; t < T; t++){
+    const year: number = baseYear + t + 1;
+    const dataPeriod:  number[] = [year, ...transSumN[t]];
+    dataArr.push(dataPeriod);
+  }
+
+  return dataArr;
+}
+
+// function createDataRegionColumns(
+//   matrix4D: number[][][][], 
+//   vesselKeys: number[] = [0, 1, 2, 3, 4],
+//   sizeKeys: number[] = [0, 1, 2, 3, 4],
+//   regionKeys: number[]
+// ): number[][] {
+
+//   const sumFLEET: number[] = sumDataObj(FLEET, vesselKeys, sizeKeys);
+//   const sumZ: number[] = sumDataObj(Z, vesselKeys, sizeKeys);
+  
+//   const dataArr:  number[][] = [];
+
+//   for(let t = 0; t < T; t++){
+//     const year: number = baseYear + t + 1;
+//     const dataPeriod:  number[] = [year, sumFLEET[t], sumZ[t]];
+//     dataArr.push(dataPeriod);
+//   }
+
+//   return dataArr;
+// }
+
+
+// Girozero functions
 
 function createDataTotalCost(
   dataObj: {  TCX: number[][][], VFCX: number[][][], VACX: number[][][] },
@@ -215,30 +263,7 @@ function filterNegVeh(
 }
 
 
-function createGapBySize(
-  dataProp: number[][][],
-  vesselKeys: number[] = [0, 1, 2, 3, 4],
-  sizeKeys: number[] = [0, 1, 2, 3, 4]
-): number[][] {
-  
-  const sumN: number[][] = [];
 
-  vesselKeys.forEach((tech: number) => {
-    sumN.push(sumDataObj(dataProp, [tech], sizeKeys));
-  })
-
-  const transSumN = d3.transpose(sumN);
-  
-  const dataArr:  number[][] = [];
-
-  for(let t = 0; t < T; t++){
-    const year: number = baseYear + t + 1;
-    const dataPeriod:  number[] = [year, ...transSumN[t]];
-    dataArr.push(dataPeriod);
-  }
-
-  return dataArr;
-}
 
 function dataPropNegative(
   dataProp: number[][][]
@@ -298,4 +323,4 @@ function createDataQfuel(
 
 export { createDataFleet1Lines, createDataFleet2Lines, createGapBySize, 
   dataPropNegative, maxValueVAxis, createDataAreaCost, createDataQfuel, 
-  createDataTotalCost, costNegObj }
+  createDataTotalCost, costNegObj, sumPeriodRegions }

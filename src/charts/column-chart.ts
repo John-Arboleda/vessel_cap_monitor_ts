@@ -88,9 +88,9 @@ function multipleColumnChart(
   header: string[]
 ): void {
 
-  let { percentText, techKeys, sizeKeys } = resultNavbarState(navPrefix);
+  let { percentText, vesselKeys, sizeKeys } = resultNavbarState(navPrefix);
 
-  let data = createDataTable(dataObj, dataFunction, header, techKeys, sizeKeys);
+  let data = createDataTable(dataObj, dataFunction, header, vesselKeys, sizeKeys);
 
   const container = document.getElementById(elementId) as HTMLElement;
 
@@ -127,15 +127,95 @@ function multipleColumnChart(
   chart.draw(data, options);
 }
 
+function createDataTable3(
+  dataObjProp: number[][][][],
+  dataFunction: any,
+  header: string[],
+  routeKeys: number[],
+  techKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4]
+): google.visualization.DataTable {
+
+  const dataRows = dataFunction(dataObjProp, routeKeys, techKeys, sizeKeys);
+
+  // console.log(routeKeys);
+
+  const dataTable = new google.visualization.DataTable();
+
+  const [ period, ...keys ] = header;
+
+  const filteredKeys = techKeys.map((k: number) => keys[k]);
+
+  [ period, ...filteredKeys ].forEach(columnName => {
+    dataTable.addColumn('number', columnName);
+  })
+
+  dataTable.addRows(dataRows);
+
+  return dataTable
+}
+
+function multipleColumnChart4D(
+  dataObj: number[][][][],
+  dataFunction: any,
+  elementId: string,
+  navPrefix: string,
+  chartOptions: any, // Fix options interface
+  header: string[]
+): void {
+
+  let { percentText, vesselKeys, sizeKeys, selectRegions } = resultNavbarState(navPrefix);
+
+  let data = createDataTable3(dataObj, dataFunction, header, selectRegions, vesselKeys, sizeKeys);
+
+  const container = document.getElementById(elementId) as HTMLElement;
+
+  const chart = new google.visualization.ColumnChart(container);
+
+  const percentButton = document.getElementById(navPrefix + '_percent_button') as HTMLButtonElement;
+
+  const { minValue, maxValue } = chartOptions.vAxis;
+
+  let options = setColumnOptions(chartOptions, percentText, minValue, maxValue);
+
+  percentButton.addEventListener('click', () => {
+
+    percentButton.innerHTML = options.isStacked == 'percent' ? 'Porcentajes' : 'Valores'
+    
+    options = setColumnOptions(chartOptions, percentButton.innerHTML, minValue, maxValue);
+    
+    chart.draw(data, options);
+  });
+
+  const select_technology = document.getElementById(navPrefix + '_select_tech') as HTMLSelectElement;
+  const select_size = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
+  const select_routes = document.getElementById(navPrefix + '_select_region') as HTMLSelectElement;
+
+  function updateDataChart(){
+    const techKeys: number[] = select_technology.value.split("").map((a: String) => Number(a));
+    const sizeKeys: number[] = select_size.value.split("").map((a: String) => Number(a));
+    const routesKeys: number[] = select_routes.value.split(",").map((a: String) => Number(a));
+    // console.log(routesKeys);
+    data = createDataTable3(dataObj, dataFunction, header, routesKeys, techKeys, sizeKeys);
+    chart.draw(data, options);
+  }
+
+  select_technology.addEventListener('change', updateDataChart);
+  select_size.addEventListener('change', updateDataChart);
+  select_routes.addEventListener('change', updateDataChart);
+
+  chart.draw(data, options);
+}
+
 function createDataTable2(
   dataObj: any,
   dataFunction: any,
   header: string[],
-  techKeys: number[] = [0, 1, 2, 3, 4],
-  sizeKeys: number[] = [0, 1]
+  vesselKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4]
 ): google.visualization.DataTable {
 
-  const dataRows = dataFunction(dataObj, techKeys, sizeKeys);
+  const dataRows = dataFunction(dataObj, vesselKeys, sizeKeys);
 
   const dataTable = new google.visualization.DataTable();
 
@@ -157,9 +237,9 @@ function sumColumnChart(
   header: string[]
 ): void {
 
-  let { percentText, techKeys, sizeKeys } = resultNavbarState(navPrefix);
+  let { percentText, vesselKeys, sizeKeys } = resultNavbarState(navPrefix);
 
-  let data = createDataTable2(dataObj, dataFunction, header, techKeys, sizeKeys);
+  let data = createDataTable2(dataObj, dataFunction, header, vesselKeys, sizeKeys);
 
   const container = document.getElementById(elementId) as HTMLElement;
 
@@ -196,4 +276,4 @@ function sumColumnChart(
   chart.draw(data, options);
 }
 
-export { multipleColumnChart, sumColumnChart }
+export { multipleColumnChart, sumColumnChart, multipleColumnChart4D }

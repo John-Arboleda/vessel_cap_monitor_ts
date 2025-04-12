@@ -1,3 +1,5 @@
+import { createResultRegionSelect } from "./result-input-region";
+
 
 function navbarResultsScroll(): void {
     const mainPanel = document.getElementById('main-panel') as HTMLElement;
@@ -23,17 +25,23 @@ function navbarResultsScroll(): void {
       makeStickyNavbar(strategiesResultNavbar); 
       makeStickyNavbar(capacityResultNavbar); 
     };
+
+    // Create regions select
+    createResultRegionSelect();
   }
   
   function resultNavbarState(navPrefix: string){
+
     const percentButton = document.getElementById(navPrefix + '_percent_button') as HTMLButtonElement;
     const selectTechnology = document.getElementById(navPrefix + '_select_tech') as HTMLSelectElement;
     const selectSize = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
-  
+    const selectRegions = document.getElementById(navPrefix + '_select_region') as HTMLSelectElement;
+
     const navObj = {
       percentText: percentButton.innerHTML,
-      techKeys: selectTechnology.value.split("").map((a: String) => Number(a)),
+      vesselKeys: selectTechnology.value.split("").map((a: String) => Number(a)),
       sizeKeys: selectSize.value.split("").map((a: String) => Number(a)),
+      selectRegions: selectRegions.value.split(",").map((a: String) => Number(a)),
     }
   
     return navObj
