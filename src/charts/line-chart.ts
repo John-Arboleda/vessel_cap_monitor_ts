@@ -1,42 +1,5 @@
 import { resultNavbarState } from "../components/navbar-results";
 
-// function createDataTable(
-//     dataObj: any,
-//     dataFunction: any,
-//     header: string[],
-//   ): google.visualization.DataTable {
-  
-//     const dataRows = dataFunction(dataObj);
-  
-//     const dataTable = new google.visualization.DataTable();
-  
-//     header.forEach(columnName => {
-//       dataTable.addColumn('number', columnName);
-//     })
-  
-//     dataTable.addRows(dataRows);
-  
-//     return dataTable
-//   }
-  
-  
-//   function simpleLineChart(
-//     dataObj: any,
-//     dataFunction: any,
-//     id_element: string,
-//     chartOptions: any,
-//     header: string[]
-//   ) {
-
-//     const dataTable = createDataTable(dataObj, dataFunction, header);
-  
-//     const container = document.getElementById(id_element) as HTMLElement;
-  
-//     const chart = new google.visualization.LineChart(container);
-  
-//     chart.draw(dataTable, chartOptions);
-//   }
-
   function createDataTable(
   dataObj: any,
   dataFunction: any,
@@ -58,21 +21,6 @@ import { resultNavbarState } from "../components/navbar-results";
   return dataTable
 }
 
-function setAreaOptions(chartOptions: any, percentText: string){
-
-  const options = { ...chartOptions }
-
-  if (percentText == 'Porcentajes') {
-    options.isStacked = true;
-    options.vAxis.ticks = 'auto';
-  } else {
-    options.isStacked = 'percent';
-    options.vAxis.ticks = [0, 0.25, 0.50, 0.75, 1];
-  }
-
-  return options;
-}
-
 function multipleLineChart(
   dataObj: any,
   dataFunction: any,
@@ -82,38 +30,27 @@ function multipleLineChart(
   header: string[]
 ): void {
   
-  let { percentText, techKeys, sizeKeys } = resultNavbarState(navPrefix);
+  let { vesselKeys, sizeKeys } = resultNavbarState(navPrefix);
   
-  let data = createDataTable(dataObj, dataFunction, header, techKeys, sizeKeys);
+  let data = createDataTable(dataObj, dataFunction, header, vesselKeys, sizeKeys);
 
   const container = document.getElementById(elementId) as HTMLElement;
 
   const chart = new google.visualization.LineChart(container);
 
-  const percentButton = document.getElementById(navPrefix + '_percent_button') as HTMLButtonElement;
+  let options = { ...chartOptions };
 
-  let options = setAreaOptions(chartOptions, percentText);
-
-  percentButton.addEventListener('click', () => {
-
-    percentButton.innerHTML = options.isStacked == 'percent' ? 'Porcentajes' : 'Valores'
-    
-    options = setAreaOptions(chartOptions, percentButton.innerHTML);
-
-    chart.draw(data, options);
-  });
-
-  const selectTechnology = document.getElementById(navPrefix + '_select_tech') as HTMLSelectElement;
+  const selectVessel = document.getElementById(navPrefix + '_select_tech') as HTMLSelectElement;
   const selectSize = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
 
   function updateDataChart(){
-    const techKeys: number[] = selectTechnology.value.split("").map((a: String) => Number(a));
+    const techKeys: number[] = selectVessel.value.split("").map((a: String) => Number(a));
     const sizeKeys: number[] = selectSize.value.split("").map((a: String) => Number(a));
     data = createDataTable(dataObj, dataFunction, header, techKeys, sizeKeys);
     chart.draw(data, options);
   }
 
-  selectTechnology.addEventListener('change', updateDataChart);
+  selectVessel.addEventListener('change', updateDataChart);
   selectSize.addEventListener('change', updateDataChart);
 
   chart.draw(data, options);

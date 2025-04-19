@@ -4,18 +4,18 @@ const co2Options = {
     legend: {position: 'bottom', maxLines: 3},
     hAxis: {
       //minValue: 'auto',
-      title: 'Periodo (años)',
+      title: 'Period (years)',
       titleTextStyle: {
         italic: false,
       },
       format: '####',
     },
     vAxis: {
-      title: 'Ahorros CO2 (%)',
+      title: 'Fleet (number of vessels)',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,
-      }
+      },
     },
   }
   
