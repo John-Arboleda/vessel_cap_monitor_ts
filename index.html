@@ -226,7 +226,7 @@
 
             <ul id="strategies-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
               <li class="nav-item">
-                <select id="strategies_select_tech" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                <select id="strategies_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
                   <option value="01234" selected>All products</option>
                   <option value="0">Crude Tanker</option>
                   <option value="1">Product Tanker</option>
@@ -247,12 +247,6 @@
               </li>
               <li class="nav-item me-4">
                 <select id="strategies_select_region" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
-                  <!-- <option value="01234" selected>All sizes</option>
-                  <option value="0">Size 1</option>
-                  <option value="1">Size 2</option>
-                  <option value="2">Size 3</option>
-                  <option value="3">Size 4</option>
-                  <option value="4">Size 5</option>  -->
                 </select>
               </li>
               <li class="nav-item">
@@ -306,7 +300,7 @@
 
             <ul id="capacity-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
               <li class="nav-item">
-                <select id="capacity_select_tech" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                <select id="capacity_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
                   <option value="01234" selected>All products</option>
                   <option value="0">Crude Tanker</option>
                   <option value="1">Product Tanker</option>
@@ -327,12 +321,6 @@
               </li>
               <li class="nav-item me-4">
                 <select id="capacity_select_region" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
-                  <!-- <option value="01234" selected>All sizes</option>
-                  <option value="0">Size 1</option>
-                  <option value="1">Size 2</option>
-                  <option value="2">Size 3</option>
-                  <option value="3">Size 4</option>
-                  <option value="4">Size 5</option>  -->
                 </select>
               </li>
               <li class="nav-item">
@@ -377,165 +365,6 @@
                 <div class="row justify-content-md-center mx-1">
                   <div id="routes-capacity-chart" class="chart-content col-lg-12"></div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- delete cost panel -->
-
-        <div id="costs-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
-          <div>
-            <ul id="costs-result-navbar"
-              class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
-              <li class="nav-item">
-                <select id="costs_select_tech" class="form-select flex-sm-fill text-sm-center m-2"
-                  aria-label="technology select">
-                  <option value="01234" selected>Todas las fuentes de energía</option>
-                  <option value="0">Crude Tanker</option>
-                  <option value="1">Product Tanker</option>
-                  <option value="2">LNG</option>
-                  <option value="3">LPG</option>
-                  <option value="4">Bulker</option>
-                </select>
-              </li>
-              <li class="nav-item mx-4">
-                <select id="costs_select_size" class="form-select flex-sm-fill text-sm-center m-2"
-                  aria-label="vehicle type select">
-                  <option value="01" selected>Todos los vehículos</option>
-                  <option value="0">C2</option>
-                  <option value="1">C3S3</option>
-                </select>
-              </li>
-              <li class="nav-item">
-                <button id="costs_percent_button"
-                  class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
-              </li>
-            </ul>
-
-
-            <div class="mb-4">
-              <h5 class="text-persian-green fw-bold">Gráfica 7.1
-              </h5>
-              <div class="alert alert-light text-justify" role="alert">
-                <p class="mb-0">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem deleniti dolor ducimus eos quibusdam! Ducimus totam veniam nihil perspiciatis nulla unde aliquid magni, illo harum ratione, repellendus sunt vero optio.
-                </p>
-              </div>
-
-              <div class="row justify-content-md-center mx-1">
-                <div id="cost_area_chart" class="chart-content col-lg-12"></div>
-              </div>
-              
-            </div>
-
-            <div class="mb-2">
-              <h5 class="text-persian-green fw-bold">Gráfica 7.2</h5>
-              <div class="alert alert-light text-justify" role="alert">
-                <p class="mb-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint consequuntur quibusdam earum assumenda, quidem animi ducimus, consectetur deserunt optio ad fuga sed eos esse autem possimus repellendus nam! Consectetur, voluptatem.
-                </p>
-              </div>
-              <div class="row justify-content-md-center mx-1">
-                <div id="income_area_chart" class="buy-chart-content col-lg-12 p-0"></div>
-              </div>
-              <div class="row justify-content-md-center mx-1">
-                <div id="spending_area_chart" class="sell-chart-content col-lg-12 p-0"></div>
-              </div>
-              
-            </div>
-          </div>
-        </div>
-
-        <!-- delete energy panel -->
-
-        <div id="energy-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
-          <div>
-            <ul id="energy-result-navbar"
-              class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
-              <li class="nav-item">
-                <select id="energy_select_tech" class="form-select flex-sm-fill text-sm-center m-2"
-                  aria-label="technology select" disabled>
-                  <option value="01234" selected>Todas las fuentes de energía</option>
-                  <option value="0">Crude Tanker</option>
-                  <option value="1">Product Tanker</option>
-                  <option value="2">LNG</option>
-                  <option value="3">LPG</option>
-                  <option value="4">Bulker</option>
-                </select>
-              </li>
-              <li class="nav-item mx-4">
-                <select id="energy_select_size" class="form-select flex-sm-fill text-sm-center m-2"
-                  aria-label="vehicle type select" disabled>
-                  <option value="01" selected>Todos los vehículos</option>
-                  <option value="0">C2</option>
-                  <option value="1">C3S3</option>
-                </select>
-              </li>
-              <li class="nav-item">
-                <button id="energy_percent_button"
-                  class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Porcentajes</button>
-              </li>
-            </ul>
-            <div class="mb-4">
-              <h5 class="text-persian-green fw-bold">Gráfica 7</h5>
-              <div class="alert alert-light text-justify" role="alert">
-                <p class="mb-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint consequuntur quibusdam earum assumenda, quidem animi ducimus, consectetur deserunt optio ad fuga sed eos esse autem possimus repellendus nam! Consectetur, voluptatem.
-                </p>
-              </div>
-              <div class="row justify-content-md-center mx-1">
-                <div id="current_diesel_area_chart" class="chart-content col-lg-12"></div>
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <h5 class="text-persian-green fw-bold">Gráfica 8
-              </h5>
-              <div class="alert alert-light text-justify" role="alert">
-                <p class="mb-0">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dignissimos eveniet suscipit voluptatibus deleniti reprehenderit beatae explicabo facilis nam accusamus fuga recusandae, illo quod, ad perspiciatis consequatur amet! Praesentium, repellendus.
-                </p>
-              </div>
-              <div class="row justify-content-md-center mx-1">
-                <div id="new_diesel_area_chart" class="chart-content col-lg-12"></div>
-              </div>
-            </div>
-            
-            <div class="mb-4">
-              <h5 class="text-persian-green fw-bold">Gráfica 9
-              </h5>
-              <div class="alert alert-light text-justify" role="alert">
-                <p class="mb-0">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dignissimos eveniet suscipit voluptatibus deleniti reprehenderit beatae explicabo facilis nam accusamus fuga recusandae, illo quod, ad perspiciatis consequatur amet! Praesentium, repellendus.
-                </p>
-              </div>
-              <div class="row justify-content-md-center mx-1">
-                <div id="gas_area_chart" class="chart-content col-lg-12"></div>
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <h5 class="text-persian-green fw-bold">Gráfica 10
-              </h5>
-              <div class="alert alert-light text-justify" role="alert">
-                <p class="mb-0">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dignissimos eveniet suscipit voluptatibus deleniti reprehenderit beatae explicabo facilis nam accusamus fuga recusandae, illo quod, ad perspiciatis consequatur amet! Praesentium, repellendus.
-                </p>
-              </div>
-              <div class="row justify-content-md-center mx-1">
-                <div id="electric_area_chart" class="chart-content col-lg-12"></div>
-              </div>
-            </div>
-
-            <div class="mb-2">
-              <h5 class="text-persian-green fw-bold">Gráfica 11
-              </h5>
-              <div class="alert alert-light text-justify" role="alert">
-                <p class="mb-0">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dignissimos eveniet suscipit voluptatibus deleniti reprehenderit beatae explicabo facilis nam accusamus fuga recusandae, illo quod, ad perspiciatis consequatur amet! Praesentium, repellendus.
-                </p>
-              </div>
-              <div class="row justify-content-md-center mx-1">
-                <div id="hydrogen_area_chart" class="chart-content col-lg-12"></div>
               </div>
             </div>
           </div>

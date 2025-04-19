@@ -33,13 +33,13 @@ function navbarResultsScroll(): void {
   function resultNavbarState(navPrefix: string){
 
     const percentButton = document.getElementById(navPrefix + '_percent_button') as HTMLButtonElement;
-    const selectTechnology = document.getElementById(navPrefix + '_select_tech') as HTMLSelectElement;
+    const selectVessel = document.getElementById(navPrefix + '_select_vessel') as HTMLSelectElement;
     const selectSize = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
     const selectRegions = document.getElementById(navPrefix + '_select_region') as HTMLSelectElement;
 
     const navObj = {
       percentText: percentButton.innerHTML,
-      vesselKeys: selectTechnology.value.split("").map((a: String) => Number(a)),
+      vesselKeys: selectVessel.value.split("").map((a: String) => Number(a)),
       sizeKeys: selectSize.value.split("").map((a: String) => Number(a)),
       selectRegions: selectRegions.value.split(",").map((a: String) => Number(a)),
     }

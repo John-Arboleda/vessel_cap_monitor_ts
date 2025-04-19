@@ -1,13 +1,10 @@
-import { multipleAreaChart } from "./area-chart";
-import { multipleColumnChart, sumColumnChart, multipleColumnChart4D } from "./column-chart";
+
+import { multipleColumnChart, multipleColumnChart4D } from "./column-chart";
 import { multipleLineChart } from "./line-chart";
 
-import { createDataFleet1Lines, createDataFleet2Lines, createGapBySize, sumPeriodRegions ,dataPropNegative, maxValueVAxis, 
-  createDataAreaCost, createDataTotalCost, createDataQfuel, costNegObj } from "./chart-functions";
+import { createDataFleet1Lines, createDataFleet2Lines, createGapBySize, sumPeriodRegions } from "./chart-functions";
 
-import { sellFleetOptions, buyFleetOptions, fleetOptions, emissionsOptions, 
-  co2Options, dieselOptions, gasOptions, electricOptions, hydrogenOptions, 
-  incomeOptions, spendingOptions, totalCostOptions } from "./chart-options";
+import {  fleetOptions, lineChartOptions } from "./chart-options";
 
 interface ResultObj {
   FLEET: number[][][],
@@ -36,7 +33,7 @@ function drawFleetStrategiesChart(resultObj: ResultObj): void {
 
   const fleetHeader: string[] = ['Year', 'FLEET', 'Z']
 
-  multipleLineChart(resultObj, createDataFleet1Lines, 'area_chart_div', 'strategies', co2Options, fleetHeader);
+  multipleLineChart(resultObj, createDataFleet1Lines, 'area_chart_div', 'strategies', lineChartOptions, fleetHeader);
   multipleColumnChart(resultObj.GAP, createGapBySize, 'gap-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
   multipleColumnChart4D(resultObj.X2, sumPeriodRegions, 'routes-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
 }
@@ -56,7 +53,7 @@ function drawFleetCapacityChart(resultObj: ResultObj): void {
 
   const fleetHeader: string[] = ['Year', 'FLEET2', 'Z2'];
 
-  multipleLineChart(resultObj, createDataFleet2Lines, 'fleet_capacity_chart_div', 'capacity', co2Options, fleetHeader);
+  multipleLineChart(resultObj, createDataFleet2Lines, 'fleet_capacity_chart_div', 'capacity', lineChartOptions, fleetHeader);
   multipleColumnChart(resultObj.GAP2, createGapBySize, 'gap_capacity_chart', 'capacity', fleetOptions, techTypeHeader);
   multipleColumnChart4D(resultObj.Q3, sumPeriodRegions, 'routes-capacity-chart', 'capacity', fleetOptions, techTypeHeader);
 }

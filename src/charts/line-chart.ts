@@ -4,11 +4,11 @@ import { resultNavbarState } from "../components/navbar-results";
   dataObj: any,
   dataFunction: any,
   header: string[],
-  techKeys: number[] = [0, 1, 2, 3, 4],
-  sizeKeys: number[] = [0, 1]
+  vesselKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4]
 ): google.visualization.DataTable {
 
-  const dataRows = dataFunction(dataObj, techKeys, sizeKeys);
+  const dataRows = dataFunction(dataObj, vesselKeys, sizeKeys);
 
   const dataTable = new google.visualization.DataTable();
 
@@ -40,7 +40,7 @@ function multipleLineChart(
 
   let options = { ...chartOptions };
 
-  const selectVessel = document.getElementById(navPrefix + '_select_tech') as HTMLSelectElement;
+  const selectVessel = document.getElementById(navPrefix + '_select_vessel') as HTMLSelectElement;
   const selectSize = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
 
   function updateDataChart(){
