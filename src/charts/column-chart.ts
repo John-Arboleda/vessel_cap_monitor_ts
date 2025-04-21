@@ -1,4 +1,5 @@
 import { resultNavbarState } from "../components/navbar-results";
+import { updateRoute } from "../components/result-input-route";
 
 function createDataTable(
   dataObjProp: number[][][],
@@ -127,9 +128,9 @@ function multipleColumnChart4D(
   header: string[]
 ): void {
 
-  let { percentText, vesselKeys, sizeKeys, selectRegions } = resultNavbarState(navPrefix);
+  let { percentText, vesselKeys, sizeKeys, routesKeys } = resultNavbarState(navPrefix);
 
-  let data = createDataTable3(dataObj, dataFunction, header, selectRegions, vesselKeys, sizeKeys);
+  let data = createDataTable3(dataObj, dataFunction, header, routesKeys, vesselKeys, sizeKeys);
 
   const container = document.getElementById(elementId) as HTMLElement;
 
@@ -152,20 +153,21 @@ function multipleColumnChart4D(
 
   const select_technology = document.getElementById(navPrefix + '_select_vessel') as HTMLSelectElement;
   const select_size = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
-  const select_routes = document.getElementById(navPrefix + '_select_region') as HTMLSelectElement;
+  const origin_select = document.getElementById(navPrefix + '_select_region_origin') as HTMLSelectElement;
+  const destination_select = document.getElementById(navPrefix + '_select_region_dest') as HTMLSelectElement;
 
   function updateDataChart(){
     const techKeys: number[] = select_technology.value.split("").map((a: String) => Number(a));
     const sizeKeys: number[] = select_size.value.split("").map((a: String) => Number(a));
-    const routesKeys: number[] = select_routes.value.split(",").map((a: String) => Number(a));
-    // console.log(routesKeys);
+    const routesKeys: number[] = updateRoute(origin_select.value, destination_select.value);
     data = createDataTable3(dataObj, dataFunction, header, routesKeys, techKeys, sizeKeys);
     chart.draw(data, options);
   }
 
   select_technology.addEventListener('change', updateDataChart);
   select_size.addEventListener('change', updateDataChart);
-  select_routes.addEventListener('change', updateDataChart);
+  origin_select.addEventListener('change', updateDataChart);
+  destination_select .addEventListener('change', updateDataChart);
 
   chart.draw(data, options);
 }

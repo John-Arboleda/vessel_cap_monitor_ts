@@ -1,5 +1,5 @@
-import { createResultRegionSelect } from "./result-input-region";
-
+import { createResultRegionSelect } from "./result-input-route";
+import { updateRoute } from "./result-input-route";
 
 function navbarResultsScroll(): void {
     const mainPanel = document.getElementById('main-panel') as HTMLElement;
@@ -35,13 +35,14 @@ function navbarResultsScroll(): void {
     const percentButton = document.getElementById(navPrefix + '_percent_button') as HTMLButtonElement;
     const selectVessel = document.getElementById(navPrefix + '_select_vessel') as HTMLSelectElement;
     const selectSize = document.getElementById(navPrefix + '_select_size') as HTMLSelectElement;
-    const selectRegions = document.getElementById(navPrefix + '_select_region') as HTMLSelectElement;
+    const origin_select = document.getElementById(navPrefix + '_select_region_origin') as HTMLSelectElement;
+    const destination_select = document.getElementById(navPrefix + '_select_region_dest') as HTMLSelectElement;
 
     const navObj = {
       percentText: percentButton.innerHTML,
       vesselKeys: selectVessel.value.split("").map((a: String) => Number(a)),
       sizeKeys: selectSize.value.split("").map((a: String) => Number(a)),
-      selectRegions: selectRegions.value.split(",").map((a: String) => Number(a)),
+      routesKeys: updateRoute(origin_select.value, destination_select.value)
     }
   
     return navObj
