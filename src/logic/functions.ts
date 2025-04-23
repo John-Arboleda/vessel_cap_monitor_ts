@@ -6,27 +6,15 @@ import { arrayToNDMatrix } from "./linear-alg";
 
 async function transformData( dataObj = userParams ){
     
-  const { goal, eta, rho, alpha, PARN, beta, PARR, RF, delta } = dataObj;
+  const { goal, eta, rho, beta, PARR, RF, delta, rang1, rang2 } = dataObj;
 
   const devParams = await getDevParams();
   
-  const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, 
-    lambda1, HF, HN, HD, CAP, U, DIST, MAXD, AVEG, lambda2, 
-    M, agep1, agep2, O, D, L, L2, FOREC, FOREC2, factor } = devParams;
+  const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, lambda1, HF, HN, HD, CAP, U, 
+    DIST, MAXD, AVEG, lambda2, M, agep1, agep2, O, D, L, L2, FOREC, factor, year, year2 } = devParams;
 
   //  ############# Pre processing ####################
 
-  //   RATE0<- array(rep(0,T), dim=c(T))
-  const arrayRATE0: number[] = new Array(T).fill(0);
-  const RATE0: number[] = arrayToNDMatrix(arrayRATE0, [T]) as number[];
-
-  // for (t in 1:T){
-  //   RATE0[t]<-min(1,(max(0,t-PARN[1])/max(1,PARN[2]-PARN[1])))
-  // }
-  for (let t = 0; t < T; t++){
-    // Add one because the index is 1-based in R
-    RATE0[t] = Math.min(1, Math.max(0, t - PARN[0] + 1) / Math.max(1, PARN[1] - PARN[0]));
-  }
 
   // RATE1<- array(rep(0,T*N), dim=c(T,N))
   const arrayRATE1: number[] = new Array(T * N).fill(0);
@@ -35,27 +23,25 @@ async function transformData( dataObj = userParams ){
   // RATE2<- array(rep(0,T*N), dim=c(T,N))
   const arrayRATE2: number[] = new Array(T * N).fill(0);
   const RATE2: number[][] = arrayToNDMatrix(arrayRATE2, [T, N]) as number[][];
-
   // for (t in 1:T){
   //   for (n in 1:N){
   //     RATE1[t,n]<-min(1,(max(0,t-PARR[1,n])/max(1,PARR[2,n]-PARR[1,n])))
   //     RATE2[t,n]<-min(1,(max(0,t-PARR[3,n])/max(1,PARR[4,n]-PARR[3,n])))
-  //   }}
+  //   }
+  // }
   for (let t = 0; t < T; t++){
     for (let n = 0; n < N; n++){
       RATE1[t][n] = Math.min(1, Math.max(0, t - PARR[0][n] + 1) / Math.max(1, PARR[1][n] - PARR[0][n]));
       RATE2[t][n] = Math.min(1, Math.max(0, t - PARR[2][n] + 1) / Math.max(1, PARR[3][n] - PARR[2][n]));
     }
   }
-
+  
   // UB<-array(rep(0,R*W*V*S2), dim=c(R,W,V,S2))
   const arrayUB: number[] = new Array(R * W * V * S2).fill(0);
   const UB: number[][][][] = arrayToNDMatrix(arrayUB, [R, W, V, S2]) as number[][][][];
-
   // LB<-array(rep(0,R*W*V*S2), dim=c(R,W,V,S2))
   const arrayLB: number[] = new Array(R * W * V * S2).fill(0);
   const LB: number[][][][] = arrayToNDMatrix(arrayLB, [R, W, V, S2]) as number[][][][];
-
   // for (r in 1:R){
   //   for (v in 1:V){
   //     for (s in 1:S[v]){
@@ -78,79 +64,74 @@ async function transformData( dataObj = userParams ){
   // lambda1B<-array(rep(1,R*W*F*T), dim=c(R,W,F,T))
   const arrayLambda1B: number[] = new Array(R * W * F * T).fill(1);
   const lambda1B: number[][][][] = arrayToNDMatrix(arrayLambda1B, [R, W, F, T]) as number[][][][];
-
-  // TOTAL<-array(rep(1,T), dim=c(T))
-  const TOTAL: number[] = new Array(T).fill(1);
+  // TOTAL<-array(rep(1,F*T), dim=c(F,T))
+  const arrayTOTAL: number[] = new Array(F * T).fill(1);
+  const TOTAL: number[][] = arrayToNDMatrix(arrayTOTAL, [F, T]) as number[][];
 
   // for (t in 1:T){
   //   for (r in 1:R){
   //     for (w in 1:W){
   //       for (f in 1:F){
           
-  //         lambda1B[r,w,f,t]<-lambda1[r,w,f]*min(factor[O[r,w],goal,f,t],max((1-beta[1,O[r,w]]*RATE1[t,O[r,w]]),(1-beta[2,D[r,w]]*RATE2[t,D[r,w]]))) 
-  //         TOTAL[t]<-TOTAL[t]+lambda1B[r,w,f,t]
+  //         lambda1B[r,w,f,t]<-lambda1[w,r,year,f]*min(max((1-beta[1,O[r,w]])^RATE1[t,O[r,w]],(1-beta[2,D[r,w]])^RATE2[t,D[r,w]]))
+  //         TOTAL[f,t]<-TOTAL[f,t]+lambda1B[r,w,f,t]
           
   //       }}}}
   for (let t = 0; t < T; t++){
     for (let r = 0; r < R; r++){
       for (let w = 0; w < W; w++){
         for (let f = 0; f < F; f++){
-          lambda1B[r][w][f][t] = lambda1[r][w][f] * Math.min(factor[O[r][w] - 1][goal - 1][f][t], Math.max(1 - beta[0][O[r][w] - 1] * RATE1[t][O[r][w] - 1], 1 - beta[1][D[r][w] - 1] * RATE2[t][D[r][w] - 1]));
-          TOTAL[t] += lambda1B[r][w][f][t];
+          lambda1B[r][w][f][t] = lambda1[w][r][year - 1][f] * Math.min(Math.max(Math.pow((1 - beta[0][O[r][w] - 1]), RATE1[t][O[r][w] - 1]), Math.pow((1 - beta[1][D[r][w] - 1]), RATE2[t][D[r][w] - 1])));
+          TOTAL[f][t] += lambda1B[r][w][f][t];
         }
       }
     }
   }
 
-  // ############# Variable ####################
+  // ######Demand equations###################
 
   // Q<-array(rep(0,R*W*F*T), dim=c(R,W,F,T))
   const arrayQ: number[] = new Array(R * W * F * T).fill(0);
   const Q: number[][][][] = arrayToNDMatrix(arrayQ, [R, W, F, T]) as number[][][][];
-
-  // Y<-array(rep(1,R*W*V*S2*T), dim=c(R,W,V,S2,T))
-  const arrayY: number[] = new Array(R * W * V * S2 * T).fill(1);
-  const Y: number[][][][][] = arrayToNDMatrix(arrayY, [R, W, V, S2, T]) as number[][][][][];
-
-  // TRIP<-array(rep(0,R*W*F*V*S2), dim=c(R,W,V,S2))
-  const arrayTRIP: number[] = new Array(R * W * V * S2).fill(0);
-  const TRIP: number[][][][] = arrayToNDMatrix(arrayTRIP, [R, W, V, S2]) as number[][][][];
-
-  // Q2<-array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayQ2: number[] = new Array(V * S2 * T).fill(0);
-  const Q2: number[][][] = arrayToNDMatrix(arrayQ2, [V, S2, T]) as number[][][];
-
   // for (r in 1:R){
   //   for (w in 1:W){
   //     for (t in 1:T){
   //       for (f in 1:F){
           
-  //         Q[r,w,f,t]<-(10^6)*DDA[SCN,f,t]*(1+alpha*RATE0[t])*min(factor[O[r,w],goal,f,t],(1-beta[2,O[r,w]]*RATE1[t,O[r,w]])) *(lambda1B[r,w,f,t]/TOTAL[t])
+  //         Q[r,w,f,t]<-(10^6)*DDA[SCN,f,t]*min((1-beta[2,O[r,w]])^RATE1[t,O[r,w]]) *(lambda1B[r,w,f,t]/TOTAL[f,t])
           
   //       }}}}
   for (let r = 0; r < R; r++){
     for (let w = 0; w < W; w++){
       for (let t = 0; t < T; t++){
         for (let f = 0; f < F; f++){
-          Q[r][w][f][t] = Math.pow(10, 6) * DDA[SCN - 1][f][t] * (1 + alpha * RATE0[t]) * Math.min(factor[O[r][w] - 1][goal - 1][f][t], (1 - beta[1][O[r][w] - 1] * RATE1[t][O[r][w] - 1])) * (lambda1B[r][w][f][t] / TOTAL[t]);
+          Q[r][w][f][t] = Math.pow(10, 6) * DDA[SCN - 1][f][t] * Math.min(Math.pow((1 - beta[1][O[r][w] - 1]), RATE1[t][O[r][w] - 1])) * (lambda1B[r][w][f][t] / TOTAL[f][t]);
         }
       }
     }
   }
+
+  // Y<-array(rep(1,R*W*V*S2*T), dim=c(R,W,V,S2,T))
+  const arrayY: number[] = new Array(R * W * V * S2 * T).fill(1);
+  const Y: number[][][][][] = arrayToNDMatrix(arrayY, [R, W, V, S2, T]) as number[][][][][];
+
+  // TRIP<-array(rep(0,R*W*V*S2), dim=c(R,W,V,S2))
+  const arrayTRIP: number[] = new Array(R * W * V * S2).fill(0);
+  const TRIP: number[][][][] = arrayToNDMatrix(arrayTRIP, [R, W, V, S2]) as number[][][][];
 
   // for (r in 1:R){
   //   for (w in 1:W){
   //     for (v in 1:V){
   //       for (s in 1:S[v]){
           
-  //         TRIP[r,w,v,s]<-(eta*UB[r,w,v,s]+(1-eta)*LB[r,w,v,s])*(1-rho)
+  //         TRIP[r,w,v,s]<-(eta*UB[r,w,v,s]+(1-eta)*LB[r,w,v,s])
           
   //         for (t in 1:T){
             
   //           if(t<=T2){Y[r,w,v,s,t]<-CAP[s,v,ind]*U[v,r,1]*TRIP[r,w,v,s]}
   //           else{
               
-  //             Y[r,w,v,s,t]<-Y[r,w,v,s,t]+CAP[s,v,ind]*((1-delta[s,v])*U[v,r,1]+delta[s,v]*U[v,r,2])*TRIP[r,w,v,s]
+  //             Y[r,w,v,s,t]<-CAP[s,v,ind]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*TRIP[r,w,v,s]
   //           }
             
   //         }}}}}
@@ -158,12 +139,12 @@ async function transformData( dataObj = userParams ){
     for (let w = 0; w < W; w++){
       for (let v = 0; v < V; v++){
         for (let s = 0; s < S[v]; s++){
-          TRIP[r][w][v][s] = (eta * UB[r][w][v][s] + (1 - eta) * LB[r][w][v][s]) * (1 - rho);
+          TRIP[r][w][v][s] = (eta * UB[r][w][v][s] + (1 - eta) * LB[r][w][v][s]);
           for (let t = 0; t < T; t++){
             if(t < T2){ // T2 = 29, 28th index in js
               Y[r][w][v][s][t] = CAP[s][v][ind - 1] * U[v][r][0] * TRIP[r][w][v][s];
             } else {
-              Y[r][w][v][s][t] = Y[r][w][v][s][t] + CAP[s][v][ind - 1] * ((1 - delta[s][v]) * U[v][r][0] + delta[s][v] * U[v][r][1]) * TRIP[r][w][v][s];
+              Y[r][w][v][s][t] = CAP[s][v][ind - 1] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * TRIP[r][w][v][s];
             }
           }
         }
@@ -171,143 +152,91 @@ async function transformData( dataObj = userParams ){
     }
   }
 
-  // X<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
-  const arrayX: number[] = new Array(R * V * S2 * T).fill(0);
-  const X: number[][][][] = arrayToNDMatrix(arrayX, [R, V, S2, T]) as number[][][][];
+  // Z1<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayZ1: number[] = new Array(R * V * S2 * T).fill(0);
+  const Z1: number[][][][] = arrayToNDMatrix(arrayZ1, [R, V, S2, T]) as number[][][][];
 
-  // X2<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
-  const arrayX2: number[] = new Array(R * V * S2 * T).fill(0);
-  const X2: number[][][][] = arrayToNDMatrix(arrayX2, [R, V, S2, T]) as number[][][][];
+  // Z2<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayZ2: number[] = new Array(R * V * S2 * T).fill(0);
+  const Z2: number[][][][] = arrayToNDMatrix(arrayZ2, [R, V, S2, T]) as number[][][][];
+
+  // Z3<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayZ3: number[] = new Array(R * V * S2 * T).fill(0);
+  const Z3: number[][][][] = arrayToNDMatrix(arrayZ3, [R, V, S2, T]) as number[][][][];
 
   // for (v in 1:V){
   //   for (s in 1:S[v]){
   //     for (t in 1:T){
   //       for (r in 1:R){
   //         for (f in 1:F){
-            
-  //           if(v==V2[f]){ 
-  //             X[r,v,s,t]<-X[r,v,s,t]+ceiling(((1-delta[s,v])*lambda2[r,s,v]+delta[s,v])*max(Q[r,1,f,t]/Y[r,1,v,s,t],Q[r,2,f,t]/Y[r,2,v,s,t]))
-              
-  //           }
-            
-  //         }}}}}
-  for (let v = 0; v < V; v++){
-    for (let s = 0; s < S[v]; s++){
-      for (let t = 0; t < T; t++){
-        for (let r = 0; r < R; r++){
-          for (let f = 0; f < F; f++){
-            if(v === V2[f]){
-              X[r][v][s][t] = X[r][v][s][t] + Math.ceil(((1 - delta[s][v]) * lambda2[r][s][v] + delta[s][v]) * Math.max(Q[r][0][f][t] / Y[r][0][v][s][t], Q[r][1][f][t] / Y[r][1][v][s][t]));
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Z<-array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayZ: number[] = new Array(V * S2 * T).fill(0);
-  const Z: number[][][] = arrayToNDMatrix(arrayZ, [V, S2, T]) as number[][][];
-
-  // Z2<-array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayZ2: number[] = new Array(V * S2 * T).fill(0);
-  const Z2: number[][][] = arrayToNDMatrix(arrayZ2, [V, S2, T]) as number[][][];
-
-  // Z3<-array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayZ3: number[] = new Array(V * S2 * T).fill(0);
-  const Z3: number[][][] = arrayToNDMatrix(arrayZ3, [V, S2, T]) as number[][][];
-
-  // for (v in 1:V){
-  //   for (s in 1:S[v]){
-  //     for (t in 1:T){
-  //       for (r in 1:R){
-  //         X2[r,v,s,t]<- ceiling(X[r,v,s,t]*(1+(M[O[r,1],v,s]/100)))
-  //         Z[v,s,t]<-Z[v,s,t]+X2[r,v,s,t]
+  //           if(v==V2[f]){
+  //             Z1[r,v,s,t]<-Z1[r,v,s,t]+factor[goal,t]*ceiling(lambda2[r,year2,s,v]*max(Q[r,1,f,t]/Y[r,1,v,s,t],Q[r,2,f,t]/Y[r,2,v,s,t])*(1+(M[v]/100)))        
+  //             #Z2[r,v,s,t]<-Z2[r,v,s,t]+(Q[r,1,f,t]+Q[r,2,f,t])*lambda2[r,year2,s,v]
+  //           }}
           
-  //         for (f in 1:F){
-  //           if(v==V2[f]){ 
-              
-  //             for (w in 1:W){
-  //               Q2[v,s,t]<-Q2[v,s,t]+Q[r,w,f,t]*((1-delta[s,v])*lambda2[r,s,v]+delta[s,v])
-  //             }}}}
-        
-  //     }}}
+  //         Z1[r,v,s,t]<-Z1[r,v,s,t]*L[s,v,t]
+  //         Z2[r,v,s,t]<-Z1[r,v,s,t]*CAP[s,v,1]/10^6
+  //         Z3[r,v,s,t]<-Z2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/L[s,v,t]
+  //       }}}}
+  for (let v = 0; v < V; v++){
+    for (let s = 0; s < S[v]; s++){
+      for (let t = 0; t < T; t++){
+        for (let r = 0; r < R; r++){
+          for (let f = 0; f < F; f++){
+            if(v === V2[f] - 1){ // V2 is 1-based in R
+              Z1[r][v][s][t] += factor[goal - 1][t] * Math.ceil(lambda2[r][year2 - 1][s][v] * Math.max(Q[r][0][f][t] / Y[r][0][v][s][t], Q[r][1][f][t] / Y[r][1][v][s][t]) * (1 + (M[v] / 100)));
+            }
+          }
+          Z1[r][v][s][t] = Z1[r][v][s][t] * L[s][v][t];
+          Z2[r][v][s][t] = Z1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
+          Z3[r][v][s][t] = Z2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / L[s][v][t];
+        }
+      }
+    }
+  }
 
-  // for (v in 1:V){
-  //   for (s in 1:S[v]){
-  //     for (t in 1:T){
-        
-  //       Z[v,s,t]<-ceiling(Z[v,s,t]*L[s,v,t])
-        
-        
+  // ZC<-array(rep(0,V*S2*T), dim=c(V,S2,T))
+  const arrayZC: number[] = new Array(V * S2 * T).fill(0);
+  const ZC: number[][][] = arrayToNDMatrix(arrayZC, [V, S2, T]) as number[][][];
+
+  // ZD<-array(rep(0,V*S2*T), dim=c(V,S2,T))
+  const arrayZD: number[] = new Array(V * S2 * T).fill(0);
+  const ZD: number[][][] = arrayToNDMatrix(arrayZD, [V, S2, T]) as number[][][];
+
+  // FLEETC<-array(rep(0,V*S2*T), dim=c(V,S2,T))
+  // const arrayFLEETC: number[] = new Array(V * S2 * T).fill(0);
+  // const FLEETC: number[][][] = arrayToNDMatrix(arrayFLEETC, [V, S2, T]) as number[][][];
+
+  // for(v in 1:V){
+  //   for(s in 1:S[v]){
+  //     for(t in 1:T){
+  //       for(r in 1:R){
+  //         ZC[v,s,t]<-ZC[v,s,t]+Z1[r,v,s,t]
+  //       }
+  //       ZD[v,s,t]<-ZC[v,s,t]
+  //       ZC[v,s,t]<-ceiling(max(0,ZC[v,s,t]-L2[s,v]))  
   //     }}}
   for (let v = 0; v < V; v++){
     for (let s = 0; s < S[v]; s++){
       for (let t = 0; t < T; t++){
         for (let r = 0; r < R; r++){
-          X2[r][v][s][t] = Math.ceil(X[r][v][s][t] * (1 + M[O[r][0] - 1][v][s] / 100));
-          Z[v][s][t] += X2[r][v][s][t];
-          for (let f = 0; f < F; f++){
-            if(v === V2[f]){
-              for (let w = 0; w < W; w++){
-                Q2[v][s][t] += Q[r][w][f][t] * ((1 - delta[s][v]) * lambda2[r][s][v] + delta[s][v]);
-              }
-            }
-          }
+          ZC[v][s][t] += Z1[r][v][s][t];
         }
+        ZD[v][s][t] = ZC[v][s][t];
+        ZC[v][s][t] = Math.ceil(Math.max(0, ZC[v][s][t] - L2[s][v]));
       }
     }
   }
 
-  // PORC<-array(rep(0,R*V*T), dim=c(R,V,T))
-  const arrayPORC: number[] = new Array(R * V * T).fill(0);
-  const PORC: number[][][] = arrayToNDMatrix(arrayPORC, [R, V, T]) as number[][][];
+  // ####### Capacity equations ##########################
 
-  // for(t in 1:T){
-  //   for(r in 1:R){
-  //     for(v in 1:V){  
-  //       for (f in 1:F){
-  //         if(v==V2[f]){ 
-  //           PORC[r,v,t] <-PORC[r,v,t]+ ((lambda1B[r,1,f,t]+lambda1B[r,2,f,t])/TOTAL[t])
-  //         }}}}}
-  for (let t = 0; t < T; t++){
-    for (let r = 0; r < R; r++){
-      for (let v = 0; v < V; v++){
-        for (let f = 0; f < F; f++){
-          if(v === (V2[f] - 1)){ // V2 is 1-based in R
-            PORC[r][v][t] += ((lambda1B[r][0][f][t] + lambda1B[r][1][f][t]) / TOTAL[t]);
-          }
-        }
-      }
-    }
-  }
+  // delta2<- array(rep(0,V*S2*T), dim=c(V,S2,T))
+  const arrayDelta2: number[] = new Array(V * S2 * T).fill(0);
+  const delta2: number[][][] = arrayToNDMatrix(arrayDelta2, [V, S2, T]) as number[][][];
 
-  // UTIL<-array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayUTIL: number[] = new Array(V * S2 * T).fill(0);
-  const UTIL: number[][][] = arrayToNDMatrix(arrayUTIL, [V, S2, T]) as number[][][];
-
-  // for(t in 1:T){ 
-  //   for(v in 1:V){   
-  //     for (s in 1:S[v]){
-  //       UTIL[v,s,t]<-UTIL[v,s,t] + ((1-delta[s,v])*U[v,r,1]+delta[s,v]*U[v,r,2])*PORC[r,v,t]
-  //     }}}
-  for (let t = 0; t < T; t++){
-    for (let v = 0; v < V; v++){
-      for (let s = 0; s < S[v]; s++){
-        for (let r = 0; r < R; r++){
-          UTIL[v][s][t] += ((1 - delta[s][v]) * U[v][r][0] + delta[s][v] * U[v][r][1]) * PORC[r][v][t];
-        }
-      }
-    }
-  }
-
-  // FLEET<- array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayFLEET: number[] = new Array(V * S2 * T).fill(0);
-  const FLEET: number[][][] = arrayToNDMatrix(arrayFLEET, [V, S2, T]) as number[][][];
-
-  // FLEET2<- array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayFLEET2: number[] = new Array(V * S2 * T).fill(0);
-  const FLEET2: number[][][] = arrayToNDMatrix(arrayFLEET2, [V, S2, T]) as number[][][];
+  // RF2<- array(rep(0,V*S2*T), dim=c(V,S2,T))
+  const arrayRF2: number[] = new Array(V * S2 * T).fill(0);
+  const RF2: number[][][] = arrayToNDMatrix(arrayRF2, [V, S2, T]) as number[][][];
 
   // NEW<- array(rep(0,V*S2*T), dim=c(V,S2,T))
   const arrayNEW: number[] = new Array(V * S2 * T).fill(0);
@@ -325,29 +254,43 @@ async function transformData( dataObj = userParams ){
   const arrayOLD: number[] = new Array(V * S2 * T).fill(0);
   const OLD: number[][][] = arrayToNDMatrix(arrayOLD, [V, S2, T]) as number[][][];
 
-  // GAP<-array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayGAP: number[] = new Array(V * S2 * T).fill(0);
-  const GAP: number[][][] = arrayToNDMatrix(arrayGAP, [V, S2, T]) as number[][][];
+  // FLEET<- array(rep(0,V*S2*T), dim=c(V,S2,T))
+  const arrayFLEET: number[] = new Array(V * S2 * T).fill(0);
+  const FLEET: number[][][] = arrayToNDMatrix(arrayFLEET, [V, S2, T]) as number[][][];
 
-  // GAP2<-array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayGAP2: number[] = new Array(V * S2 * T).fill(0);
-  const GAP2: number[][][] = arrayToNDMatrix(arrayGAP2, [V, S2, T]) as number[][][];
+  // FLEET1<- array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayFLEET1: number[] = new Array(R * V * S2 * T).fill(0);
+  const FLEET1: number[][][][] = arrayToNDMatrix(arrayFLEET1, [R, V, S2, T]) as number[][][][];
 
-  // Q3<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
-  const arrayQ3: number[] = new Array(R * V * S2 * T).fill(0);
-  const Q3: number[][][][] = arrayToNDMatrix(arrayQ3, [R, V, S2, T]) as number[][][][];
+  // FLEET2<- array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayFLEET2: number[] = new Array(R * V * S2 * T).fill(0);
+  const FLEET2: number[][][][] = arrayToNDMatrix(arrayFLEET2, [R, V, S2, T]) as number[][][][];
+
+  // FLEET3<- array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayFLEET3: number[] = new Array(R * V * S2 * T).fill(0);
+  const FLEET3: number[][][][] = arrayToNDMatrix(arrayFLEET3, [R, V, S2, T]) as number[][][][];
+
+  // GAP<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayGAP: number[] = new Array(R * V * S2 * T).fill(0);
+  const GAP: number[][][][] = arrayToNDMatrix(arrayGAP, [R, V, S2, T]) as number[][][][];
+
+  // GAP2<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayGAP2: number[] = new Array(R * V * S2 * T).fill(0);
+  const GAP2: number[][][][] = arrayToNDMatrix(arrayGAP2, [R, V, S2, T]) as number[][][][];
+
+  // GAP3<-array(rep(0,R*V*S2*T), dim=c(R,V,S2,T))
+  const arrayGAP3: number[] = new Array(R * V * S2 * T).fill(0);
+  const GAP3: number[][][][] = arrayToNDMatrix(arrayGAP3, [R, V, S2, T]) as number[][][][];
 
   // for(v in 1:V){
   //   for(s in 1:S[v]){
   //     for(t in 1:T){
+  //       #decreciente
+  //       delta2[v,s,t]<-(1-min(0.999,delta[v,s]))^(min(1,(max(0,t-rang1[v,s,1])/max(1,rang1[v,s,2]-rang1[v,s,1]))))
+  //       #Creciente
+  //       RF2[v,s,t]<- min(0.999,RF[v,s])^(min(1,(max(0,t-rang2[v,s,1])/max(1,rang2[v,s,2]-rang2[v,s,1]))))
         
-  //       for(f in 1:F){
-  //         if(v==V2[f]){ 
-  //           Q3[r,v,s,t]<-Q3[r,v,s,t]+Q[r,1,f,t]+Q[r,2,f,t]
-            
-  //         }}
-        
-  //       if(t>=(T2+1)){ 
+  //       if(t>=(T2+1)){
           
   //         if(t-agep1[s]>=1){
   //           OLD[v,s,t]<-NEW[v,s,t-agep1[s]]-FIT[v,s,t-agep2[s]]
@@ -355,12 +298,10 @@ async function transformData( dataObj = userParams ){
   //         else{
   //           OLD[v,s,t]<-0
   //         }
-          
-  //         FIT[v,s,t] <- RF[v]*OLD[v,s,t]
+  //         FIT[v,s,t] <-RF2[v,s,t]*OLD[v,s,t]
   //         DEM[v,s,t] <- OLD[v,s,t]- FIT[v,s,t]
-  //         NEW[v,s,t] <- FOREC2[t,s,v,3]
-  //         FLEET[v,s,t] <- FLEET[v,s,t-1]+ NEW[v,s,t]-DEM[v,s,t]
-          
+  //         NEW[v,s,t] <- (FOREC[t,s,v,3]-FOREC[t-1,s,v,3]+DEM[v,s,t])*delta2[v,s,t]
+  //         FLEET[v,s,t] <- FLEET[v,s,t-1]+ NEW[v,s,t]-DEM[v,s,t]      
           
   //       }else{
   //         FLEET[v,s,t]<-HF[s,v,t]
@@ -368,51 +309,52 @@ async function transformData( dataObj = userParams ){
   //         NEW[v,s,t]<-HN[s,v,t]
   //       }
         
-        
-  //       FLEET2[v,s,t]<-FLEET[v,s,t]*CAP[s,v,1]*UTIL[v,s,t]
-        
-  //       Z2[v,s,t]<- Z2[v,s,t]+Q3[r,v,s,t]
-        
-        
-  //       GAP[v,s,t]=FLEET[v,s,t]-Z[v,s,t]
-  //       GAP2[v,s,t]=FLEET2[v,s,t]-Z2[v,s,t]
-        
+  //       for(r in 1:R){
+  //         FLEET1[r,v,s,t]<-FLEET[v,s,t]*(Z1[r,v,s,t]/ZD[v,s,t])
+  //         FLEET2[r,v,s,t]<-FLEET1[r,v,s,t]*CAP[s,v,1]/10^6
+  //         FLEET3[r,v,s,t]<-FLEET2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/L[s,v,t]
+          
+  //         GAP[r,v,s,t] <-FLEET1[r,v,s,t]-Z1[r,v,s,t]
+  //         GAP2[r,v,s,t]<-FLEET2[r,v,s,t]-Z2[r,v,s,t]
+  //         GAP3[r,v,s,t]<-FLEET3[r,v,s,t]-Z3[r,v,s,t]
+  //       }
   //     }}}
-  
   for (let v = 0; v < V; v++){
     for (let s = 0; s < S[v]; s++){
       for (let t = 0; t < T; t++){
-        for (let r = 0; r < R; r++){
-          for (let f = 0; f < F; f++){
-            if(v === (V2[f] - 1)){ // V2 is 1-based in R 
-              Q3[r][v][s][t] = Q3[r][v][s][t] + Q[r][0][f][t] + Q[r][1][f][t];
-            }
-          }
-        }
-          if(t >= (T2)){ // T2 = 29, 28th index in js
-            if(t - (agep1[s] - 1) >= 0){
-              OLD[v][s][t] = NEW[v][s][t - agep1[s]] - FIT[v][s][t - agep2[s]];
-            } else {
-              OLD[v][s][t] = 0;
-            }
-            FIT[v][s][t] = RF[v] * OLD[v][s][t];
-            DEM[v][s][t] = OLD[v][s][t] - FIT[v][s][t];
-            NEW[v][s][t] = FOREC2[t][s][v][2];
-            FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - DEM[v][s][t];
+        // decreciente
+        delta2[v][s][t] = Math.pow((1 - Math.min(0.999, delta[v][s])), Math.min(1, Math.max(0, t - rang1[v][s][0]) / Math.max(1, rang1[v][s][1] - rang1[v][s][0])));
+        // Creciente
+        RF2[v][s][t] = Math.pow(Math.min(0.999, RF[v][s]), Math.min(1, Math.max(0, t - rang2[v][s][0]) / Math.max(1, rang2[v][s][1] - rang2[v][s][0])));
+
+        if(t >= (T2 + 1)){
+          if(t - agep1[s] >= 1){
+            OLD[v][s][t] = NEW[v][s][t - agep1[s]] - FIT[v][s][t - agep2[s]];
           } else {
-            FLEET[v][s][t] = HF[s][v][t];
-            DEM[v][s][t] = HD[s][v][t];
-            NEW[v][s][t] = HN[s][v][t];
+            OLD[v][s][t] = 0;
           }
-          FLEET2[v][s][t] = FLEET[v][s][t] * CAP[s][v][0] * UTIL[v][s][t];
-          for (let r = 0; r < R; r++){
-            Z2[v][s][t] = Z2[v][s][t] + Q3[r][v][s][t];
-          }
-          GAP[v][s][t] = FLEET[v][s][t] - Z[v][s][t];
-          GAP2[v][s][t] = FLEET2[v][s][t] - Z2[v][s][t];
+          FIT[v][s][t] = RF2[v][s][t] * OLD[v][s][t];
+          DEM[v][s][t] = OLD[v][s][t] - FIT[v][s][t];
+          NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2] + DEM[v][s][t]) * delta2[v][s][t];
+          FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - DEM[v][s][t];
+        } else {
+          FLEET[v][s][t] = HF[s][v][t];
+          DEM[v][s][t] = HD[s][v][t];
+          NEW[v][s][t] = HN[s][v][t];
+        }
+        for (let r = 0; r < R; r++){
+          FLEET1[r][v][s][t] = FLEET[v][s][t] * (Z1[r][v][s][t] / ZD[v][s][t]);
+          FLEET2[r][v][s][t] = FLEET1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
+          FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / L[s][v][t];
+          
+          GAP[r][v][s][t] = FLEET1[r][v][s][t] - Z1[r][v][s][t];
+          GAP2[r][v][s][t] = FLEET2[r][v][s][t] - Z2[r][v][s][t];
+          GAP3[r][v][s][t] = FLEET3[r][v][s][t] - Z3[r][v][s][t];
+        }
       }
     }
   }
+  
   
 
 // ############Graph 1######################################
@@ -434,14 +376,15 @@ async function transformData( dataObj = userParams ){
 // # Q3[r,v,s,t] # Eje X es t, v y s son filtros. Barras acumuladas, cada color es v
 
   const resultObj = {
-    FLEET: FLEET,
-    Z: Z,
-    GAP: GAP,
-    X2: X2,
+    FLEET1: FLEET1,
     FLEET2: FLEET2,
+    FLEET3: FLEET3,
+    Z1: Z1,
     Z2: Z2,
+    Z3: Z3,
+    GAP: GAP,
     GAP2: GAP2,
-    Q3: Q3,
+    GAP3: GAP3,
   }
 
   return resultObj;
