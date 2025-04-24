@@ -2,7 +2,7 @@
 // import { defaultValues } from "./data";
 import { navbarResultsScroll } from "./components/navbar-results";
 import { createNavEvents} from "./components/main-navbar";
-import { runFleetStrategiesCharts } from "./charts/draw-charts";
+import { runFleetVesselsCharts } from "./charts/draw-charts";
 import { displayRangeValue } from "./components/range-value";
 import { validatePayPer } from "./components/validations";
 
@@ -23,13 +23,14 @@ validatePayPer();
 
 (async () => {
   const devParams = await getDevParams()
-  console.log(devParams);
+  // console.log(devParams);
 
   const objData = updateObj(userParams);
+  console.log(objData);
   const resultObj = await transformData(objData);
   console.log(resultObj);
   
-  runFleetStrategiesCharts(resultObj);
+  runFleetVesselsCharts(resultObj);
 })();
 createNavEvents();
 navbarResultsScroll();

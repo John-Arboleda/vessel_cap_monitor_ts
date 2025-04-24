@@ -6,15 +6,14 @@ import { arrayToNDMatrix } from "./linear-alg";
 
 async function transformData( dataObj = userParams ){
     
-  const { goal, eta, rho, beta, PARR, RF, delta, rang1, rang2 } = dataObj;
+  const { goal, eta, rho, beta, PARR,  delta, rang1, rang2 } = dataObj;
 
   const devParams = await getDevParams();
   
-  const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, lambda1, HF, HN, HD, CAP, U, 
+  const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, lambda1, HF, HN, HD, CAP, U, RF, 
     DIST, MAXD, AVEG, lambda2, M, agep1, agep2, O, D, L, L2, FOREC, factor, year, year2 } = devParams;
 
   //  ############# Pre processing ####################
-
 
   // RATE1<- array(rep(0,T*N), dim=c(T,N))
   const arrayRATE1: number[] = new Array(T * N).fill(0);
@@ -80,8 +79,9 @@ async function transformData( dataObj = userParams ){
   for (let t = 0; t < T; t++){
     for (let r = 0; r < R; r++){
       for (let w = 0; w < W; w++){
+        // console.log("beta[1]",beta[1],"D",D[r][w],"t",t,"r",r,"w",w)
         for (let f = 0; f < F; f++){
-          lambda1B[r][w][f][t] = lambda1[w][r][year - 1][f] * Math.min(Math.max(Math.pow((1 - beta[0][O[r][w] - 1]), RATE1[t][O[r][w] - 1]), Math.pow((1 - beta[1][D[r][w] - 1]), RATE2[t][D[r][w] - 1])));
+          lambda1B[r][w][f][t] = lambda1[w][r][year - 1][f] * Math.min(Math.max(Math.pow((1 - beta[0][O[r][w] - 1]), RATE1[t][O[r][w] - 1]), Math.pow((1 - beta[1][D[r][w] - 1]), RATE2[t][D[r][w] - 1]))); 
           TOTAL[f][t] += lambda1B[r][w][f][t];
         }
       }
@@ -327,9 +327,9 @@ async function transformData( dataObj = userParams ){
         // Creciente
         RF2[v][s][t] = Math.pow(Math.min(0.999, RF[v][s]), Math.min(1, Math.max(0, t - rang2[v][s][0]) / Math.max(1, rang2[v][s][1] - rang2[v][s][0])));
 
-        if(t >= (T2 + 1)){
-          if(t - agep1[s] >= 1){
-            OLD[v][s][t] = NEW[v][s][t - agep1[s]] - FIT[v][s][t - agep2[s]];
+        if(t >= (T2)){
+          if(t - (agep1[s] - 1) >= 1){
+            OLD[v][s][t] = NEW[v][s][t - agep1[s] - 1] - FIT[v][s][t - agep2[s] - 1];
           } else {
             OLD[v][s][t] = 0;
           }
@@ -354,8 +354,6 @@ async function transformData( dataObj = userParams ){
       }
     }
   }
-  
-  
 
 // ############Graph 1######################################
 // #FLEET[v,s,t] vs Z[v,s,t] # Eje X es t, v y s son filtros. Lineas

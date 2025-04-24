@@ -147,7 +147,6 @@ async function getDevParams() {
     // L<-array(data.matrix(data14), dim=c(S2,V,T)) # Correccion por programacion y otros
     const arrayL: number[] = d3.transpose(data14).flat(2);
     const L: number[][][] = arrayTo3DMatrix(arrayL, [S2, V, T]) as number[][][];
-
     // L2<-array(data.matrix(data16), dim=c(S2,V)) # Correccion por programacion y otros
     const arrayL2: number[] = d3.transpose(data16).flat(2);
     const L2: number[][] = arrayTo2DMatrix(arrayL2, [S2, V]) as number[][];
@@ -179,6 +178,7 @@ async function getDevParams() {
         M,
         agep1,
         agep2,
+        RF,
         O,
         D,
         L,
@@ -243,7 +243,7 @@ const userParams = {
     PARN,
     beta,
     PARR,
-    RF,
+    // RF,
     delta,
     // agep1,
     // agep2,
