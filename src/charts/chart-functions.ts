@@ -2,10 +2,10 @@ import * as d3 from "d3";
 
 const baseYear: number = 1995;
 const T: number = 55;
-const I: number = 5;
+// const I: number = 5;
 // const V: number = 2;
-const V: number = 5;
-const S: number = 5;
+// const V: number = 5;
+// const S: number = 5;
 
 
 function sumPeriod(
@@ -113,15 +113,15 @@ function createDataFleetLines(
 }
 
 function createDataFleet1Lines(
-  dataObj: {  FLEET: number[][][][], Z: number[][][][] },
+  dataObj: {  FLEET1: number[][][][], Z1: number[][][][] },
   regionKeys: number[],
   vesselKeys: number[] = [0, 1, 2, 3, 4],
   sizeKeys: number[] = [0, 1, 2, 3, 4]
 ): number[][] {
   
-  const { FLEET, Z } = dataObj
+  const { FLEET1, Z1 } = dataObj
 
-  return createDataFleetLines(FLEET, Z, regionKeys, vesselKeys, sizeKeys);
+  return createDataFleetLines(FLEET1, Z1, regionKeys, vesselKeys, sizeKeys);
 }
 
 function createDataFleet2Lines(
@@ -168,8 +168,6 @@ function sumPeriodRegions(
     const dataPeriod:  number[] = [year, ...transSumN[t]];
     dataArr.push(dataPeriod);
   }
-
-  console.log(dataArr);
 
   return dataArr;
 }
