@@ -2,8 +2,9 @@ import { regionsData, routesData } from '../logic/data';
 
 function createResultRegionSelect() {
 
-  setupRegionSelectors('strategies');
+  setupRegionSelectors('vessels');
   setupRegionSelectors('capacity');
+  setupRegionSelectors('productivity');
 
 }
 

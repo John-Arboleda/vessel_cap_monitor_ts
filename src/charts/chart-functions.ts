@@ -91,14 +91,15 @@ function sumDataObj2(
 }
 
 function createDataFleetLines(
-  FLEET: number[][][], 
-  Z: number[][][],
+  FLEET: number[][][][], 
+  Z: number[][][][],
+  regionKeys: number[],
   vesselKeys: number[] = [0, 1, 2, 3, 4],
   sizeKeys: number[] = [0, 1, 2, 3, 4]
 ): number[][] {
 
-  const sumFLEET: number[] = sumDataObj(FLEET, vesselKeys, sizeKeys);
-  const sumZ: number[] = sumDataObj(Z, vesselKeys, sizeKeys);
+  const sumFLEET: number[] = sumDataObj2(FLEET, regionKeys, vesselKeys, sizeKeys);
+  const sumZ: number[] = sumDataObj2(Z, regionKeys, vesselKeys, sizeKeys);
   
   const dataArr:  number[][] = [];
 
@@ -112,25 +113,39 @@ function createDataFleetLines(
 }
 
 function createDataFleet1Lines(
-  dataObj: {  FLEET: number[][][], Z: number[][][] },
+  dataObj: {  FLEET: number[][][][], Z: number[][][][] },
+  regionKeys: number[],
   vesselKeys: number[] = [0, 1, 2, 3, 4],
   sizeKeys: number[] = [0, 1, 2, 3, 4]
 ): number[][] {
   
   const { FLEET, Z } = dataObj
 
-  return createDataFleetLines(FLEET, Z, vesselKeys, sizeKeys);
+  return createDataFleetLines(FLEET, Z, regionKeys, vesselKeys, sizeKeys);
 }
 
 function createDataFleet2Lines(
-  dataObj: {  FLEET2: number[][][], Z2: number[][][] },
+  dataObj: {  FLEET2: number[][][][], Z2: number[][][][] },
+  regionKeys: number[],
   vesselKeys: number[] = [0, 1, 2, 3, 4],
   sizeKeys: number[] = [0, 1, 2, 3, 4]
 ): number[][] {
   
   const { FLEET2, Z2 } = dataObj
 
-  return createDataFleetLines(FLEET2, Z2, vesselKeys, sizeKeys);
+  return createDataFleetLines(FLEET2, Z2, regionKeys, vesselKeys, sizeKeys);
+}
+
+function createDataFleet3Lines(
+  dataObj: {  FLEET3: number[][][][], Z3: number[][][][] },
+  regionKeys: number[],
+  vesselKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4]
+): number[][] {
+  
+  const { FLEET3, Z3 } = dataObj
+
+  return createDataFleetLines(FLEET3, Z3, regionKeys, vesselKeys, sizeKeys);
 }
 
 function sumPeriodRegions(
@@ -184,4 +199,4 @@ function createGapBySize(
   return dataArr;
 }
 
-export { createDataFleet1Lines, createDataFleet2Lines, createGapBySize, sumPeriodRegions }
+export { createDataFleet1Lines, createDataFleet2Lines, createDataFleet3Lines, createGapBySize, sumPeriodRegions }

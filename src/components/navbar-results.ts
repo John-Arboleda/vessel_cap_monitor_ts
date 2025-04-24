@@ -4,8 +4,9 @@ import { updateRoute } from "./result-input-route";
 function navbarResultsScroll(): void {
     const mainPanel = document.getElementById('main-panel') as HTMLElement;
     // Get the navbar
-    const strategiesResultNavbar = document.getElementById('strategies-result-navbar') as HTMLElement;
+    const vesselsResultNavbar = document.getElementById('vessels-result-navbar') as HTMLElement;
     const capacityResultNavbar = document.getElementById('capacity-result-navbar') as HTMLElement;
+    const productivityResultNavbar = document.getElementById('productivity-result-navbar') as HTMLElement;
   
     // Add the sticky class to the navbar when you reach its scroll position.
     // Remove "sticky" when you leave the scroll position
@@ -22,8 +23,9 @@ function navbarResultsScroll(): void {
   
     // When the user scrolls the page, execute makeStickyNavbar
     mainPanel.onscroll = function (): void { 
-      makeStickyNavbar(strategiesResultNavbar); 
+      makeStickyNavbar(vesselsResultNavbar); 
       makeStickyNavbar(capacityResultNavbar); 
+      makeStickyNavbar(productivityResultNavbar); 
     };
 
     // Create regions select

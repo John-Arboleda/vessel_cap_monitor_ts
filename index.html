@@ -49,10 +49,10 @@
       <div class="col mt-2 d-flex justify-content-center">
         <ul class="nav nav-pills flex-row mb-auto">
 
-          <li id="strategies-nav-button" class="navbar-item nav-item mb-1 me-1">
+          <li id="vessels-nav-button" class="navbar-item nav-item mb-1 me-1">
             <a class="nav-link link-secondary d-flex active">
               <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-leaf" aria-hidden="true"></i></div>
-              <div>Strategies</div>
+              <div>Vessels</div>
             </a>
           </li>
 
@@ -60,6 +60,13 @@
             <a class="nav-link link-secondary d-flex">
               <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-truck" aria-hidden="true"></i></div>
               <div>Capacity</div>
+            </a>
+          </li>
+
+          <li id="productivity-nav-button" class="navbar-item nav-item mb-1 me-1">
+            <a class="nav-link link-secondary d-flex">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-truck" aria-hidden="true"></i></div>
+              <div>Productivity</div>
             </a>
           </li>
 
@@ -221,12 +228,12 @@
       <!-- main -->
       <div id="main-panel" class="col height-100-vh pb-5">
 
-        <div id="strategies-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3">
+        <div id="vessels-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3">
           <div>
 
-            <ul id="strategies-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+            <ul id="vessels-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
               <li class="nav-item">
-                <select id="strategies_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                <select id="vessels_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
                   <option value="01234" selected>All products</option>
                   <option value="0">Crude Tanker</option>
                   <option value="1">Product Tanker</option>
@@ -236,7 +243,7 @@
                 </select>
               </li>
               <li class="nav-item mx-4">
-                <select id="strategies_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                <select id="vessels_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
                   <option value="01234" selected>All sizes</option>
                   <option value="0">Size 1</option>
                   <option value="1">Size 2</option>
@@ -245,20 +252,17 @@
                   <option value="4">Size 5</option> 
                 </select>
               </li>
-              <!-- <li class="nav-item me-4 d-none">
-                <select id="strategies_select_region" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
-                </select>
-              </li> -->
+              
               <li class="nav-item me-4">
-                <select id="strategies_select_region_origin" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                <select id="vessels_select_region_origin" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
                 </select>
               </li>
               <li class="nav-item me-4">
-                <select id="strategies_select_region_dest" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                <select id="vessels_select_region_dest" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
                 </select>
               </li>
               <li class="nav-item">
-                <button id="strategies_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Percentage</button>
+                <button id="vessels_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Percentage</button>
               </li>
             </ul>
             
@@ -271,7 +275,7 @@
                   </p>
                 </div>
                 <div class="row justify-content-md-center mx-1">
-                  <div id="area_chart_div" class="chart-content col-lg-12"></div>
+                  <div id="vessels_line_chart_div" class="chart-content col-lg-12"></div>
                 </div>
               </div>
 
@@ -283,7 +287,7 @@
                   </p>
                 </div>
                 <div class="row justify-content-md-center mx-1">
-                  <div id="gap-strategies-chart" class="chart-content col-lg-12"></div>
+                  <div id="vessels_gap_chart_div" class="chart-content col-lg-12"></div>
                 </div>
               </div>
 
@@ -295,7 +299,7 @@
                   </p>
                 </div>
                 <div class="row justify-content-md-center mx-1">
-                  <div id="routes-strategies-chart" class="chart-content col-lg-12"></div>
+                  <div id="vessels_column_chart_div" class="chart-content col-lg-12"></div>
                 </div>
               </div>
 
@@ -327,10 +331,6 @@
                   <option value="4">Size 5</option> 
                 </select>
               </li>
-              <!-- <li class="nav-item me-4">
-                <select id="capacity_select_region" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
-                </select>
-              </li> -->
               <li class="nav-item me-4">
                 <select id="capacity_select_region_origin" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
                 </select>
@@ -355,7 +355,7 @@
                 </div>
 
                 <div class="row justify-content-md-center mx-1">
-                  <div id="fleet_capacity_chart_div" class="chart-content col-lg-12"></div>
+                  <div id="capacity_line_chart_div" class="chart-content col-lg-12"></div>
                 </div>
               </div>
 
@@ -367,7 +367,7 @@
                   </p>
                 </div>
                 <div class="row justify-content-md-center mx-1">
-                  <div id="gap_capacity_chart" class="chart-content col-lg-12"></div>
+                  <div id="capacity_gap_chart_div" class="chart-content col-lg-12"></div>
                 </div>
               </div>
 
@@ -379,7 +379,86 @@
                   </p>
                 </div>
                 <div class="row justify-content-md-center mx-1">
-                  <div id="routes-capacity-chart" class="chart-content col-lg-12"></div>
+                  <div id="capacity_column_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="productivity-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+          <div>
+
+            <ul id="productivity-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+              <li class="nav-item">
+                <select id="productivity_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                  <option value="01234" selected>All products</option>
+                  <option value="0">Crude Tanker</option>
+                  <option value="1">Product Tanker</option>
+                  <option value="2">LNG</option>
+                  <option value="3">LPG</option>
+                  <option value="4">Bulker</option> 
+                </select>
+              </li>
+              <li class="nav-item mx-4">
+                <select id="productivity_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                  <option value="01234" selected>All sizes</option>
+                  <option value="0">Size 1</option>
+                  <option value="1">Size 2</option>
+                  <option value="2">Size 3</option>
+                  <option value="3">Size 4</option>
+                  <option value="4">Size 5</option> 
+                </select>
+              </li>
+              <li class="nav-item me-4">
+                <select id="productivity_select_region_origin" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                </select>
+              </li>
+              <li class="nav-item me-4">
+                <select id="productivity_select_region_dest" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                </select>
+              </li>
+              <li class="nav-item">
+                <button id="productivity_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Percentage</button>
+              </li>
+            </ul>
+
+            <div class="container px-0">
+
+              <div class="mb-4">
+                <h5 class="text-persian-green fw-bold">Chart 4</h5>
+                <div class="alert alert-light text-justify" role="alert">
+                  <p class="mb-0">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem deleniti dolor ducimus eos quibusdam! Ducimus totam veniam nihil perspiciatis nulla unde aliquid magni, illo harum ratione, repellendus sunt vero optio.
+                  </p>
+                </div>
+
+                <div class="row justify-content-md-center mx-1">
+                  <div id="productivity_line_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <h5 class="text-persian-green fw-bold">Chart 5</h5>
+                <div class="alert alert-light text-justify" role="alert">
+                  <p class="mb-0">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Et vitae quasi voluptatum unde. Aliquam repellat suscipit possimus, pariatur dignissimos deserunt, quia id explicabo autem sed tenetur amet sequi cum placeat?
+                  </p>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="productivity_gap_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <h5 class="text-persian-green fw-bold">Chart 6</h5>
+                <div class="alert alert-light text-justify" role="alert">
+                  <p class="mb-0">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem, omnis iusto aliquam error odio optio expedita suscipit, nihil laudantium possimus sunt ducimus dolore quis soluta voluptate distinctio ex placeat vitae!
+                  </p>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="productivity_column_chart_div" class="chart-content col-lg-12"></div>
                 </div>
               </div>
             </div>

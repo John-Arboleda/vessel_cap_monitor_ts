@@ -2,40 +2,41 @@
 import { multipleColumnChart, multipleColumnChart4D } from "./column-chart";
 import { multipleLineChart } from "./line-chart";
 
-import { createDataFleet1Lines, createDataFleet2Lines, createGapBySize, sumPeriodRegions } from "./chart-functions";
+import { createDataFleet1Lines, createDataFleet2Lines, createDataFleet3Lines, createGapBySize, sumPeriodRegions } from "./chart-functions";
 
 import {  fleetOptions, lineChartOptions } from "./chart-options";
 
 interface ResultObj {
-  FLEET: number[][][],
-  Z: number[][][],
-  FLEET2: number[][][],
-  Z2: number[][][],
-  GAP: number[][][],
-  GAP2: number[][][],
-  Q3: number[][][][],
-  X2: number[][][][],
+  FLEET1: number[][][][],
+  FLEET2: number[][][][],
+  FLEET3: number[][][][],
+  Z1: number[][][][],
+  Z2: number[][][][],
+  Z3: number[][][][],
+  GAP: number[][][][],
+  GAP2: number[][][][],
+  GAP3: number[][][][],
 }
 
 const techTypeHeader: string[] = ['Year', 'Crude Tanker', 'Product Tanker', 'LNG', 'LPG', 'Bulker'];
 
-function runFleetStrategiesCharts(resultObj: ResultObj) {
+function runFleetVesselsCharts(resultObj: ResultObj) {
   google.charts.load('current', { packages: ['corechart', 'bar', 'table', 'controls'] });
   return new Promise<void>((resolve) => {
     google.charts.setOnLoadCallback(() => {
-      drawFleetStrategiesChart(resultObj);
+      drawFleetVesselsChart(resultObj);
       resolve();
     });
   });
 }
 
-function drawFleetStrategiesChart(resultObj: ResultObj): void {
+function drawFleetVesselsChart(resultObj: ResultObj): void {
 
   const fleetHeader: string[] = ['Year', 'FLEET', 'Z']
 
-  multipleLineChart(resultObj, createDataFleet1Lines, 'area_chart_div', 'strategies', lineChartOptions, fleetHeader);
-  multipleColumnChart(resultObj.GAP, createGapBySize, 'gap-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
-  multipleColumnChart4D(resultObj.X2, sumPeriodRegions, 'routes-strategies-chart', 'strategies', fleetOptions, techTypeHeader);
+  multipleLineChart(resultObj, createDataFleet1Lines, 'vessels_line_chart_div', 'vessels', lineChartOptions, fleetHeader);
+  multipleColumnChart4D(resultObj.GAP, sumPeriodRegions, 'vessels_gap_chart_div', 'vessels', fleetOptions, techTypeHeader);
+  multipleColumnChart4D(resultObj.Z1, sumPeriodRegions, 'vessels_column_chart_div', 'vessels', fleetOptions, techTypeHeader);
 }
 
 
@@ -53,14 +54,14 @@ function drawFleetCapacityChart(resultObj: ResultObj): void {
 
   const fleetHeader: string[] = ['Year', 'FLEET2', 'Z2'];
 
-  multipleLineChart(resultObj, createDataFleet2Lines, 'fleet_capacity_chart_div', 'capacity', lineChartOptions, fleetHeader);
-  multipleColumnChart(resultObj.GAP2, createGapBySize, 'gap_capacity_chart', 'capacity', fleetOptions, techTypeHeader);
-  multipleColumnChart4D(resultObj.Q3, sumPeriodRegions, 'routes-capacity-chart', 'capacity', fleetOptions, techTypeHeader);
+  multipleLineChart(resultObj, createDataFleet2Lines, 'capacity_line_chart_div', 'capacity', lineChartOptions, fleetHeader);
+  multipleColumnChart4D(resultObj.GAP2, sumPeriodRegions, 'capacity_gap_chart_div', 'capacity', fleetOptions, techTypeHeader);
+  multipleColumnChart4D(resultObj.Z2, sumPeriodRegions, 'capacity_column_chart_div', 'capacity', fleetOptions, techTypeHeader);
 }
 
 const drawChartFunctions: { [prefixId: string]: (resultObj: ResultObj) => void } = {
-  'strategies': runFleetStrategiesCharts,
+  'vessels': runFleetVesselsCharts,
   'capacity': runFleetCapacityCharts,
 };
 
-export { runFleetStrategiesCharts, drawChartFunctions }
+export { runFleetVesselsCharts, drawChartFunctions }
