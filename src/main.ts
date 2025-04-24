@@ -23,7 +23,7 @@ validatePayPer();
 
 (async () => {
   const devParams = await getDevParams()
-  // console.log(devParams);
+  console.log(devParams);
 
   const objData = updateObj(userParams);
   console.log(objData);
