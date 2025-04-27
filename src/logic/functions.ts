@@ -11,7 +11,7 @@ async function transformData( dataObj = userParams ){
   const devParams = await getDevParams();
   
   const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, lambda1, HF, HN, HD, CAP, U, RF, 
-    DIST, MAXD, AVEG, lambda2, M, agep1, agep2, O, D, L, L2, FOREC, factor, year, year2 } = devParams;
+    DIST, MAXD, AVEG, lambda2, M, agep1, agep2, O, D, L, L2, FOREC, factor, year, year2, ONES } = devParams;
 
   //  ############# Pre processing ####################
 
@@ -87,6 +87,24 @@ async function transformData( dataObj = userParams ){
       }
     }
   }
+
+// IMPACT<-array(rep(0,N), dim=c(N))
+// for(n in 1:N){
+//   for (r in 1:R){
+// IMPACT[n]<-IMPACT[n]+(lambda1B[r,2,f,t])/TOTAL[f,t]
+// }}
+const arrayIMPACT: number[] = new Array(N * T * F).fill(0);
+const IMPACT: number[][][] = arrayToNDMatrix(arrayIMPACT, [N, F, T]) as number[][][];
+for (let t = 0; t < T; t++) {
+  for (let n = 0; n < N; n++) {
+    for (let r = 0; r < R; r++) {
+      for (let f = 0; f < F; f++) {
+        IMPACT[n][f][t] += lambda1B[r][1][f][t] / TOTAL[f][t]; // Adjusted for 0-based indexing in TypeScript
+      }
+    }
+  }
+}
+
 
   // ######Demand equations###################
 
@@ -170,13 +188,14 @@ async function transformData( dataObj = userParams ){
   //       for (r in 1:R){
   //         for (f in 1:F){
   //           if(v==V2[f]){
-  //             Z1[r,v,s,t]<-Z1[r,v,s,t]+factor[goal,t]*ceiling(lambda2[r,year2,s,v]*max(Q[r,1,f,t]/Y[r,1,v,s,t],Q[r,2,f,t]/Y[r,2,v,s,t])*(1+(M[v]/100)))        
+  //             Z1[r,v,s,t]<-Z1[r,v,s,t]+factor[goal,t]*]*(1-ONES[O[r,2]]*(IMPACT[O[r,2],f,t]))*ceiling(lambda2[r,year2,s,v]*max(Q[r,1,f,t]/Y[r,1,v,s,t],Q[r,2,f,t]/Y[r,2,v,s,t])*(1+(M[v]/100)))        
+  //             #Z1[r,v,s,t]<-Z1[r,v,s,t]+factor[goal,t]*ceiling(lambda2[r,year2,s,v]*max(Q[r,1,f,t]/Y[r,1,v,s,t],Q[r,2,f,t]/Y[r,2,v,s,t])*(1+(M[v]/100)))        
   //             #Z2[r,v,s,t]<-Z2[r,v,s,t]+(Q[r,1,f,t]+Q[r,2,f,t])*lambda2[r,year2,s,v]
   //           }}
           
   //         Z1[r,v,s,t]<-Z1[r,v,s,t]*L[s,v,t]
   //         Z2[r,v,s,t]<-Z1[r,v,s,t]*CAP[s,v,1]/10^6
-  //         Z3[r,v,s,t]<-Z2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/L[s,v,t]
+  //         Z3[r,v,s,t]<-Z2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/(L[s,v,t]*1.852*10^6)
   //       }}}}
   for (let v = 0; v < V; v++){
     for (let s = 0; s < S[v]; s++){
@@ -184,12 +203,16 @@ async function transformData( dataObj = userParams ){
         for (let r = 0; r < R; r++){
           for (let f = 0; f < F; f++){
             if(v === V2[f] - 1){ // V2 is 1-based in R
-              Z1[r][v][s][t] += factor[goal - 1][t] * Math.ceil(lambda2[r][year2 - 1][s][v] * Math.max(Q[r][0][f][t] / Y[r][0][v][s][t], Q[r][1][f][t] / Y[r][1][v][s][t]) * (1 + (M[v] / 100)));
+              Z1[r][v][s][t] += factor[goal - 1][t] * (1 - ONES[O[r][1] - 1] * IMPACT[O[r][1] - 1][f][t]) *
+                Math.ceil(lambda2[r][year2 - 1][s][v] * 
+                Math.max(Q[r][0][f][t] / Y[r][0][v][s][t], Q[r][1][f][t] / Y[r][1][v][s][t]) * (1 + (M[v] / 100)));
             }
           }
           Z1[r][v][s][t] = Z1[r][v][s][t] * L[s][v][t];
           Z2[r][v][s][t] = Z1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
-          Z3[r][v][s][t] = Z2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / L[s][v][t];
+          Z3[r][v][s][t] = Z2[r][v][s][t] * 
+            ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * 
+            (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / (L[s][v][t] * 1.852 * 10^6);
         }
       }
     }
@@ -312,7 +335,7 @@ async function transformData( dataObj = userParams ){
   //       for(r in 1:R){
   //         FLEET1[r,v,s,t]<-FLEET[v,s,t]*(Z1[r,v,s,t]/ZD[v,s,t])
   //         FLEET2[r,v,s,t]<-FLEET1[r,v,s,t]*CAP[s,v,1]/10^6
-  //         FLEET3[r,v,s,t]<-FLEET2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/L[s,v,t]
+  //         FLEET3[r,v,s,t]<-FLEET2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/(L[s,v,t]*1.852*10^6)
           
   //         GAP[r,v,s,t] <-FLEET1[r,v,s,t]-Z1[r,v,s,t]
   //         GAP2[r,v,s,t]<-FLEET2[r,v,s,t]-Z2[r,v,s,t]
@@ -325,11 +348,11 @@ async function transformData( dataObj = userParams ){
         // decreciente
         delta2[v][s][t] = Math.pow((1 - Math.min(0.999, delta[v][s])), Math.min(1, Math.max(0, t - rang1[v][s][0]) / Math.max(1, rang1[v][s][1] - rang1[v][s][0])));
         // Creciente
-        RF2[v][s][t] = Math.pow(Math.min(0.999, RF[v][s]), Math.min(1, Math.max(0, t - rang2[v][s][0]) / Math.max(1, rang2[v][s][1] - rang2[v][s][0])));
+        RF2[v][s][t] = Math.pow(Math.min(0.999, RF[v]), Math.min(1, Math.max(0, t - rang2[v][0]) / Math.max(1, rang2[v][1] - rang2[v][0])));
 
         if(t >= (T2)){
-          if(t - (agep1[s] - 1) >= 1){
-            OLD[v][s][t] = NEW[v][s][t - agep1[s] - 1] - FIT[v][s][t - agep2[s] - 1];
+          if(t - (agep1[s][v] - 1) >= 1){
+            OLD[v][s][t] = NEW[v][s][t - agep1[s][v] - 1] - FIT[v][s][t - agep2[v] - 1];
           } else {
             OLD[v][s][t] = 0;
           }
@@ -345,7 +368,7 @@ async function transformData( dataObj = userParams ){
         for (let r = 0; r < R; r++){
           FLEET1[r][v][s][t] = FLEET[v][s][t] * (Z1[r][v][s][t] / ZD[v][s][t]);
           FLEET2[r][v][s][t] = FLEET1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
-          FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / L[s][v][t];
+          FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / (L[s][v][t] * 1.852 * 10^6);
           
           GAP[r][v][s][t] = FLEET1[r][v][s][t] - Z1[r][v][s][t];
           GAP2[r][v][s][t] = FLEET2[r][v][s][t] - Z2[r][v][s][t];

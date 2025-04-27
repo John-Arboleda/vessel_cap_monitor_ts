@@ -186,17 +186,19 @@ async function getDevParams() {
         FOREC,
         factor,
         year,
-        year2
+        year2,
+        ONES
     };
 }
 
 // #USER CAPACITY PARAM
 
-// agep1<-c(28,24,23,22,22) # Edad para lifecycle regular flota by size
-const agep1: number[] = [28, 24, 23, 22, 22];
+// agep1<-array(rep(c(28,24,23,22,22),S2), dim=c(S2,V)) # Edad para lifecycle regular flota by size
+const arrayAgep1: number[] = new Array(S2 * V).fill([28, 24, 23, 22, 22]).flat(2);
+const agep1: number[][] = arrayToNDMatrix(arrayAgep1, [S2, V]) as number[][];
 
-// agep2<-c(14,12,12,10,10) # Edad para lifecicle retrofit flota by size
-const agep2: number[] = [14, 12, 12, 10, 10];
+// agep2<-c(10,10,10,10,10) # Edad para lifecicle retrofit flota by size
+const agep2: number[] = [10, 10, 10, 10, 10];
 
 // delta<- array(rep(0,V*S2), dim=c(V,S2)) // delta<-array(rep(0,V*S2), dim=c(V,S2)) # % share in route of vessels type v with size s.
 const arrayDelta: number[] = new Array(V * S2).fill(0);
@@ -206,13 +208,12 @@ const delta: number[][] = arrayToNDMatrix(arrayDelta, [V, S2]) as number[][];
 const arrayRang1: number[] = new Array(V * S2 * 2).fill(0);
 const rang1: number[][][] = arrayToNDMatrix(arrayRang1, [V, S2, 2]) as number[][][];
 
-// RF<- array(rep(0,V*S2), dim=c(V,S2))
-const arrayRF: number[] = new Array(V * S2).fill(0);
-const RF: number[][] = arrayToNDMatrix(arrayRF, [V, S2]) as number[][];
+// RF<- array(rep(0,V), dim=c(V))
+const RF: number[] = new Array(V).fill(0);
 
-// rang2<- array(rep(0,V*S2*2), dim=c(V,S2,2))
-const arrayRang2: number[] = new Array(V * S2 * 2).fill(0);
-const rang2: number[][][] = arrayToNDMatrix(arrayRang2, [V, S2, 2]) as number[][][];
+// rang2<- array(rep(0,V*2), dim=c(V,2))
+const arrayRang2: number[] = new Array(V * 2).fill(0);
+const rang2: number[][] = arrayToNDMatrix(arrayRang2, [V, 2]) as number[][];
 
 
 // #USER DEMAND PARAM
@@ -233,7 +234,8 @@ const PARR: number[][] = arrayToNDMatrix(arrayPARR, [4, N]) as number[][];
 const alpha: number = 0.5;
 // PARN<-c(29,56) #inicio y final del shock [T2+1;T], 2 mayor que 1
 const PARN: number[] = [29, 56];
-
+// ONES<-array(rep(0,N), dim=c(N))
+const ONES: number[] = new Array(N).fill(0) as number[];
 
 const userParams = {
     goal,
@@ -248,7 +250,8 @@ const userParams = {
     // agep1,
     // agep2,
     rang1,
-    rang2
+    rang2,
+    // ONES
 };
 
 export { userParams, getDevParams };
