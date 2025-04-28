@@ -20,6 +20,7 @@ interface ResultObj {
 }
 
 const techTypeHeader: string[] = ['Year', 'Crude Tanker', 'Product Tanker', 'LNG', 'LPG', 'Bulker'];
+const aggregateHeader: string[] = ['Year', 'Shipping supply', 'Shipping demand'];
 
 function runFleetVesselsCharts(resultObj: ResultObj) {
   google.charts.load('current', { packages: ['corechart', 'bar', 'table', 'controls'] });
@@ -33,9 +34,7 @@ function runFleetVesselsCharts(resultObj: ResultObj) {
 
 function drawFleetVesselsChart(resultObj: ResultObj): void {
 
-  const fleetHeader: string[] = ['Year', 'FLEET1', 'Z1']
-
-  multipleLineChart(resultObj, createDataFleet1Lines, 'vessels_line_chart_div', 'vessels', lineVesselOptions, fleetHeader);
+  multipleLineChart(resultObj, createDataFleet1Lines, 'vessels_line_chart_div', 'vessels', lineVesselOptions, aggregateHeader);
   multipleColumnChart4D(resultObj.GAP, sumPeriodRegions, 'vessels_gap_chart_div', 'vessels', columnVesselOptions, techTypeHeader);
   multipleColumnChart4D(resultObj.Z1, sumPeriodRegions, 'vessels_column_chart_div', 'vessels', columnVesselOptions, techTypeHeader);
 }
@@ -53,9 +52,7 @@ function runFleetCapacityCharts(resultObj: ResultObj) {
 
 function drawFleetCapacityChart(resultObj: ResultObj): void {
 
-  const fleetHeader: string[] = ['Year', 'FLEET2', 'Z2'];
-
-  multipleLineChart(resultObj, createDataFleet2Lines, 'capacity_line_chart_div', 'capacity', lineCapacityOptions, fleetHeader);
+  multipleLineChart(resultObj, createDataFleet2Lines, 'capacity_line_chart_div', 'capacity', lineCapacityOptions, aggregateHeader);
   multipleColumnChart4D(resultObj.GAP2, sumPeriodRegions, 'capacity_gap_chart_div', 'capacity', columnCapacityOptions, techTypeHeader);
   multipleColumnChart4D(resultObj.Z2, sumPeriodRegions, 'capacity_column_chart_div', 'capacity', columnCapacityOptions, techTypeHeader);
 }
@@ -73,9 +70,7 @@ function runFleetProductivityCharts(resultObj: ResultObj) {
 
 function drawFleetProductivityChart(resultObj: ResultObj): void {
 
-  const fleetHeader: string[] = ['Year', 'FLEET3', 'Z3'];
-
-  multipleLineChart(resultObj, createDataFleet3Lines, 'productivity_line_chart_div', 'productivity', lineProductivityOptions, fleetHeader);
+  multipleLineChart(resultObj, createDataFleet3Lines, 'productivity_line_chart_div', 'productivity', lineProductivityOptions, aggregateHeader);
   multipleColumnChart4D(resultObj.GAP3, sumPeriodRegions, 'productivity_gap_chart_div', 'productivity', columnProductivityOptions, techTypeHeader);
   multipleColumnChart4D(resultObj.Z3, sumPeriodRegions, 'productivity_column_chart_div', 'productivity', columnProductivityOptions, techTypeHeader);
 }

@@ -80,7 +80,7 @@ function vesselBody(vesselId: number, vesselTypes: string[]): HTMLTableRowElemen
   typeHeaderRow.innerHTML = `
     <td scope="row" colspan="2" class="text-center">
       <label>
-        <small class="form-text text-muted">% Share in route of vessels type</small>
+        <small class="form-text text-muted">Total percentage reduction of the ship orderbook</small>
       </label>
     </td>
   `;

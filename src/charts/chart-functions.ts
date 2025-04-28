@@ -35,7 +35,7 @@ function sumPeriod(
     }
   }
 
-  return result;
+  return Math.round(result * 100) / 100;
 }
 
 function sumDataObj(
@@ -75,7 +75,7 @@ function sumPeriod2(
       }
     }
   }
-  return result;
+  return Math.round(result * 100) / 100;
 }
 
 function sumDataObj2(

@@ -4,14 +4,14 @@ const lineVesselOptions = {
     legend: {position: 'bottom', maxLines: 3},
     hAxis: {
       //minValue: 'auto',
-      title: 'Period (years)',
+      title: 'Years',
       titleTextStyle: {
         italic: false,
       },
       format: '####',
     },
     vAxis: {
-      title: 'Fleet (number of vessels)',
+      title: 'Number of vessels',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,
@@ -23,7 +23,7 @@ const lineVesselOptions = {
     chartArea: { width: '75%' },
     hAxis: {
       minValue: 'auto',
-      title: 'Period (years)',
+      title: 'Years',
       titleTextStyle: {
         italic: false,
       },
@@ -58,14 +58,14 @@ const lineVesselOptions = {
     legend: {position: 'bottom', maxLines: 3},
     hAxis: {
       //minValue: 'auto',
-      title: 'Period (years)',
+      title: 'Years',
       titleTextStyle: {
         italic: false,
       },
       format: '####',
     },
     vAxis: {
-      title: 'Metric Tonnes',
+      title: '10^6 tonnes',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,
@@ -77,7 +77,7 @@ const lineVesselOptions = {
     chartArea: { width: '75%' },
     hAxis: {
       minValue: 'auto',
-      title: 'Period (years)',
+      title: 'Years',
       titleTextStyle: {
         italic: false,
       },
@@ -86,7 +86,7 @@ const lineVesselOptions = {
     isStacked: true,
     legend: {position: 'bottom', maxLines: 3},
     vAxis: {
-      title: 'Metric Tonnes',
+      title: '10^6 tonnes',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,
@@ -112,14 +112,14 @@ const lineVesselOptions = {
     legend: {position: 'bottom', maxLines: 3},
     hAxis: {
       //minValue: 'auto',
-      title: 'Period (years)',
+      title: 'Years',
       titleTextStyle: {
         italic: false,
       },
       format: '####',
     },
     vAxis: {
-      title: 'Tonnes per kilometre',
+      title: '10^12 tonnes',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,
@@ -131,7 +131,7 @@ const lineVesselOptions = {
     chartArea: { width: '75%' },
     hAxis: {
       minValue: 'auto',
-      title: 'Period (years)',
+      title: 'Years',
       titleTextStyle: {
         italic: false,
       },
@@ -140,7 +140,7 @@ const lineVesselOptions = {
     isStacked: true,
     legend: {position: 'bottom', maxLines: 3},
     vAxis: {
-      title: 'Tonnes per kilometre',
+      title: '10^12 tonnes',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,

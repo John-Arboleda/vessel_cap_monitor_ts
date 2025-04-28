@@ -97,8 +97,8 @@ const arrayIMPACT: number[] = new Array(N * T * F).fill(0);
 const IMPACT: number[][][] = arrayToNDMatrix(arrayIMPACT, [N, F, T]) as number[][][];
 for (let t = 0; t < T; t++) {
   for (let n = 0; n < N; n++) {
-    for (let r = 0; r < R; r++) {
-      for (let f = 0; f < F; f++) {
+    for (let f = 0; f < F; f++) {
+      for (let r = 0; r < R; r++) {
         IMPACT[n][f][t] += lambda1B[r][1][f][t] / TOTAL[f][t]; // Adjusted for 0-based indexing in TypeScript
       }
     }
@@ -212,7 +212,7 @@ for (let t = 0; t < T; t++) {
           Z2[r][v][s][t] = Z1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
           Z3[r][v][s][t] = Z2[r][v][s][t] * 
             ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * 
-            (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / (L[s][v][t] * 1.852 * 10^6);
+            (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / (L[s][v][t] * 1.852 * Math.pow(10, 6));
         }
       }
     }
@@ -368,7 +368,7 @@ for (let t = 0; t < T; t++) {
         for (let r = 0; r < R; r++){
           FLEET1[r][v][s][t] = FLEET[v][s][t] * (Z1[r][v][s][t] / ZD[v][s][t]);
           FLEET2[r][v][s][t] = FLEET1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
-          FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / (L[s][v][t] * 1.852 * 10^6);
+          FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / (L[s][v][t] * 1.852 * Math.pow(10, 6));
           
           GAP[r][v][s][t] = FLEET1[r][v][s][t] - Z1[r][v][s][t];
           GAP2[r][v][s][t] = FLEET2[r][v][s][t] - Z2[r][v][s][t];
