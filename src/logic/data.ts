@@ -405,11 +405,107 @@ const routesData = [
 
 
 
-interface VesselData {
+interface VesselData1 {
     [key: string]: string[];
 }
 
+interface VesselData {
+    [key: number]: {
+        type: string, 
+        sizes: string[]
+        sizesHTML: string[]    
+    };
+}
+
 const vesselData: VesselData = {
+    0: {
+        type: "Crude Tanker",
+        sizes: [
+            "VLCC", 
+            "Suezmax", 
+            "Aframax", 
+            "Panamax", 
+            "Handysize"
+        ],
+        sizesHTML: [
+            "VLCC", 
+            "Suezmax", 
+            "Aframax", 
+            "Panamax", 
+            "Handysize"
+        ]
+    },
+    1: {
+        type: "Product Tanker",
+        sizes: [
+            "Suezmax", 
+            "Aframax", 
+            "Panamax", 
+            "Handysize", 
+            "Small",
+        ],
+        sizesHTML: [
+            "Suezmax", 
+            "Aframax", 
+            "Panamax", 
+            "Handysize", 
+            "Small",
+        ],
+    },
+    2: {
+        type: "LNG",
+        sizes: [
+            "<40K m3", 
+            "40-59,999 m3", 
+            "60-99,999 m3", 
+            "100-139,999 m3", 
+            ">140,000 m3"
+        ],
+        sizesHTML: [
+            "<40K m<sup>3</sup>", 
+            "40-59,999 m<sup>3</sup>", 
+            "60-99,999 m<sup>3</sup>", 
+            "100-139,999 m<sup>3</sup>", 
+            ">140,000 m<sup>3</sup>"
+        ]
+    },
+    3: {
+        type: "LPG",
+        sizes: [
+            "<5,000 m3", 
+            "5-20,000 m3", 
+            "20-44,999 m3", 
+            "45-64,999 m3", 
+            "65,000+ m3" 
+        ],
+        sizesHTML: [
+            "<5,000 m<sup>3</sup>", 
+            "5-20,000 m<sup>3</sup>", 
+            "20-44,999 m<sup>3</sup>", 
+            "45-64,999 m<sup>3</sup>", 
+            "65,000+ m<sup>3</sup>" 
+        ]
+    },
+    4: {
+        type: "Bulker",
+        sizes: [
+            "Capesize", 
+            "Panamax", 
+            "Handymax", 
+            "Handysize",
+            "None"
+        ],
+        sizesHTML: [
+            "Capesize", 
+            "Panamax", 
+            "Handymax", 
+            "Handysize",
+            "None"
+        ]
+    },
+}
+
+const vesselData1: VesselData1 = {
     "Crude Tanker": [
         "VLCC", 
         "Suezmax", 

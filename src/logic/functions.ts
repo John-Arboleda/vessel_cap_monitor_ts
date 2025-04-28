@@ -88,18 +88,33 @@ async function transformData( dataObj = userParams ){
     }
   }
 
-// IMPACT<-array(rep(0,N), dim=c(N))
-// for(n in 1:N){
-//   for (r in 1:R){
-// IMPACT[n]<-IMPACT[n]+(lambda1B[r,2,f,t])/TOTAL[f,t]
-// }}
+  // IMPACT<-array(rep(0,N*F*T), dim=c(N,F,T))
+  // for (n in 1:N){
+  //   for (t in 1:T){
+  //     for (f in 1:F){
+  //   for (r in 1:R){
+      
+  //     if(n==D[r,1]){
+  // IMPACT[n,f,t]<-IMPACT[n,f,t]+(lambda1B[r,1,f,t])/TOTAL[f,t]
+  //     }
+  
+  // if(n==D[r,2]){
+  //       IMPACT[n,f,t]<-IMPACT[n,f,t]+(lambda1B[r,2,f,t])/TOTAL[f,t]
+  // }
+  // }}}}
 const arrayIMPACT: number[] = new Array(N * T * F).fill(0);
 const IMPACT: number[][][] = arrayToNDMatrix(arrayIMPACT, [N, F, T]) as number[][][];
-for (let t = 0; t < T; t++) {
-  for (let n = 0; n < N; n++) {
+
+for (let n = 0; n < N; n++) {
+  for (let t = 0; t < T; t++) {
     for (let f = 0; f < F; f++) {
       for (let r = 0; r < R; r++) {
-        IMPACT[n][f][t] += lambda1B[r][1][f][t] / TOTAL[f][t]; // Adjusted for 0-based indexing in TypeScript
+        if(n = (D[r][0] - 1)){
+          IMPACT[n][f][t] += lambda1B[r][0][f][t] / TOTAL[f][t];
+        }
+        if(n = (D[r][1] - 1)){
+          IMPACT[n][f][t] += lambda1B[r][1][f][t] / TOTAL[f][t];
+        } 
       }
     }
   }

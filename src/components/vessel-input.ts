@@ -9,7 +9,7 @@ function createVesselInputs():void{
   vesselNames.forEach((name, id) => {
     const header = vesselHeader(id, name);
     vesselCollapse.appendChild(header);
-    const body = vesselBody(id, vesselData[name]);
+    const body = vesselBody(id, vesselData[id]["sizesHTML"]);
     vesselCollapse.appendChild(body);
   })
 }
@@ -113,7 +113,7 @@ function vesselTypeRow (vesselId: number, typeId: number, typeName: string): HTM
       step="1"
       min="0"
       max="100"
-      value="20"
+      value="0"
       required>
   </td>
   `

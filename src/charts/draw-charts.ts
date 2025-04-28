@@ -1,8 +1,8 @@
 
-import { multipleColumnChart4D } from "./column-chart";
+import { multipleColumnChart4D, multipleColumnChartSizes } from "./column-chart";
 import { multipleLineChart } from "./line-chart";
 
-import { createDataFleet1Lines, createDataFleet2Lines, createDataFleet3Lines, sumPeriodRegionsByVessel } from "./chart-functions";
+import { createDataFleet1Lines, createDataFleet2Lines, createDataFleet3Lines, sumPeriodRegionsByVessel, sumPeriodRegionsBySize } from "./chart-functions";
 
 import {  lineVesselOptions, columnVesselOptions, lineCapacityOptions, 
   columnCapacityOptions, lineProductivityOptions, columnProductivityOptions } from "./chart-options";
@@ -35,8 +35,10 @@ function runFleetVesselsCharts(resultObj: ResultObj) {
 function drawFleetVesselsChart(resultObj: ResultObj): void {
 
   multipleLineChart(resultObj, createDataFleet1Lines, 'vessels_line_chart_div', 'vessels', lineVesselOptions, aggregateHeader);
-  multipleColumnChart4D(resultObj.GAP, sumPeriodRegionsByVessel, 'vessels_gap_chart_div', 'vessels', columnVesselOptions, vesselTypeHeader);
-  multipleColumnChart4D(resultObj.Z1, sumPeriodRegionsByVessel, 'vessels_column_chart_div', 'vessels', columnVesselOptions, vesselTypeHeader);
+  multipleColumnChartSizes(resultObj.GAP, sumPeriodRegionsByVessel, sumPeriodRegionsBySize, 'vessels_gap_chart_div', 'vessels', columnVesselOptions, vesselTypeHeader);
+  multipleColumnChartSizes(resultObj.Z1, sumPeriodRegionsByVessel, sumPeriodRegionsBySize, 'vessels_column_chart_div', 'vessels', columnVesselOptions, vesselTypeHeader);
+  // multipleColumnChart4D(resultObj.GAP, sumPeriodRegionsByVessel, 'vessels_gap_chart_div', 'vessels', columnVesselOptions, vesselTypeHeader);
+  // multipleColumnChart4D(resultObj.Z1, sumPeriodRegionsByVessel, 'vessels_column_chart_div', 'vessels', columnVesselOptions, vesselTypeHeader);
 }
 
 
@@ -53,8 +55,8 @@ function runFleetCapacityCharts(resultObj: ResultObj) {
 function drawFleetCapacityChart(resultObj: ResultObj): void {
 
   multipleLineChart(resultObj, createDataFleet2Lines, 'capacity_line_chart_div', 'capacity', lineCapacityOptions, aggregateHeader);
-  multipleColumnChart4D(resultObj.GAP2, sumPeriodRegionsByVessel, 'capacity_gap_chart_div', 'capacity', columnCapacityOptions, vesselTypeHeader);
-  multipleColumnChart4D(resultObj.Z2, sumPeriodRegionsByVessel, 'capacity_column_chart_div', 'capacity', columnCapacityOptions, vesselTypeHeader);
+  multipleColumnChartSizes(resultObj.GAP2, sumPeriodRegionsByVessel, sumPeriodRegionsBySize, 'capacity_gap_chart_div', 'capacity', columnCapacityOptions, vesselTypeHeader);
+  multipleColumnChartSizes(resultObj.Z2, sumPeriodRegionsByVessel, sumPeriodRegionsBySize, 'capacity_column_chart_div', 'capacity', columnCapacityOptions, vesselTypeHeader);
 }
 
 
@@ -71,8 +73,8 @@ function runFleetProductivityCharts(resultObj: ResultObj) {
 function drawFleetProductivityChart(resultObj: ResultObj): void {
 
   multipleLineChart(resultObj, createDataFleet3Lines, 'productivity_line_chart_div', 'productivity', lineProductivityOptions, aggregateHeader);
-  multipleColumnChart4D(resultObj.GAP3, sumPeriodRegionsByVessel, 'productivity_gap_chart_div', 'productivity', columnProductivityOptions, vesselTypeHeader);
-  multipleColumnChart4D(resultObj.Z3, sumPeriodRegionsByVessel, 'productivity_column_chart_div', 'productivity', columnProductivityOptions, vesselTypeHeader);
+  multipleColumnChartSizes(resultObj.GAP3, sumPeriodRegionsByVessel, sumPeriodRegionsBySize, 'productivity_gap_chart_div', 'productivity', columnProductivityOptions, vesselTypeHeader);
+  multipleColumnChartSizes(resultObj.Z3, sumPeriodRegionsByVessel, sumPeriodRegionsBySize, 'productivity_column_chart_div', 'productivity', columnProductivityOptions, vesselTypeHeader);
 }
 
 const drawChartFunctions: { [prefixId: string]: (resultObj: ResultObj) => void } = {

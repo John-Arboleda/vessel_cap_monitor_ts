@@ -119,7 +119,7 @@ const lineVesselOptions = {
       format: '####',
     },
     vAxis: {
-      title: '10^12 tonnes',
+      title: '10^12  tonnes-miles',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,
@@ -140,7 +140,7 @@ const lineVesselOptions = {
     isStacked: true,
     legend: {position: 'bottom', maxLines: 3},
     vAxis: {
-      title: '10^12 tonnes',
+      title: '10^12  tonnes-miles',
       ticks: 'auto',
       titleTextStyle: {
         italic: false,
