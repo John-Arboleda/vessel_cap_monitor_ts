@@ -191,7 +191,7 @@ async function getDevParams() {
 
 // agep1<-array(rep(c(28,24,23,22,22),S2), dim=c(S2,V)) # Edad para lifecycle regular flota by size
 const arrayAgep1: number[] = new Array(S2).fill([28, 24, 23, 22, 22]).flat(2);
-const agep1: number[][] = arrayToNDMatrix(arrayAgep1, [S2, V]) as number[][];
+const agep1: number[][] = arrayToNDMatrix(arrayAgep1, [V, S2]) as number[][];
 
 // agep2<-c(10,10,10,10,10) # Edad para lifecicle retrofit flota by size
 const agep2: number[] = [10, 10, 10, 10, 10];

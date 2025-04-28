@@ -8,6 +8,7 @@ async function transformData( dataObj = userParams ){
     
   const { goal, eta, rho, beta, PARR,  delta, rang1, rang2, ONES, RF, agep1, agep2} = dataObj;
 
+  console.log("agep1", agep1);
   const devParams = await getDevParams();
   
   const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, lambda1, HF, HN, HD, CAP, U,  
@@ -366,14 +367,16 @@ for (let n = 0; n < N; n++) {
         RF2[v][s][t] = Math.pow(Math.min(0.999, RF[v]), Math.min(1, Math.max(0, t - rang2[v][0]) / Math.max(1, rang2[v][1] - rang2[v][0])));
 
         if(t >= (T2)){
-          if(t - (agep1[s][v] - 1) >= 1){
-            OLD[v][s][t] = NEW[v][s][t - agep1[s][v] - 1] - FIT[v][s][t - agep2[v] - 1];
+          if(t - (agep1[v][s] - 1) >= 1){
+            OLD[v][s][t] = NEW[v][s][t - agep1[v][s] - 1] - FIT[v][s][t - agep2[v] - 1];
           } else {
             OLD[v][s][t] = 0;
           }
           FIT[v][s][t] = RF2[v][s][t] * OLD[v][s][t];
           DEM[v][s][t] = OLD[v][s][t] - FIT[v][s][t];
-          NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2] + DEM[v][s][t]) * delta2[v][s][t];
+          //NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2] + DEM[v][s][t]) * delta2[v][s][t];
+          //NEW[v,s,t] <- (FOREC[t,s,v,3]-FOREC[t-1,s,v,3])*delta2[v,s,t]
+          NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2]) * delta2[v][s][t];
           FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - DEM[v][s][t];
         } else {
           FLEET[v][s][t] = HF[s][v][t];

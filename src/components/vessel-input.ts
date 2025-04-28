@@ -179,8 +179,8 @@ function agep1TypeRow (vesselId: number, typeId: number, typeName: string): HTML
             type="number"
             class="form-control
             static-input"
-            id="input-agep1-${typeId}-${vesselId}"
-            name="input-agep1-${typeId}-${vesselId}"
+            id="input-agep1-${vesselId}-${typeId}"
+            name="input-agep1-${vesselId}-${typeId}"
             step="1"
             min="1"
             max="50"
