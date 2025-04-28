@@ -6,12 +6,12 @@ import { arrayToNDMatrix } from "./linear-alg";
 
 async function transformData( dataObj = userParams ){
     
-  const { goal, eta, rho, beta, PARR,  delta, rang1, rang2 } = dataObj;
+  const { goal, eta, rho, beta, PARR,  delta, rang1, rang2, ONES } = dataObj;
 
   const devParams = await getDevParams();
   
   const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, lambda1, HF, HN, HD, CAP, U, RF, 
-    DIST, MAXD, AVEG, lambda2, M, agep1, agep2, O, D, L, L2, FOREC, factor, year, year2, ONES } = devParams;
+    DIST, MAXD, AVEG, lambda2, M, agep1, agep2, O, D, L, L2, FOREC, factor, year, year2} = devParams;
 
   //  ############# Pre processing ####################
 

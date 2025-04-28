@@ -11,9 +11,12 @@ function createNavEvents(): void{
   navItems.forEach((navItem: Element) => {
     navItem.addEventListener("click", async () => {
 
+      
       const objData = updateObj(objValues);
+      console.log("objData",objData)
 
       const resultObj = await transformData(objData);
+      console.log("resultObj",resultObj)
 
       const mainNavbar = document.getElementById('main-navbar') as HTMLElement;
       const activeLink = mainNavbar.querySelector('.active') as HTMLElement;

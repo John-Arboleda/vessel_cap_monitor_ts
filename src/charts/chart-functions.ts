@@ -23,22 +23,14 @@ function sumPeriod(
     // Iterate over the specified 'vesselKeys'
     for (let v = 0; v < vesselKeys.length; v++) {
       let techKey = vesselKeys[v];
-
-      try{
-        result += dataProp[techKey][sizeKey][t];
-      } catch (error) {
-        console.log(dataProp, techKey, sizeKey, t);
-      }
-      // console.log(dataProp, techKey, sizeKey, t);
-      // Add the value at the specified indices to the result
-      // result += dataProp[techKey][sizeKey][t];
+      result += dataProp[techKey][sizeKey][t];
     }
   }
 
   return Math.round(result * 100) / 100;
 }
 
-function sumDataObj(
+function sumDataObj1(
   dataProp: number[][][],
   vesselKeys: number[] = [0, 1, 2, 3, 4],
   sizeKeys: number[] = [0, 1, 2, 3, 4]
@@ -148,24 +140,48 @@ function createDataFleet3Lines(
   return createDataFleetLines(FLEET3, Z3, regionKeys, vesselKeys, sizeKeys);
 }
 
-function sumPeriodRegions(
+function sumPeriodRegionsByVessel(
   matrix4D: number[][][][], 
   regionKeys: number[],
   vesselKeys: number[] = [0, 1, 2, 3, 4],
   sizeKeys: number[] = [0, 1, 2, 3, 4],
 ){
 
-  const sumN:  number[][] = vesselKeys.map(v => {
+  const sumData:  number[][] = vesselKeys.map(v => {
       return sumDataObj2(matrix4D, regionKeys, [v], sizeKeys);
     })
 
-  const transSumN: number[][] = d3.transpose(sumN);
+  const transSumData: number[][] = d3.transpose(sumData);
 
   const dataArr:  number[][] = [];
 
   for(let t = 0; t < T; t++){
     const year: number = baseYear + t + 1;
-    const dataPeriod:  number[] = [year, ...transSumN[t]];
+    const dataPeriod:  number[] = [year, ...transSumData[t]];
+    dataArr.push(dataPeriod);
+  }
+
+  return dataArr;
+}
+
+function sumPeriodRegionsBySize(
+  matrix4D: number[][][][], 
+  regionKeys: number[],
+  vesselKeys: number[] = [0, 1, 2, 3, 4],
+  sizeKeys: number[] = [0, 1, 2, 3, 4],
+){
+
+  const sumData:  number[][] = sizeKeys.map(s => {
+      return sumDataObj2(matrix4D, regionKeys, vesselKeys, [s]);
+    })
+
+  const transSumData: number[][] = d3.transpose(sumData);
+
+  const dataArr:  number[][] = [];
+
+  for(let t = 0; t < T; t++){
+    const year: number = baseYear + t + 1;
+    const dataPeriod:  number[] = [year, ...transSumData[t]];
     dataArr.push(dataPeriod);
   }
 
@@ -181,7 +197,7 @@ function createGapBySize(
   const sumN: number[][] = [];
 
   vesselKeys.forEach((tech: number) => {
-    sumN.push(sumDataObj(dataProp, [tech], sizeKeys));
+    sumN.push(sumDataObj1(dataProp, [tech], sizeKeys));
   })
 
   const transSumN = d3.transpose(sumN);
@@ -197,4 +213,4 @@ function createGapBySize(
   return dataArr;
 }
 
-export { createDataFleet1Lines, createDataFleet2Lines, createDataFleet3Lines, createGapBySize, sumPeriodRegions }
+export { createDataFleet1Lines, createDataFleet2Lines, createDataFleet3Lines, createGapBySize, sumPeriodRegionsByVessel, sumPeriodRegionsBySize }

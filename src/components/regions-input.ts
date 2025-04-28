@@ -39,6 +39,28 @@ function regionBody(regionId: number): HTMLTableRowElement{
           <tbody class="lh-1 bg-transparent">
 
             <tr>
+              <td class="home">
+                <label>
+                  <small class="form-text text-muted">Activate Region</small>
+                </label>
+              </td>
+              <td class="home">
+                <input 
+                  type="number"
+                  class="form-control
+                  static-input"
+                  id="input-ONES-${regionId}"
+                  name="input-ONES-${regionId}"
+                  step="1"
+                  min="0"
+                  max="1"
+                  value="0"
+                  required
+                >
+              </td>
+            </tr>
+
+            <tr>
               <td scope="row" colspan="2" class="text-center">
                 <label>
                   <small class="form-text text-muted">Exports</small>

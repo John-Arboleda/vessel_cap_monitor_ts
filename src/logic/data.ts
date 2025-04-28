@@ -442,7 +442,8 @@ const vesselData: VesselData = {
         "Capesize", 
         "Panamax", 
         "Handymax", 
-        "Handysize"
+        "Handysize",
+        "None"
     ]
 }
 

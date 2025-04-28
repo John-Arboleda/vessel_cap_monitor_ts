@@ -186,8 +186,7 @@ async function getDevParams() {
         FOREC,
         factor,
         year,
-        year2,
-        ONES
+        year2
     };
 }
 
@@ -251,7 +250,7 @@ const userParams = {
     // agep2,
     rang1,
     rang2,
-    // ONES
+    ONES
 };
 
 export { userParams, getDevParams };

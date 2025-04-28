@@ -28,7 +28,7 @@ validatePayPer();
   const objData = updateObj(userParams);
   console.log(objData);
   const resultObj = await transformData(objData);
-  console.log(resultObj);
+  // console.log(resultObj);
   
   runFleetVesselsCharts(resultObj);
 })();
