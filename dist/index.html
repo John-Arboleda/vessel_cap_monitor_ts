@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <title>Vessel Capacity Monitor</title>
+    <script type="module" crossorigin src="/assets/index-D53e5hkI.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-rF1OhJNV.css">
+  </head>
+
+  <body>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Guardar escenario actual</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="save-description" class="col-form-label">Descripción:</label>
+                <textarea class="form-control" id="save-description"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button id="save-data-button" type="button" class="btn btn-primary" data-bs-dismiss="modal">Guardar
+              Datos</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navbar -->
+    <div id="main-navbar" class="row bg-light mx-0">
+      <div id="logo" class="col-3 d-flex flex-row align-items-center justify-content-center my-1">
+        <!-- <img src="./assets/images/girozeroLogo.jpg" alt="Girozero Logo" /> -->
+        <div class="ps-2 mt-1">
+          <h5 class="mb-0">VESSEL CAPACITY MONITOR</h5>
+        </div>
+      </div>
+      <div class="col mt-2 mb-1 d-flex justify-content-center">
+        <ul class="nav nav-pills flex-row mb-auto">
+
+          <li id="vessels-nav-button" class="navbar-item nav-item mb-1 me-1">
+            <a class="nav-link link-secondary d-flex active">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-leaf" aria-hidden="true"></i></div>
+              <div>Vessels</div>
+            </a>
+          </li>
+
+          <li id="capacity-nav-button" class="navbar-item nav-item mb-1 me-1">
+            <a class="nav-link link-secondary d-flex">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-truck" aria-hidden="true"></i></div>
+              <div>Capacity</div>
+            </a>
+          </li>
+
+          <li id="productivity-nav-button" class="navbar-item nav-item mb-1 me-1">
+            <a class="nav-link link-secondary d-flex">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-truck" aria-hidden="true"></i></div>
+              <div>Productivity</div>
+            </a>
+          </li>
+
+          <li id="scenario-nav-button" class="mb-1" data-bs-toggle="collapse" data-bs-target="#scenario-collapse"
+            aria-expanded="true">
+            <a class="nav-link link-secondary d-flex">
+              <div class="bi me-2 sidebar-icon text-center"><i class="fa fa-archive" aria-hidden="true"></i></div>
+              <div>Scenarios</div>
+            </a>
+          </li>
+          <li>
+            <div class="collapse" id="scenario-collapse">
+              <ul class="nav nav-pills flex-row mb-auto small">
+
+                <li class="nav-item ms-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  <a class="nav-link link-secondary">Guardar Actual</a>
+                </li>
+                <li id="load-scenario-nav-button" class="navbar-item nav-item ms-2">
+                  <a class="nav-link link-secondary">Administrar</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+
+
+    <div id="app" class="container-fluid row m-0 p-0">
+
+      <!-- sidebar -->
+      <div id="sidebar-panel" class="col-3 p-0 overflow-scroll height-100-vh px-2 pb-5">
+
+        <!-- General -->
+
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#general-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">General Parameters</th>
+            </tr>
+          </thead>
+          <tbody class="lh-1 collapse bg-transparent" id="general-collapse">
+
+            <tr>
+              <td scope="row">
+                <label for="input-goal">
+                  <small class="form-text text-muted">AR6 Scenario (WGIII, IIASA)</small>
+                </label>
+              </td>
+              <td class="home">
+                
+                <input type="number" class="form-control static-input" id="input-goal" name="input-goal" value="8" step="1" required>
+                <!-- <select id="input-goal" class="form-select static-input goal" name="input-goal">
+                  <option value="1">C1</option>
+                  <option value="2">C2</option>
+                  <option value="3">C3</option>
+                  <option value="4">C4</option>
+                  <option value="5">C5</option>
+                  <option value="6">C6</option>
+                  <option value="7">C7</option>
+                  <option value="8" selected>C8</option>
+                </select> -->
+              </td>
+            </tr>
+
+            <tr>
+              <td colspan="2">
+                <div class="d-flex justify-content-between">
+                  <label for="input-eta" class="form-label">
+                    <small class="form-text text-muted">Operational productivity enhancement</small>
+                  </label>
+                  <small id="per_input-eta" class="form-text text-muted">0.0</small>
+                </div>
+                <input type="range" class="form-range static-input eta" min="0" max="1" step="0.01" value="0.0"
+                  id="input-eta">
+        
+              </td>
+            </tr>
+
+            <tr>
+              <td colspan="2">
+                <div class="d-flex justify-content-between">
+                  <label for="input-rho" class="form-label">
+                    <small class="form-text text-muted">Capacity efficiency improvement</small>
+                  </label>
+                  <small id="per_input-rho" class="form-text text-muted">0.0</small>
+                </div>
+                <input type="range" class="form-range static-input rho" min="0" max="0.3" step="0.01" value="0.0"
+                  id="input-rho">
+        
+              </td>
+            </tr>
+
+            <tr>
+              <td colspan="2">
+                <div class="d-flex justify-content-between">
+                  <label for="input-alpha" class="form-label">
+                    <small class="form-text text-muted">Effect of economic shock</small>
+                  </label>
+                  <small id="per_input-alpha" class="form-text text-muted">0.5</small>
+                </div>
+                <input type="range" class="form-range static-input alpha" min="-1" max="1" step="0.01" value="0.5"
+                  id="input-alpha">
+        
+              </td>
+            </tr>
+
+            <tr>
+              <td scope="row">
+                <label for="input-PARN-0">
+                  <small class="form-text text-muted">Start of the shock</small>
+                </label>
+              </td>
+              <td class="home">
+                <!-- TODO start must be lower than end -->
+                <input type="number" class="form-control static-input year" id="input-PARN-0" name="input-PARN-0" value="2025" min="2025" max="2050" step="1" required>
+              </td>
+            </tr>
+  
+            <tr>
+              <td scope="row">
+                <label for="input-PARN-1">
+                  <small class="form-text text-muted">End of the shock</small>
+                </label>
+              </td>
+              <td class="home">
+                <input type="number" class="form-control static-input year" id="input-PARN-1" name="input-PARN-1" value="2050" min="2025" max="2050" step="1" required>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- Vessel -->
+
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#vessel-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Vessel Parameters</th>
+            </tr>
+          </thead>
+          <tbody class="lh-1 collapse bg-transparent" id="vessel-collapse">
+
+            <!-- Vessel inputs -->
+            
+          </tbody>
+        </table>
+
+        <!-- Regions -->
+
+        <table class="table table-bordered table table-hover align-middle my-4">
+          <thead class="collapsed bg-transparent cursor-pointer" data-bs-toggle="collapse" data-bs-target="#region-collapse"
+            aria-expanded="false">
+            <tr>
+              <th colspan="2" class="text-center table-header">Region Parameters</th>
+            </tr>
+          </thead>
+
+          <tbody class="lh-1 collapse bg-transparent" id="region-collapse">
+          
+            <!-- Region inputs -->
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- main -->
+      <div id="main-panel" class="col height-100-vh pb-5">
+
+        <div id="vessels-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3">
+          <div>
+
+            <ul id="vessels-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+              <li class="nav-item">
+                <select id="vessels_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                  <option value="01234" selected>All products</option>
+                  <option value="0">Crude Tanker</option>
+                  <option value="1">Product Tanker</option>
+                  <option value="2">LNG</option>
+                  <option value="3">LPG</option>
+                  <option value="4">Bulker</option> 
+                </select>
+              </li>
+              <li class="nav-item mx-4">
+                <select id="vessels_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                  <option value="01234" selected>All sizes</option>
+                  <option value="0">Size 1</option>
+                  <option value="1">Size 2</option>
+                  <option value="2">Size 3</option>
+                  <option value="3">Size 4</option>
+                  <option value="4">Size 5</option> 
+                </select>
+              </li>
+              
+              <li class="nav-item me-4">
+                <select id="vessels_select_region_origin" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                </select>
+              </li>
+              <li class="nav-item me-4">
+                <select id="vessels_select_region_dest" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                </select>
+              </li>
+              <li class="nav-item">
+                <button id="vessels_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Percentage</button>
+              </li>
+            </ul>
+            
+            <div class="container px-0">
+              <div class="mb-4">
+                <div class="alert alert-light text-justify mx-1" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Shipping evolution: required demand vs capacity supply</h5>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="vessels_line_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <div class="alert alert-light text-justify mx-1" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Stranded shipping supply</h5>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="vessels_gap_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <div class="alert alert-light text-justify mx-1" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Required demand breakdown</h5>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="vessels_column_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div id="capacity-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+          <div>
+
+            <ul id="capacity-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+              <li class="nav-item">
+                <select id="capacity_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                  <option value="01234" selected>All products</option>
+                  <option value="0">Crude Tanker</option>
+                  <option value="1">Product Tanker</option>
+                  <option value="2">LNG</option>
+                  <option value="3">LPG</option>
+                  <option value="4">Bulker</option> 
+                </select>
+              </li>
+              <li class="nav-item mx-4">
+                <select id="capacity_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                  <option value="01234" selected>All sizes</option>
+                  <option value="0">Size 1</option>
+                  <option value="1">Size 2</option>
+                  <option value="2">Size 3</option>
+                  <option value="3">Size 4</option>
+                  <option value="4">Size 5</option> 
+                </select>
+              </li>
+              <li class="nav-item me-4">
+                <select id="capacity_select_region_origin" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                </select>
+              </li>
+              <li class="nav-item me-4">
+                <select id="capacity_select_region_dest" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                </select>
+              </li>
+              <li class="nav-item">
+                <button id="capacity_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Percentage</button>
+              </li>
+            </ul>
+
+            <div class="container px-0">
+
+              <div class="mb-4">
+                <div class="alert alert-light text-justify" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Shipping evolution: required demand vs capacity supply</h5>
+                </div>
+
+                <div class="row justify-content-md-center mx-1">
+                  <div id="capacity_line_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <div class="alert alert-light text-justify" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Stranded shipping supply</h5>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="capacity_gap_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <div class="alert alert-light text-justify" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Required demand breakdown</h5>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="capacity_column_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="productivity-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+          <div>
+
+            <ul id="productivity-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+              <li class="nav-item">
+                <select id="productivity_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                  <option value="01234" selected>All products</option>
+                  <option value="0">Crude Tanker</option>
+                  <option value="1">Product Tanker</option>
+                  <option value="2">LNG</option>
+                  <option value="3">LPG</option>
+                  <option value="4">Bulker</option> 
+                </select>
+              </li>
+              <li class="nav-item mx-4">
+                <select id="productivity_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                  <option value="01234" selected>All sizes</option>
+                  <option value="0">Size 1</option>
+                  <option value="1">Size 2</option>
+                  <option value="2">Size 3</option>
+                  <option value="3">Size 4</option>
+                  <option value="4">Size 5</option> 
+                </select>
+              </li>
+              <li class="nav-item me-4">
+                <select id="productivity_select_region_origin" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                </select>
+              </li>
+              <li class="nav-item me-4">
+                <select id="productivity_select_region_dest" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                </select>
+              </li>
+              <li class="nav-item">
+                <button id="productivity_percent_button" class="btn btn-persian-green flex-sm-fill text-sm-center m-2">Percentage</button>
+              </li>
+            </ul>
+
+            <div class="container px-0">
+
+              <div class="mb-4">
+                <div class="alert alert-light text-justify" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Shipping evolution: required demand vs capacity supply</h5>
+                </div>
+
+                <div class="row justify-content-md-center mx-1">
+                  <div id="productivity_line_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <div class="alert alert-light text-justify" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Stranded shipping supply</h5>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="productivity_gap_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <div class="alert alert-light text-justify" role="alert">
+                  <h5 class="text-persian-green fw-bold mb-0">Required demand breakdown</h5>
+                </div>
+                <div class="row justify-content-md-center mx-1">
+                  <div id="productivity_column_chart_div" class="chart-content col-lg-12"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="load-scenario-panel" class="panel m-md-4 p-4 border border-persian-green rounded-3 d-none">
+          <div>
+            <div class="mb-2">
+              <h3 class="text-tropical fw-bold">Manage Scenarios</h3>
+            </div>
+
+            <div class="col-12 mt-3 pt-4">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th colspan="8" class="text-center text-persian-green border-top border-persian-green">Saved
+                      Scenarios</th>
+                  </tr>
+                  <tr>
+                    <th scope="col" class="text-persian-green">#</th>
+                    <th scope="col" colspan="4" class="text-persian-green">
+                      Description
+                    </th>
+                    <th scope="col" class="text-persian-green">
+                      Date
+                    </th>
+                    <th scope="col" class="text-persian-green">
+                      Load
+                    </th>
+                    <th scope="col" class="text-persian-green">
+                      Delete
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="scenario-table-body">
+
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </body>
+
+</html>

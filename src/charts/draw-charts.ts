@@ -1,8 +1,9 @@
 
-import { multipleColumnChart4D, multipleColumnChartSizes } from "./column-chart";
+import { multipleColumnChartSizes } from "./column-chart";
 import { multipleLineChart } from "./line-chart";
 
-import { createDataFleet1Lines, createDataFleet2Lines, createDataFleet3Lines, sumPeriodRegionsByVessel, sumPeriodRegionsBySize } from "./chart-functions";
+import { createDataFleet1Lines, createDataFleet2Lines, createDataFleet3Lines, sumPeriodRegionsByVessel,
+   sumPeriodRegionsBySize } from "./chart-functions";
 
 import {  lineVesselOptions, columnVesselOptions, lineCapacityOptions, 
   columnCapacityOptions, lineProductivityOptions, columnProductivityOptions } from "./chart-options";
