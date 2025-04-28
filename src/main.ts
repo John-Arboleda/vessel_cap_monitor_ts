@@ -10,6 +10,7 @@ import { drawChartsOnInput, updateObj } from "./update";
 
 import { createRegionInputs } from "./components/regions-input";
 import { createVesselInputs } from "./components/vessel-input";
+import { createRetrofitInputs } from "./components/retrofit-input";
 import { userParams } from "./logic/parameters";
 // import { updateObj } from "./update";
 import { transformData } from "./logic/functions";
@@ -17,6 +18,7 @@ import { getDevParams } from "./logic/parameters";
 
 createRegionInputs();
 createVesselInputs();
+createRetrofitInputs();
 displayRangeValue();
 drawChartsOnInput();
 validatePayPer();

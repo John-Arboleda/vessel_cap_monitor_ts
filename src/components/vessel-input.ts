@@ -50,46 +50,51 @@ function vesselBody(vesselId: number, vesselTypes: string[]): HTMLTableRowElemen
   td.appendChild(innerTable);
   bigRow.appendChild(td);
 
-  const rfRow = document.createElement('TR');
-  rfRow.innerHTML = `
-    <td colspan="2">
-      <div class="d-flex justify-content-between">
-        <label for="input-RF-${vesselId}" class="form-label">
-          <small class="form-text text-muted">RF</small>
-        </label>
-        <small id="per_input-RF-${vesselId}" class="form-text text-muted">0.0</small>
-      </div>
-      <input 
-        id="input-RF-${vesselId}" 
-        type="range" 
-        class="form-range 
-        static-input" 
-        min="0" 
-        max="1" 
-        step="0.01" 
-        value="0.0"
-      >
-      <div class="input-RF-${vesselId}_legend d-flex justify-content-between">
-        <small class="text-muted">0</small>
-        <small class="text-muted">1</small>
-      </div>
-    </td>
-  `;
-
   const typeHeaderRow = document.createElement('TR');
   typeHeaderRow.innerHTML = `
-    <td scope="row" colspan="2" class="text-center">
+    <td scope="row" colspan="3" class="text-center">
       <label>
         <small class="form-text text-muted">Total percentage reduction of the ship orderbook</small>
       </label>
     </td>
   `;
-  
-  tbody.appendChild(rfRow);
+
   tbody.appendChild(typeHeaderRow);
 
   vesselTypes.forEach((type, typeId) => {
     const typeRow = vesselTypeRow(vesselId, typeId, type);
+    tbody.appendChild(typeRow);
+  });
+
+  const agep1HeaderRow = document.createElement('TR');
+  agep1HeaderRow.innerHTML = `
+    <td scope="row" colspan="3" class="text-center">
+      <label>
+        <small class="form-text text-muted">New vessels lifecycle</small>
+      </label>
+    </td>
+  `;
+
+  tbody.appendChild(agep1HeaderRow);
+
+  vesselTypes.forEach((type, typeId) => {
+    const typeRow = rang1TypeRow(vesselId, typeId, type);
+    tbody.appendChild(typeRow);
+  });
+
+  const rang1HeaderRow = document.createElement('TR');
+  rang1HeaderRow.innerHTML = `
+    <td scope="row" colspan="3" class="text-center">
+      <label>
+        <small class="form-text text-muted">Timeframe for gradual ship orderbook reduction</small>
+      </label>
+    </td>
+  `;
+
+  tbody.appendChild(rang1HeaderRow);
+
+  vesselTypes.forEach((type, typeId) => {
+    const typeRow = agep1TypeRow(vesselId, typeId, type);
     tbody.appendChild(typeRow);
   });
 
@@ -99,7 +104,7 @@ function vesselBody(vesselId: number, vesselTypes: string[]): HTMLTableRowElemen
 function vesselTypeRow (vesselId: number, typeId: number, typeName: string): HTMLTableRowElement {
   const row = document.createElement('TR') as HTMLTableRowElement;
   row.innerHTML = `
-  <td>
+  <td colspan="2">
     <label>
       <small class="form-text text-muted">${typeName}</small>
     </label>
@@ -117,6 +122,74 @@ function vesselTypeRow (vesselId: number, typeId: number, typeName: string): HTM
       required>
   </td>
   `
+  return row;
+}
+
+function rang1TypeRow (vesselId: number, typeId: number, typeName: string): HTMLTableRowElement {
+  const row = document.createElement('TR') as HTMLTableRowElement;
+  row.innerHTML = `
+    <td class="home">
+        <label>
+            <small class="form-text text-muted">${typeName}</small>
+        </label>
+    </td>
+    <td class="home">
+        <input 
+            type="number"
+            class="form-control
+            static-input year"
+            id="input-rang1-${vesselId}-${typeId}-0"
+            name="input-rang1-${vesselId}-${typeId}-0"
+            step="1"
+            min="2025"
+            max="2050"
+            value="2030"
+            required
+        >
+    </td>
+    <td class="home">
+        <input 
+            type="number"
+            class="form-control
+            static-input year"
+            id="input-rang1-${vesselId}-${typeId}-1"
+            name="input-rang1-${vesselId}-${typeId}-1"
+            step="1"
+            min="2026"
+            max="2050"
+            value="2050"
+            required
+        >
+    </td>
+  `
+
+  return row;
+}
+
+function agep1TypeRow (vesselId: number, typeId: number, typeName: string): HTMLTableRowElement {
+  const row = document.createElement('TR') as HTMLTableRowElement;
+  row.innerHTML = `
+    <td class="home" colspan="2">
+        <label>
+            <small class="form-text text-muted">${typeName}</small>
+        </label>
+    </td>
+    <td class="home">
+        <input 
+            type="number"
+            class="form-control
+            static-input"
+            id="input-agep1-${typeId}-${vesselId}"
+            name="input-agep1-${typeId}-${vesselId}"
+            step="1"
+            min="1"
+            max="50"
+            value="20"
+            required
+        >
+    </td>
+  `
+
   return row;
 }
 
