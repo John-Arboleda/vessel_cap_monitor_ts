@@ -374,9 +374,9 @@ for (let n = 0; n < N; n++) {
           }
           FIT[v][s][t] = RF2[v][s][t] * OLD[v][s][t];
           DEM[v][s][t] = OLD[v][s][t] - FIT[v][s][t];
-          //NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2] + DEM[v][s][t]) * delta2[v][s][t];
+          NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2] + DEM[v][s][t]) * delta2[v][s][t];
           //NEW[v,s,t] <- (FOREC[t,s,v,3]-FOREC[t-1,s,v,3])*delta2[v,s,t]
-          NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2]) * delta2[v][s][t];
+          //NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2]) * delta2[v][s][t];
           FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - DEM[v][s][t];
         } else {
           FLEET[v][s][t] = HF[s][v][t];
