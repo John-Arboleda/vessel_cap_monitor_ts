@@ -142,6 +142,12 @@ body {
   color: var(--tropical-rain-forest);
 }
 
+#vessels-result-navbar .nav-item,
+#capacity-result-navbar .nav-item,
+#productivity-result-navbar .nav-item {
+  max-width: 180px;
+}
+
 /* Charts */
 
 .chart-content {

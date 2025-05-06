@@ -60,6 +60,7 @@ function multipleLineChart(
   selectSize.addEventListener('change', updateDataChart);
   origin_select.addEventListener('change', updateDataChart);
   destination_select .addEventListener('change', updateDataChart);
+  window.addEventListener('resize', updateDataChart);
 
   chart.draw(data, options);
 }

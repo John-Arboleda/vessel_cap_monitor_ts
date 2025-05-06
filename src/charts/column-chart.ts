@@ -211,7 +211,16 @@ function multipleColumnChartSizes(
 
   let { percentText, vesselKeys, sizeKeys, routesKeys } = resultNavbarState(navPrefix);
 
-  let data = createDataTable3(dataObj, vesselFunction, vesselHeader, routesKeys, vesselKeys, sizeKeys);
+  // let data = createDataTable3(dataObj, vesselFunction, vesselHeader, routesKeys, vesselKeys, sizeKeys);
+  let data: any
+
+  if (vesselKeys.length > 1){
+    data = createDataTable3(dataObj, vesselFunction, vesselHeader, routesKeys, vesselKeys, sizeKeys);
+  } else {
+    const vesselSizes: string[] = vesselData[vesselKeys[0]]["sizes"]
+    const sizeHeader: string[] = ['Year', ...vesselSizes]
+    data = createDataTable4(dataObj, sizeFunction, sizeHeader, routesKeys, vesselKeys, sizeKeys);
+  }
 
   const container = document.getElementById(elementId) as HTMLElement;
 
@@ -255,6 +264,7 @@ function multipleColumnChartSizes(
   select_size.addEventListener('change', updateDataChart);
   origin_select.addEventListener('change', updateDataChart);
   destination_select .addEventListener('change', updateDataChart);
+  window.addEventListener('resize', updateDataChart);
 
   chart.draw(data, options);
 }

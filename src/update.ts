@@ -1,7 +1,5 @@
 import { getStaticInputValues, setStaticValues, setStaticObjValues, setStaticInputValues } from "./components/static-inputs";
 import { drawChartFunctions } from "./charts/draw-charts";
-// import { transformData } from "./functions";
-// import { defaultValues } from "./data";
 
 import { userParams } from "./logic/parameters";
 import { transformData } from "./logic/functions";
