@@ -404,7 +404,7 @@ const routesData = [
 ]
 
 interface VesselData {
-    [key: number]: {
+    [key: string]: {
         type: string, 
         sizes: string[]
         sizesHTML: string[]    
@@ -412,7 +412,7 @@ interface VesselData {
 }
 
 const vesselData: VesselData = {
-    0: {
+    "0": {
         type: "Crude Tanker",
         sizes: [
             "VLCC", 
@@ -429,7 +429,7 @@ const vesselData: VesselData = {
             "Handysize"
         ]
     },
-    1: {
+    "1": {
         type: "Product Tanker",
         sizes: [
             "Suezmax", 
@@ -446,7 +446,7 @@ const vesselData: VesselData = {
             "Small",
         ],
     },
-    2: {
+    "2": {
         type: "LNG",
         sizes: [
             "<40K m3", 
@@ -463,7 +463,7 @@ const vesselData: VesselData = {
             ">140,000 m<sup>3</sup>"
         ]
     },
-    3: {
+    "3": {
         type: "LPG",
         sizes: [
             "<5,000 m3", 
@@ -480,7 +480,7 @@ const vesselData: VesselData = {
             "65,000+ m<sup>3</sup>" 
         ]
     },
-    4: {
+    "4": {
         type: "Bulker",
         sizes: [
             "Capesize", 
