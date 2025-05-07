@@ -7,8 +7,8 @@
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <title>Vessel Capacity Monitor</title>
-    <script type="module" crossorigin src="/assets/index-_X0-fhlG.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-rF1OhJNV.css">
+    <script type="module" crossorigin src="/assets/index-BX7bN9WT.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Burnramo.css">
   </head>
 
   <body>
@@ -161,7 +161,7 @@
               </td>
             </tr>
 
-            <tr>
+            <!-- <tr>
               <td colspan="2">
                 <div class="d-flex justify-content-between">
                   <label for="input-alpha" class="form-label">
@@ -173,21 +173,20 @@
                   id="input-alpha">
         
               </td>
-            </tr>
+            </tr> -->
 
-            <tr>
+            <!-- <tr>
               <td scope="row">
                 <label for="input-PARN-0">
                   <small class="form-text text-muted">Start of the shock</small>
                 </label>
               </td>
               <td class="home">
-                <!-- TODO start must be lower than end -->
                 <input type="number" class="form-control static-input year" id="input-PARN-0" name="input-PARN-0" value="2025" min="2025" max="2050" step="1" required>
               </td>
-            </tr>
+            </tr> -->
   
-            <tr>
+            <!-- <tr>
               <td scope="row">
                 <label for="input-PARN-1">
                   <small class="form-text text-muted">End of the shock</small>
@@ -195,7 +194,7 @@
               </td>
               <td class="home">
                 <input type="number" class="form-control static-input year" id="input-PARN-1" name="input-PARN-1" value="2050" min="2025" max="2050" step="1" required>
-              </td>
+              </td> -->
             </tr>
 
           </tbody>
@@ -257,9 +256,9 @@
         <div id="vessels-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3">
           <div>
 
-            <ul id="vessels-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
+            <ul id="vessels-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3 flex-nowrap">
               <li class="nav-item">
-                <select id="vessels_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                <select id="vessels_select_vessel" class="form-select flex-sm-fill text-sm-center m-2 vessels-select" aria-label="technology select">
                   <option value="01234" selected>All products</option>
                   <option value="0">Crude Tanker</option>
                   <option value="1">Product Tanker</option>
@@ -269,7 +268,7 @@
                 </select>
               </li>
               <li class="nav-item mx-4">
-                <select id="vessels_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                <select id="vessels_select_size" class="form-select flex-sm-fill text-sm-center m-2 size-select" aria-label="vehicle type select">
                   <option value="01234" selected>All sizes</option>
                   <option value="0">Size 1</option>
                   <option value="1">Size 2</option>
@@ -324,12 +323,12 @@
           </div>
         </div>
 
-        <div id="capacity-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+        <div id="capacity-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 flex-nowrap d-none">
           <div>
 
             <ul id="capacity-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
               <li class="nav-item">
-                <select id="capacity_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                <select id="capacity_select_vessel" class="form-select flex-sm-fill text-sm-center m-2 vessels-select" aria-label="technology select">
                   <option value="01234" selected>All products</option>
                   <option value="0">Crude Tanker</option>
                   <option value="1">Product Tanker</option>
@@ -339,7 +338,7 @@
                 </select>
               </li>
               <li class="nav-item mx-4">
-                <select id="capacity_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                <select id="capacity_select_size" class="form-select flex-sm-fill text-sm-center m-2 size-select" aria-label="vehicle type select">
                   <option value="01234" selected>All sizes</option>
                   <option value="0">Size 1</option>
                   <option value="1">Size 2</option>
@@ -394,12 +393,12 @@
           </div>
         </div>
 
-        <div id="productivity-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 d-none">
+        <div id="productivity-panel" class="panel m-md-4 p-4 mb-4 border border-persian-green rounded-3 flex-nowrap d-none">
           <div>
 
             <ul id="productivity-result-navbar" class="nav nav-pills flex-column flex-sm-row justify-content-center bg-persian-green-light mb-3">
               <li class="nav-item">
-                <select id="productivity_select_vessel" class="form-select flex-sm-fill text-sm-center m-2" aria-label="technology select">
+                <select id="productivity_select_vessel" class="form-select flex-sm-fill text-sm-center m-2 vessels-select" aria-label="technology select">
                   <option value="01234" selected>All products</option>
                   <option value="0">Crude Tanker</option>
                   <option value="1">Product Tanker</option>
@@ -409,7 +408,7 @@
                 </select>
               </li>
               <li class="nav-item mx-4">
-                <select id="productivity_select_size" class="form-select flex-sm-fill text-sm-center m-2" aria-label="vehicle type select">
+                <select id="productivity_select_size" class="form-select flex-sm-fill text-sm-center m-2 size-select" aria-label="vehicle type select">
                   <option value="01234" selected>All sizes</option>
                   <option value="0">Size 1</option>
                   <option value="1">Size 2</option>
