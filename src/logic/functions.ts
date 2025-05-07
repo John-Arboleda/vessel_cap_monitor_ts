@@ -6,13 +6,13 @@ import { arrayToNDMatrix } from "./linear-alg";
 
 async function transformData( dataObj = userParams ){
     
-  const { goal, eta, rho, beta, PARR,  delta, rang1, rang2, ONES, RF, agep1, agep2} = dataObj;
+  const { goal, eta, rho, beta, PARR,  delta, rang1, rang2, ONES, RF, agep1, agep2 } = dataObj;
 
-  console.log("agep1", agep1);
+  // console.log("agep1", agep1);
   const devParams = await getDevParams();
   
   const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, lambda1, HF, HN, HD, CAP, U,  
-    DIST, MAXD, AVEG, lambda2, M, O, D, L, L2, FOREC, factor, year, year2} = devParams;
+    DIST, MAXD, AVEG, lambda2, M, O, D, L, L2, FOREC, factor, year, year2,  init1 } = devParams;
 
   //  ############# Pre processing ####################
 
@@ -89,38 +89,6 @@ async function transformData( dataObj = userParams ){
     }
   }
 
-  // IMPACT<-array(rep(0,N*F*T), dim=c(N,F,T))
-  // for (n in 1:N){
-  //   for (t in 1:T){
-  //     for (f in 1:F){
-  //   for (r in 1:R){
-      
-  //     if(n==D[r,1]){
-  // IMPACT[n,f,t]<-IMPACT[n,f,t]+(lambda1B[r,1,f,t])/TOTAL[f,t]
-  //     }
-  
-  // if(n==D[r,2]){
-  //       IMPACT[n,f,t]<-IMPACT[n,f,t]+(lambda1B[r,2,f,t])/TOTAL[f,t]
-  // }
-  // }}}}
-const arrayIMPACT: number[] = new Array(N * T * F).fill(0);
-const IMPACT: number[][][] = arrayToNDMatrix(arrayIMPACT, [N, F, T]) as number[][][];
-
-for (let n = 0; n < N; n++) {
-  for (let t = 0; t < T; t++) {
-    for (let f = 0; f < F; f++) {
-      for (let r = 0; r < R; r++) {
-        if(n = (D[r][0] - 1)){
-          IMPACT[n][f][t] += lambda1B[r][0][f][t] / TOTAL[f][t];
-        }
-        if(n = (D[r][1] - 1)){
-          IMPACT[n][f][t] += lambda1B[r][1][f][t] / TOTAL[f][t];
-        } 
-      }
-    }
-  }
-}
-
 
   // ######Demand equations###################
 
@@ -145,40 +113,63 @@ for (let n = 0; n < N; n++) {
     }
   }
 
+  // eta1<-array(rep(0,T), dim=c(T))
+  // for (t in 1:T){
+  // eta1[t]<-(1+eta)^((t-T2)/(T-T2))-1
+  //   }  
+
+
+  const eta1: number[] = new Array(T).fill(0);
+  for (let t = 0; t < T; t++) {
+    eta1[t] = (1 + eta) ** ((t + 1 - T2) / (T - T2)) - 1; // Adjusted for zero-based indexing
+  }
+
   // Y<-array(rep(1,R*W*V*S2*T), dim=c(R,W,V,S2,T))
   const arrayY: number[] = new Array(R * W * V * S2 * T).fill(1);
   const Y: number[][][][][] = arrayToNDMatrix(arrayY, [R, W, V, S2, T]) as number[][][][][];
 
   // TRIP<-array(rep(0,R*W*V*S2), dim=c(R,W,V,S2))
-  const arrayTRIP: number[] = new Array(R * W * V * S2).fill(0);
-  const TRIP: number[][][][] = arrayToNDMatrix(arrayTRIP, [R, W, V, S2]) as number[][][][];
+  const arrayTRIP: number[] = new Array(R * W * V * S2 * T).fill(0);
+  const TRIP: number[][][][][] = arrayToNDMatrix(arrayTRIP, [R, W, V, S2, T]) as number[][][][][];
 
   // for (r in 1:R){
   //   for (w in 1:W){
   //     for (v in 1:V){
   //       for (s in 1:S[v]){
           
-  //         TRIP[r,w,v,s]<-(eta*UB[r,w,v,s]+(1-eta)*LB[r,w,v,s])
+  //         for (t in 1:T){
+  //           if(t<=T2){
+  //             TRIP[r,w,v,s,t]<-LB[r,w,v,s]
+  //             }else{
+  //             TRIP[r,w,v,s,t]<-(eta1[t]*max(LB[r,w,v,s],UB[r,w,v,s]/2)+(1-eta1[t])*LB[r,w,v,s])
+  //             }}
           
   //         for (t in 1:T){
-            
-  //           if(t<=T2){Y[r,w,v,s,t]<-CAP[s,v,ind]*U[v,r,1]*TRIP[r,w,v,s]}
+  //           if(t<=T2){
+  //             Y[r,w,v,s,t]<-CAP[s,v,ind]*U[v,r,1]*TRIP[r,w,v,s,t]}
   //           else{
-              
-  //             Y[r,w,v,s,t]<-CAP[s,v,ind]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*TRIP[r,w,v,s]
-  //           }
-            
-  //         }}}}}
-  for (let r = 0; r < R; r++){
-    for (let w = 0; w < W; w++){
-      for (let v = 0; v < V; v++){
-        for (let s = 0; s < S[v]; s++){
-          TRIP[r][w][v][s] = (eta * UB[r][w][v][s] + (1 - eta) * LB[r][w][v][s]);
-          for (let t = 0; t < T; t++){
-            if(t < T2){ // T2 = 29, 28th index in js
-              Y[r][w][v][s][t] = CAP[s][v][ind - 1] * U[v][r][0] * TRIP[r][w][v][s];
+  //             Y[r,w,v,s,t]<-CAP[s,v,ind]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*TRIP[r,w,v,s,t]
+  //           }}
+          
+  //         }}}}
+  for (let r = 0; r < R; r++) {
+    for (let w = 0; w < W; w++) {
+      for (let v = 0; v < V; v++) {
+        for (let s = 0; s < S[v]; s++) {
+          for (let t = 0; t < T; t++) {
+            if (t + 1 <= T2) {
+              TRIP[r][w][v][s][t] = LB[r][w][v][s];
             } else {
-              Y[r][w][v][s][t] = CAP[s][v][ind - 1] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * TRIP[r][w][v][s];
+              TRIP[r][w][v][s][t] = (eta1[t] * Math.max(LB[r][w][v][s], UB[r][w][v][s] / 2) +
+                (1 - eta1[t]) * LB[r][w][v][s]);
+            }
+          }
+
+          for (let t = 0; t < T; t++) {
+            if (t + 1 <= T2) {
+              Y[r][w][v][s][t] = CAP[s][v][ind - 1] * U[v][r][0] * TRIP[r][w][v][s][t];
+            } else {
+              Y[r][w][v][s][t] = CAP[s][v][ind - 1] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * TRIP[r][w][v][s][t];
             }
           }
         }
@@ -213,27 +204,28 @@ for (let n = 0; n < N; n++) {
   //         Z2[r,v,s,t]<-Z1[r,v,s,t]*CAP[s,v,1]/10^6
   //         Z3[r,v,s,t]<-Z2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/(L[s,v,t]*1.852*10^6)
   //       }}}}
-  for (let v = 0; v < V; v++){
-    for (let s = 0; s < S[v]; s++){
-      for (let t = 0; t < T; t++){
-        for (let r = 0; r < R; r++){
-          for (let f = 0; f < F; f++){
-            if(v === V2[f] - 1){ // V2 is 1-based in R
-              Z1[r][v][s][t] += factor[goal - 1][t] * (1 - ONES[O[r][1] - 1] * IMPACT[O[r][1] - 1][f][t]) *
-                Math.ceil(lambda2[r][year2 - 1][s][v] * 
-                Math.max(Q[r][0][f][t] / Y[r][0][v][s][t], Q[r][1][f][t] / Y[r][1][v][s][t]) * (1 + (M[v] / 100)));
+  for (let v = 0; v < V; v++) {
+    for (let s = 0; s < S[v]; s++) {
+      for (let t = 0; t < T; t++) {
+        for (let r = 0; r < R; r++) {
+          for (let f = 0; f < F; f++) {
+            if (v === V2[f] - 1) {
+              Z1[r][v][s][t] += (ONES[O[r][1] - 1] + factor[goal - 1][t] * (1 - ONES[O[r][1] - 1])) *
+                Math.ceil(lambda2[r][year2 - 1][s][v] * Math.max(Q[r][0][f][t] / Y[r][0][v][s][t], Q[r][1][f][t] / Y[r][1][v][s][t]) * (1 + (M[v] / 100)));
+              // Z2[r,v,s,t] += (Q[r,1,f,t] + Q[r,2,f,t]) * lambda2[r,year2,s,v]; // Uncomment if needed
             }
           }
+
           Z1[r][v][s][t] = Z1[r][v][s][t] * L[s][v][t];
           Z2[r][v][s][t] = Z1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
-          Z3[r][v][s][t] = Z2[r][v][s][t] * 
-            ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * 
-            (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / (L[s][v][t] * 1.852 * Math.pow(10, 6));
+          Z3[r][v][s][t] = Z2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) *
+            (TRIP[r][0][v][s][t] * DIST[r][0] + TRIP[r][1][v][s][t] * DIST[r][1]) /
+            (L[s][v][t] * 1.852 * Math.pow(10, 6));
         }
       }
     }
   }
-
+  
   // ZC<-array(rep(0,V*S2*T), dim=c(V,S2,T))
   const arrayZC: number[] = new Array(V * S2 * T).fill(0);
   const ZC: number[][][] = arrayToNDMatrix(arrayZC, [V, S2, T]) as number[][][];
@@ -321,26 +313,38 @@ for (let n = 0; n < N; n++) {
   const arrayGAP3: number[] = new Array(R * V * S2 * T).fill(0);
   const GAP3: number[][][][] = arrayToNDMatrix(arrayGAP3, [R, V, S2, T]) as number[][][][];
 
+  // INV1<-array(rep(0,V*S2*T), dim=c(V,S2,T))
+  const arrayINV1: number[] = new Array(V * S2 * T).fill(0);
+  const INV1: number[][][] = arrayToNDMatrix(arrayINV1, [V, S2, T]) as number[][][];
+
   // for(v in 1:V){
   //   for(s in 1:S[v]){
   //     for(t in 1:T){
   //       #decreciente
-  //       delta2[v,s,t]<-(1-min(0.999,delta[v,s]))^(min(1,(max(0,t-rang1[v,s,1])/max(1,rang1[v,s,2]-rang1[v,s,1]))))
+  //       delta2[v,s,t]<-1-(1-delta[v,s])^(min(1,(max(0,t-rang1[v,s,1])/max(1,rang1[v,s,2]-rang1[v,s,1]))))
   //       #Creciente
-  //       RF2[v,s,t]<- min(0.999,RF[v,s])^(min(1,(max(0,t-rang2[v,s,1])/max(1,rang2[v,s,2]-rang2[v,s,1]))))
+  //       RF2[v,s,t]<-(1+RF[v])^(min(1,(max(0,t-rang2[v,1])/max(1,rang2[v,2]-rang2[v,1]))))-1
+        
+  //       for(t2 in agep1[s,v]:init1[s,v]){
+  //         if(t-t2>0 && agep1[s,v]<init1[s,v]){        
+  //           INV1[v,s,t]<-INV1[v,s,t]+NEW[v,s,t-t2]
+  //         }}
         
   //       if(t>=(T2+1)){
           
-  //         if(t-agep1[s]>=1){
-  //           OLD[v,s,t]<-NEW[v,s,t-agep1[s]]-FIT[v,s,t-agep2[s]]
+  //         if(t-agep1[s,v]>=1){
+  //           OLD[v,s,t]<-NEW[v,s,t-agep1[s,v]]-FIT[v,s,t-agep2[v]]+round(INV1[v,s,t]*(1/(T-T2)))
   //         }
   //         else{
   //           OLD[v,s,t]<-0
   //         }
+          
+     
   //         FIT[v,s,t] <-RF2[v,s,t]*OLD[v,s,t]
   //         DEM[v,s,t] <- OLD[v,s,t]- FIT[v,s,t]
   //         NEW[v,s,t] <- (FOREC[t,s,v,3]-FOREC[t-1,s,v,3]+DEM[v,s,t])*delta2[v,s,t]
-  //         FLEET[v,s,t] <- FLEET[v,s,t-1]+ NEW[v,s,t]-DEM[v,s,t]      
+  //         FLEET[v,s,t] <- FLEET[v,s,t-1]+ NEW[v,s,t]-DEM[v,s,t]
+          
           
   //       }else{
   //         FLEET[v,s,t]<-HF[s,v,t]
@@ -348,46 +352,67 @@ for (let n = 0; n < N; n++) {
   //         NEW[v,s,t]<-HN[s,v,t]
   //       }
         
+        
   //       for(r in 1:R){
   //         FLEET1[r,v,s,t]<-FLEET[v,s,t]*(Z1[r,v,s,t]/ZD[v,s,t])
   //         FLEET2[r,v,s,t]<-FLEET1[r,v,s,t]*CAP[s,v,1]/10^6
-  //         FLEET3[r,v,s,t]<-FLEET2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/(L[s,v,t]*1.852*10^6)
+  //         FLEET3[r,v,s,t]<-FLEET2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s,t]*DIST[r,1]+TRIP[r,2,v,s,t]*DIST[r,2])/(L[s,v,t]*1.852*10^6)
           
   //         GAP[r,v,s,t] <-FLEET1[r,v,s,t]-Z1[r,v,s,t]
   //         GAP2[r,v,s,t]<-FLEET2[r,v,s,t]-Z2[r,v,s,t]
   //         GAP3[r,v,s,t]<-FLEET3[r,v,s,t]-Z3[r,v,s,t]
   //       }
+        
+        
   //     }}}
-  for (let v = 0; v < V; v++){
-    for (let s = 0; s < S[v]; s++){
-      for (let t = 0; t < T; t++){
-        // decreciente
-        delta2[v][s][t] = Math.pow((1 - Math.min(0.999, delta[v][s])), Math.min(1, Math.max(0, t - rang1[v][s][0]) / Math.max(1, rang1[v][s][1] - rang1[v][s][0])));
-        // Creciente
-        RF2[v][s][t] = Math.pow(Math.min(0.999, RF[v]), Math.min(1, Math.max(0, t - rang2[v][0]) / Math.max(1, rang2[v][1] - rang2[v][0])));
+  
+  for (let v = 0; v < V; v++) {
+    for (let s = 0; s < S[v]; s++) {
+      for (let t = 0; t < T; t++) {
+        // Decreasing
+        delta2[v][s][t] = 1 - Math.pow((1 - delta[v][s]), 
+          Math.min(1, 
+            Math.max(0, ((t + 1) - rang1[v][s][0]) / 
+            Math.max(1, (rang1[v][s][1] - rang1[v][s][0])))));
 
-        if(t >= (T2)){
-          if(t - (agep1[v][s] - 1) >= 1){
-            OLD[v][s][t] = NEW[v][s][t - agep1[v][s] - 1] - FIT[v][s][t - agep2[v] - 1];
+        // Increasing
+        RF2[v][s][t] = Math.pow(
+          (1 + RF[v]), 
+          Math.min(1, 
+            Math.max(0, ((t + 1) - rang2[v][0]) / 
+            Math.max(1, (rang2[v][1] - rang2[v][0]))))) - 1;
+
+        for (let t2 = agep1[s][v]; t2 <= init1[s][v]; t2++) {
+          if ((t + 1) - t2 > 0 && agep1[s][v] < init1[s][v]) {
+            INV1[v][s][t] += NEW[v][s][t - t2];
+          }
+        }
+
+        if ((t + 1) >= (T2 + 1)) {
+          if ((t + 1) - agep1[s][v] >= 1) {
+            OLD[v][s][t] = NEW[v][s][t - agep1[s][v]] - FIT[v][s][t  - agep2[v]] + 
+              Math.round(INV1[v][s][t] * (1 / (T - T2)));
           } else {
             OLD[v][s][t] = 0;
           }
+
           FIT[v][s][t] = RF2[v][s][t] * OLD[v][s][t];
           DEM[v][s][t] = OLD[v][s][t] - FIT[v][s][t];
           NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2] + DEM[v][s][t]) * delta2[v][s][t];
-          //NEW[v,s,t] <- (FOREC[t,s,v,3]-FOREC[t-1,s,v,3])*delta2[v,s,t]
-          //NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2]) * delta2[v][s][t];
           FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - DEM[v][s][t];
         } else {
           FLEET[v][s][t] = HF[s][v][t];
           DEM[v][s][t] = HD[s][v][t];
           NEW[v][s][t] = HN[s][v][t];
         }
-        for (let r = 0; r < R; r++){
+
+        for (let r = 0; r < R; r++) {
           FLEET1[r][v][s][t] = FLEET[v][s][t] * (Z1[r][v][s][t] / ZD[v][s][t]);
           FLEET2[r][v][s][t] = FLEET1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
-          FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) * (TRIP[r][0][v][s] * DIST[r][0] + TRIP[r][1][v][s] * DIST[r][1]) / (L[s][v][t] * 1.852 * Math.pow(10, 6));
-          
+          FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) *
+            (TRIP[r][0][v][s][t] * DIST[r][0] + TRIP[r][1][v][s][t] * DIST[r][1]) /
+            (L[s][v][t] * 1.852 * Math.pow(10, 6));
+
           GAP[r][v][s][t] = FLEET1[r][v][s][t] - Z1[r][v][s][t];
           GAP2[r][v][s][t] = FLEET2[r][v][s][t] - Z2[r][v][s][t];
           GAP3[r][v][s][t] = FLEET3[r][v][s][t] - Z3[r][v][s][t];
@@ -425,6 +450,8 @@ for (let n = 0; n < N; n++) {
     GAP2: GAP2,
     GAP3: GAP3,
   }
+
+  // console.log(resultObj);
 
   return resultObj;
 }

@@ -147,9 +147,14 @@ async function getDevParams() {
     // L<-array(data.matrix(data14), dim=c(S2,V,T)) # Correccion por programacion y otros
     const arrayL: number[] = d3.transpose(data14).flat(2);
     const L: number[][][] = arrayTo3DMatrix(arrayL, [S2, V, T]) as number[][][];
+
     // L2<-array(data.matrix(data16), dim=c(S2,V)) # Correccion por programacion y otros
     const arrayL2: number[] = d3.transpose(data16).flat(2);
     const L2: number[][] = arrayTo2DMatrix(arrayL2, [S2, V]) as number[][];
+
+    // init1<-array(rep(c(28,24,23,22,22),S2), dim=c(S2,V))
+    const arrayInit1: number[] = new Array(S2).fill([28, 24, 23, 22, 22]).flat(2);
+    const init1: number[][] = arrayTo2DMatrix(arrayInit1, [V, S2]) as number[][];
 
     return {
         T,
@@ -183,7 +188,8 @@ async function getDevParams() {
         FOREC,
         factor,
         year,
-        year2
+        year2,
+        init1
     };
 }
 
@@ -191,13 +197,13 @@ async function getDevParams() {
 
 // agep1<-array(rep(c(28,24,23,22,22),S2), dim=c(S2,V)) # Edad para lifecycle regular flota by size
 const arrayAgep1: number[] = new Array(S2).fill([28, 24, 23, 22, 22]).flat(2);
-const agep1: number[][] = arrayToNDMatrix(arrayAgep1, [V, S2]) as number[][];
+const agep1: number[][] = arrayTo2DMatrix(arrayAgep1, [S2, V]) as number[][];
 
 // agep2<-c(10,10,10,10,10) # Edad para lifecicle retrofit flota by size
 const agep2: number[] = [10, 10, 10, 10, 10];
 
 // delta<- array(rep(0,V*S2), dim=c(V,S2)) // delta<-array(rep(0,V*S2), dim=c(V,S2)) # % share in route of vessels type v with size s.
-const arrayDelta: number[] = new Array(V * S2).fill(0);
+const arrayDelta: number[] = new Array(V * S2).fill(1);
 const delta: number[][] = arrayToNDMatrix(arrayDelta, [V, S2]) as number[][];
 
 // rang1<- array(rep(0,V*S2*2), dim=c(V,S2,2))
@@ -227,9 +233,9 @@ const beta: number[][] = arrayToNDMatrix(arrayBeta, [2, N]) as number[][];
 const arrayPARR: number[] = new Array(4 * N).fill(0);
 const PARR: number[][] = arrayToNDMatrix(arrayPARR, [4, N]) as number[][];
 // alpha<- 0.5 # effect of economic shock [-1;1]
-const alpha: number = 0.5;
+// const alpha: number = 0.5;
 // PARN<-c(29,56) #inicio y final del shock [T2+1;T], 2 mayor que 1
-const PARN: number[] = [29, 56];
+// const PARN: number[] = [29, 56];
 // ONES<-array(rep(0,N), dim=c(N))
 const ONES: number[] = new Array(N).fill(0) as number[];
 
@@ -237,8 +243,8 @@ const userParams = {
     goal,
     eta,
     rho,
-    alpha,
-    PARN,
+    // alpha,
+    // PARN,
     beta,
     PARR,
     RF,

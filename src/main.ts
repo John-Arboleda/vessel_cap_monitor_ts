@@ -24,11 +24,12 @@ drawChartsOnInput();
 validatePayPer();
 
 (async () => {
-  const devParams = await getDevParams()
-  console.log(devParams);
+  // const devParams = await getDevParams()
+  // console.log("dev params", devParams);
 
   const objData = updateObj(userParams);
-  console.log(objData);
+  // const objData = {...userParams};
+  // console.log("user params", objData);
   const resultObj = await transformData(objData);
   // console.log(resultObj);
   
