@@ -82,8 +82,8 @@ function regionBody(regionId: number): HTMLTableRowElement{
                   type="range"
                   class="form-range
                   static-input"
-                  min="-1"
-                  max="0"
+                  min="0.0"
+                  max="1.0"
                   step="0.01"
                   value="0.0"
                 >
@@ -160,8 +160,8 @@ function regionBody(regionId: number): HTMLTableRowElement{
                   type="range"
                   class="form-range
                   static-input"
-                  min="-1"
-                  max="0"
+                  min="0.0"
+                  max="1.0"
                   step="0.01"
                   value="0.0"
                 >

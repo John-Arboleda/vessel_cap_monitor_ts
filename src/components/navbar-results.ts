@@ -75,7 +75,7 @@ function customVesselSize(resultNavbar: HTMLElement):void {
         <option value="3">Size 4</option>
         <option value="4">Size 5</option> 
       `;
-    } else if(vesselId === "4"){
+    } else if((vesselId === "0") || (vesselId === "4")){
 
       const vesselSizes: string[] = vesselData[vesselId]["sizesHTML"]
       
