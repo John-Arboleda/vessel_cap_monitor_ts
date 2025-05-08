@@ -26,8 +26,8 @@ function sumPeriod(
       result += dataProp[techKey][sizeKey][t];
     }
   }
-
-  return Math.round(result * 100) / 100;
+  
+  return result;
 }
 
 function sumDataObj1(
@@ -67,7 +67,8 @@ function sumPeriod2(
       }
     }
   }
-  return Math.round(result * 100) / 100;
+  // return Math.round(result * 100) / 100;
+  return result
 }
 
 function sumDataObj2(
