@@ -118,7 +118,7 @@ function vesselTypeRow (vesselId: number, typeId: number, typeName: string): HTM
       step="1"
       min="0"
       max="100"
-      value="0"
+      value="100"
       required>
   </td>
   `
@@ -143,7 +143,7 @@ function rang1TypeRow (vesselId: number, typeId: number, typeName: string): HTML
             step="1"
             min="2025"
             max="2050"
-            value="2030"
+            value="2025"
             required
         >
     </td>
@@ -167,6 +167,7 @@ function rang1TypeRow (vesselId: number, typeId: number, typeName: string): HTML
 }
 
 function agep1TypeRow (vesselId: number, typeId: number, typeName: string): HTMLTableRowElement {
+  const valueArray = [28, 24, 23 ,22, 22]
   const row = document.createElement('TR') as HTMLTableRowElement;
   row.innerHTML = `
     <td class="home" colspan="2">
@@ -184,7 +185,7 @@ function agep1TypeRow (vesselId: number, typeId: number, typeName: string): HTML
             step="1"
             min="1"
             max="50"
-            value="20"
+            value="${valueArray[typeId]}"
             required
         >
     </td>

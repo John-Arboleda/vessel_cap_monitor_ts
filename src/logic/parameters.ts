@@ -80,6 +80,8 @@ async function getDevParams() {
     const data17 = await parseTSV("../../assets/files/FOREC.txt");
     // data18<-read.csv("factor.txt",sep = "\t",header = FALSE)
     const data18 = await parseTSV("../../assets/files/factor.txt");
+    // data19<-read.csv("CORR2.txt",sep = "\t",header = FALSE)
+    const data19 = await parseTSV("../../assets/files/CORR2.txt");
 
     // DDA<-array(data.matrix(data5), dim=c(5,F,T)) # BAU, expected tonnes of fuel f transported by sea in year t.
     const arrayDDA: number[] = d3.transpose(data5).flat(2);
@@ -156,6 +158,13 @@ async function getDevParams() {
     const arrayInit1: number[] = new Array(S2).fill([28, 24, 23, 22, 22]).flat(2);
     const init1: number[][] = arrayTo2DMatrix(arrayInit1, [V, S2]) as number[][];
 
+    // CORR1<-array(c(1,1,1,1,0.0856), dim=c(V))
+    const CORR1: number[] = [1, 1, 1, 1, 0.0856];
+
+    // CORR2<-array(data.matrix(data19), dim=c(S2,V))
+    const arrayCORR2: number[] = d3.transpose(data19).flat(2);
+    const CORR2: number[][] = arrayTo2DMatrix(arrayCORR2, [S2, V]) as number[][];
+
     return {
         T,
         T2,
@@ -189,7 +198,9 @@ async function getDevParams() {
         factor,
         year,
         year2,
-        init1
+        init1,
+        CORR1,
+        CORR2
     };
 }
 

@@ -12,7 +12,7 @@ async function transformData( dataObj = userParams ){
   const devParams = await getDevParams();
   
   const { T, T2, N, R, W, F, V, S, S2, V2, ind, SCN, DDA, lambda1, HF, HN, HD, CAP, U,  
-    DIST, MAXD, AVEG, lambda2, M, O, D, L, L2, FOREC, factor, year, year2,  init1 } = devParams;
+    DIST, MAXD, AVEG, lambda2, M, O, D, L, L2, FOREC, factor, year, year2, init1, CORR1, CORR2 } = devParams;
 
   //  ############# Pre processing ####################
 
@@ -200,7 +200,7 @@ async function transformData( dataObj = userParams ){
   //             #Z2[r,v,s,t]<-Z2[r,v,s,t]+(Q[r,1,f,t]+Q[r,2,f,t])*lambda2[r,year2,s,v]
   //           }}
           
-  //         Z1[r,v,s,t]<-Z1[r,v,s,t]*L[s,v,t]
+  //         Z1[r,v,s,t]<-Z1[r,v,s,t]*L[s,v,t]]*CORR1[v]*CORR2[s,v]
   //         Z2[r,v,s,t]<-Z1[r,v,s,t]*CAP[s,v,1]/10^6
   //         Z3[r,v,s,t]<-Z2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s]*DIST[r,1]+TRIP[r,2,v,s]*DIST[r,2])/(L[s,v,t]*1.852*10^6)
   //       }}}}
@@ -216,7 +216,7 @@ async function transformData( dataObj = userParams ){
             }
           }
 
-          Z1[r][v][s][t] = Z1[r][v][s][t] * L[s][v][t];
+          Z1[r][v][s][t] = Z1[r][v][s][t] * L[s][v][t] * CORR1[v] * CORR2[s][v];
           Z2[r][v][s][t] = Z1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
           Z3[r][v][s][t] = Z2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) *
             (TRIP[r][0][v][s][t] * DIST[r][0] + TRIP[r][1][v][s][t] * DIST[r][1]) /
@@ -245,7 +245,7 @@ async function transformData( dataObj = userParams ){
   //         ZC[v,s,t]<-ZC[v,s,t]+Z1[r,v,s,t]
   //       }
   //       ZD[v,s,t]<-ZC[v,s,t]
-  //       ZC[v,s,t]<-ceiling(max(0,ZC[v,s,t]-L2[s,v]))  
+  //       ZC[v,s,t]<-ceiling(max(0,ZC[v,s,t]-L2[s,v]*CORR1[v]*CORR2[s,v]))    
   //     }}}
   for (let v = 0; v < V; v++){
     for (let s = 0; s < S[v]; s++){
@@ -254,7 +254,7 @@ async function transformData( dataObj = userParams ){
           ZC[v][s][t] += Z1[r][v][s][t];
         }
         ZD[v][s][t] = ZC[v][s][t];
-        ZC[v][s][t] = Math.ceil(Math.max(0, ZC[v][s][t] - L2[s][v]));
+        ZC[v][s][t] = Math.ceil(Math.max(0, ZC[v][s][t] - L2[s][v] * CORR1[v] * CORR2[s][v]));
       }
     }
   }
@@ -343,7 +343,7 @@ async function transformData( dataObj = userParams ){
   //         FIT[v,s,t] <-RF2[v,s,t]*OLD[v,s,t]
   //         DEM[v,s,t] <- OLD[v,s,t]- FIT[v,s,t]
   //         NEW[v,s,t] <- (FOREC[t,s,v,3]-FOREC[t-1,s,v,3]+DEM[v,s,t])*delta2[v,s,t]
-  //         FLEET[v,s,t] <- FLEET[v,s,t-1]+ NEW[v,s,t]-DEM[v,s,t]
+  //         FLEET[v,s,t] <- FLEET[v,s,t-1]+ NEW[v,s,t]-OLD[v,s,t]
           
           
   //       }else{
@@ -354,7 +354,7 @@ async function transformData( dataObj = userParams ){
         
         
   //       for(r in 1:R){
-  //         FLEET1[r,v,s,t]<-FLEET[v,s,t]*(Z1[r,v,s,t]/ZD[v,s,t])
+  //         FLEET1[r,v,s,t]<-max(0,round(FLEET[v,s,t]*(Z1[r,v,s,t]/max(1,ZD[v,s,t]))*CORR1[v]*CORR2[s,v]))
   //         FLEET2[r,v,s,t]<-FLEET1[r,v,s,t]*CAP[s,v,1]/10^6
   //         FLEET3[r,v,s,t]<-FLEET2[r,v,s,t]*((1-rho)*U[v,r,1]+rho*U[v,r,2])*(TRIP[r,1,v,s,t]*DIST[r,1]+TRIP[r,2,v,s,t]*DIST[r,2])/(L[s,v,t]*1.852*10^6)
           
@@ -399,7 +399,7 @@ async function transformData( dataObj = userParams ){
           FIT[v][s][t] = RF2[v][s][t] * OLD[v][s][t];
           DEM[v][s][t] = OLD[v][s][t] - FIT[v][s][t];
           NEW[v][s][t] = (FOREC[t][s][v][2] - FOREC[t - 1][s][v][2] + DEM[v][s][t]) * delta2[v][s][t];
-          FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - DEM[v][s][t];
+          FLEET[v][s][t] = FLEET[v][s][t - 1] + NEW[v][s][t] - OLD[v][s][t];
         } else {
           FLEET[v][s][t] = HF[s][v][t];
           DEM[v][s][t] = HD[s][v][t];
@@ -407,7 +407,7 @@ async function transformData( dataObj = userParams ){
         }
 
         for (let r = 0; r < R; r++) {
-          FLEET1[r][v][s][t] = FLEET[v][s][t] * (Z1[r][v][s][t] / ZD[v][s][t]);
+          FLEET1[r][v][s][t] = Math.max(0, Math.round(FLEET[v][s][t] * (Z1[r][v][s][t] / Math.max(1, ZD[v][s][t])) * CORR1[v] * CORR2[s][v]));
           FLEET2[r][v][s][t] = FLEET1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
           FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) *
             (TRIP[r][0][v][s][t] * DIST[r][0] + TRIP[r][1][v][s][t] * DIST[r][1]) /
