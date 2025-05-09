@@ -407,7 +407,7 @@ async function transformData( dataObj = userParams ){
         }
 
         for (let r = 0; r < R; r++) {
-          FLEET1[r][v][s][t] = Math.max(0, Math.round(FLEET[v][s][t] * (Z1[r][v][s][t] / Math.max(1, ZD[v][s][t])) * CORR1[v] * CORR2[s][v]));
+          FLEET1[r][v][s][t] = Math.max(0, FLEET[v][s][t] * (Z1[r][v][s][t] / Math.max(1, ZD[v][s][t])) * CORR1[v] * CORR2[s][v]);
           FLEET2[r][v][s][t] = FLEET1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
           FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) *
             (TRIP[r][0][v][s][t] * DIST[r][0] + TRIP[r][1][v][s][t] * DIST[r][1]) /
