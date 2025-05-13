@@ -70,7 +70,7 @@ function vesselBody(vesselId: number, vesselTypes: string[]): HTMLTableRowElemen
   agep1HeaderRow.innerHTML = `
     <td scope="row" colspan="3" class="text-center">
       <label>
-        <small class="form-text text-muted">Expected vessels lifecycle</small>
+        <small class="form-text text-muted">Timeframe for gradual ship orderbook reduction</small>
       </label>
     </td>
   `;
@@ -86,7 +86,7 @@ function vesselBody(vesselId: number, vesselTypes: string[]): HTMLTableRowElemen
   rang1HeaderRow.innerHTML = `
     <td scope="row" colspan="3" class="text-center">
       <label>
-        <small class="form-text text-muted">Timeframe for gradual ship orderbook reduction</small>
+        <small class="form-text text-muted">Expected vessels lifecycle</small>
       </label>
     </td>
   `;

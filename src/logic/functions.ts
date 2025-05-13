@@ -211,7 +211,8 @@ async function transformData( dataObj = userParams ){
           for (let f = 0; f < F; f++) {
             if (v === V2[f] - 1) {
               Z1[r][v][s][t] += (ONES[O[r][1] - 1] + factor[goal - 1][t] * (1 - ONES[O[r][1] - 1])) *
-                Math.ceil(lambda2[r][year2 - 1][s][v] * Math.max(Q[r][0][f][t] / Y[r][0][v][s][t], Q[r][1][f][t] / Y[r][1][v][s][t]) * (1 + (M[v] / 100)));
+                Math.ceil(lambda2[r][year2 - 1][s][v] * 
+                  Math.max(Q[r][0][f][t] / Y[r][0][v][s][t], Q[r][1][f][t] / Y[r][1][v][s][t]) * (1 + (M[v] / 100)));
               // Z2[r,v,s,t] += (Q[r,1,f,t] + Q[r,2,f,t]) * lambda2[r,year2,s,v]; // Uncomment if needed
             }
           }
@@ -220,19 +221,21 @@ async function transformData( dataObj = userParams ){
           Z2[r][v][s][t] = Z1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
           Z3[r][v][s][t] = Z2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) *
             (TRIP[r][0][v][s][t] * DIST[r][0] + TRIP[r][1][v][s][t] * DIST[r][1]) /
-            (L[s][v][t] * 1.852 * Math.pow(10, 6));
+            (L[s][v][T2 - 1] * 1.852 * Math.pow(10, 6));
         }
       }
     }
   }
+
+  console.log(Z1[10][3][0])
   
   // ZC<-array(rep(0,V*S2*T), dim=c(V,S2,T))
   const arrayZC: number[] = new Array(V * S2 * T).fill(0);
   const ZC: number[][][] = arrayToNDMatrix(arrayZC, [V, S2, T]) as number[][][];
 
   // ZD<-array(rep(0,V*S2*T), dim=c(V,S2,T))
-  const arrayZD: number[] = new Array(V * S2 * T).fill(0);
-  const ZD: number[][][] = arrayToNDMatrix(arrayZD, [V, S2, T]) as number[][][];
+  // const arrayZD: number[] = new Array(V * S2 * T).fill(0);
+  // const ZD: number[][][] = arrayToNDMatrix(arrayZD, [V, S2, T]) as number[][][];
 
   // FLEETC<-array(rep(0,V*S2*T), dim=c(V,S2,T))
   // const arrayFLEETC: number[] = new Array(V * S2 * T).fill(0);
@@ -253,7 +256,7 @@ async function transformData( dataObj = userParams ){
         for (let r = 0; r < R; r++){
           ZC[v][s][t] += Z1[r][v][s][t];
         }
-        ZD[v][s][t] = ZC[v][s][t];
+        // ZD[v][s][t] = ZC[v][s][t];
         ZC[v][s][t] = Math.ceil(Math.max(0, ZC[v][s][t] - L2[s][v] * CORR1[v] * CORR2[s][v]));
       }
     }
@@ -407,11 +410,13 @@ async function transformData( dataObj = userParams ){
         }
 
         for (let r = 0; r < R; r++) {
-          FLEET1[r][v][s][t] = Math.max(0, FLEET[v][s][t] * (Z1[r][v][s][t] / Math.max(1, ZD[v][s][t])) * CORR1[v] * CORR2[s][v]);
+          FLEET1[r][v][s][t] = Math.max(0, FLEET[v][s][t] * 
+              (Z1[r][v][s][t] / Math.max(1, ZC[v][s][t])) * 
+              CORR1[v] * CORR2[s][v]);
           FLEET2[r][v][s][t] = FLEET1[r][v][s][t] * CAP[s][v][0] / Math.pow(10, 6);
           FLEET3[r][v][s][t] = FLEET2[r][v][s][t] * ((1 - rho) * U[v][r][0] + rho * U[v][r][1]) *
             (TRIP[r][0][v][s][t] * DIST[r][0] + TRIP[r][1][v][s][t] * DIST[r][1]) /
-            (L[s][v][t] * 1.852 * Math.pow(10, 6));
+            (L[s][v][T2 - 1] * 1.852 * Math.pow(10, 6));
 
           GAP[r][v][s][t] = FLEET1[r][v][s][t] - Z1[r][v][s][t];
           GAP2[r][v][s][t] = FLEET2[r][v][s][t] - Z2[r][v][s][t];
